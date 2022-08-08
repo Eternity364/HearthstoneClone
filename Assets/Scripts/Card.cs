@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
-    public CardData absCard;
+    public CardData data;
 
     [SerializeField]
     public CardDisplay cardDisplay;
@@ -12,7 +12,9 @@ public class Card : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        absCard = new CardData(1, 1, 1);
+        data = new CardData(2, 3, 4);
+        cardDisplay.SetData(data);
+        cardDisplay.ChangeState(CardDisplay.DisplayStates.OnField);
     }
 
     // Update is called once per frame
