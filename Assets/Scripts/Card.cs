@@ -16,10 +16,4 @@ public class Card : MonoBehaviour
         cardDisplay.SetData(data);
         cardDisplay.ChangeState(CardDisplay.DisplayStates.OnField);
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
