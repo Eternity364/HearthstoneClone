@@ -50,3 +50,27 @@ TagManager:
   - name: InHandCard3
     uniqueID: 2057896769
     locked: 0
+  - name: InHandCard3
+    uniqueID: 2358374833
+    locked: 0
+  - name: InHandCard4
+    uniqueID: 3023317345
+    locked: 0
+  - name: InHandCard5
+    uniqueID: 60761187
+    locked: 0
+  - name: InHandCard6
+    uniqueID: 1082530289
+    locked: 0
+  - name: InHandCard7
+    uniqueID: 3282788157
+    locked: 0
+  - name: InHandCard8
+    uniqueID: 3863241789
+    locked: 0
+  - name: InHandCard9
+    uniqueID: 3874387917
+    locked: 0
+  - name: InHandCard10
+    uniqueID: 2641629863
+    locked: 0

@@ -14,6 +14,5 @@ public class Card : MonoBehaviour
     {
         data = new CardData(2, 3, 4);
         cardDisplay.SetData(data);
-        cardDisplay.ChangeState(CardDisplay.DisplayStates.OnField);
     }
 }
