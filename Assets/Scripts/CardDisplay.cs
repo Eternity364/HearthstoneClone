@@ -84,9 +84,8 @@ public class CardDisplay : MonoBehaviour
 
     void OnCardTurningVisibility()
     {
-        if (card != null) {
-            cardBack.SetActive(!(card.transform.rotation.y > -0.61 && card.transform.rotation.y < 0.79));
-            textCanvasGO.SetActive((card.transform.rotation.y > -0.61 && card.transform.rotation.y < 0.79));
-        }
+        bool back = card.transform.eulerAngles.y > 104 && card.transform.eulerAngles.y < 285;
+        cardBack.SetActive(back);
+        textCanvasGO.SetActive(!back);
     }
 }
