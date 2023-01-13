@@ -700,6 +700,7 @@ MonoBehaviour:
   - {fileID: 1815195168}
   - {fileID: 1405847119}
   positionShift: {x: 0.09, y: 0, z: 0}
+  zPosiionShift: 0.001
   sortingTypeThreshold: 4
   fanSortingStartPosition: {x: 0, y: 0.18, z: 0}
   startAngle: -55

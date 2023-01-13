@@ -9,6 +9,8 @@ public class Hand : MonoBehaviour
     [SerializeField]
     Vector3 positionShift;
     [SerializeField]
+    float zPosiionShift;
+    [SerializeField]
     int sortingTypeThreshold;
     [SerializeField]
     Vector3 fanSortingStartPosition;
@@ -20,10 +22,21 @@ public class Hand : MonoBehaviour
     void Start()
     {
         int lenght = cards.Length;
+
         if (lenght > sortingTypeThreshold)
             SortFan(lenght);
         else
             SortLinear(lenght);
+
+
+        for (int i = 0; i < lenght; i++)
+        {
+            float zPos = i * zPosiionShift;
+            Vector3 origPos = cards[i].transform.position;
+            // TEMP For some reason game adds -1 to z coordinate, so we temporarly offset it here
+            Vector3 pos = new Vector3(origPos.x, origPos.y, zPos + 1);
+            cards[i].transform.position = pos;
+        }
     }
 
     public void SortLinear(int lenght)
@@ -52,6 +65,7 @@ public class Hand : MonoBehaviour
             Quaternion rotation = Quaternion.Euler(0, 0, angle);
             Quaternion cardRotation = Quaternion.Euler(0, 0, (startAngle + (fanSortingAngleShift * i)) * 0.5f);
             Vector3 position = rotation * fanSortingStartPosition - fanSortingStartPosition;
+            position.z = 0;
             cards[i].transform.position += position;
             cards[i].transform.rotation = cardRotation;
             cards[i].cardDisplay.SetRenderOrder(lenght - i);
