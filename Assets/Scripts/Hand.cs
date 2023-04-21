@@ -32,10 +32,9 @@ public class Hand : MonoBehaviour
         for (int i = 0; i < lenght; i++)
         {
             float zPos = i * zPosiionShift;
-            Vector3 origPos = cards[i].transform.position;
-            // TEMP For some reason game adds -1 to z coordinate, so we temporarly offset it here
-            Vector3 pos = new Vector3(origPos.x, origPos.y, zPos + 1);
-            cards[i].transform.position = pos;
+            Vector3 origPos = cards[i].transform.localPosition;
+            Vector3 pos = new Vector3(origPos.x, origPos.y, zPos);
+            cards[i].transform.localPosition = pos;
         }
     }
 
@@ -47,7 +46,7 @@ public class Hand : MonoBehaviour
 
         for (int i = 0; i < lenght; i++)
         {
-            cards[i].transform.position += startPosition + positionShift * i;
+            cards[i].transform.localPosition += startPosition + positionShift * i;
             cards[i].cardDisplay.SetRenderOrder(i);
         }
     }
@@ -66,7 +65,7 @@ public class Hand : MonoBehaviour
             Quaternion cardRotation = Quaternion.Euler(0, 0, (startAngle + (fanSortingAngleShift * i)) * 0.5f);
             Vector3 position = rotation * fanSortingStartPosition - fanSortingStartPosition;
             position.z = 0;
-            cards[i].transform.position += position;
+            cards[i].transform.localPosition += position;
             cards[i].transform.rotation = cardRotation;
             cards[i].cardDisplay.SetRenderOrder(lenght - i);
         }

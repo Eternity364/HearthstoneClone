@@ -7,8 +7,16 @@ public class InHandClickHandler : MonoBehaviour
     [SerializeField]
     public GameObject card;
 
+    private bool clicked = false;
+
     void OnMouseDown()
     {
-        Debug.Log(card.name);
+        clicked = true;
+    }
+
+    void Update()
+    {
+        if (clicked)
+            card.transform.localPosition = PositionGetter.GetPosition();
     }
 }
