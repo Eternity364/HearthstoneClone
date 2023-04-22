@@ -21,16 +21,14 @@ public class Hand : MonoBehaviour
     float endAngle;
     [SerializeField]
     ActiveCardController cardController;
+    
+    int lenght;
 
     void Start()
     {
-        int lenght = cards.Length;
+        lenght = cards.Length;
 
-        if (lenght > sortingTypeThreshold)
-            SortFan(lenght);
-        else
-            SortLinear(lenght);
-
+        Sort();
 
         for (int i = 0; i < lenght; i++)
         {
@@ -38,7 +36,14 @@ public class Hand : MonoBehaviour
         }
     }
 
-    public void SortLinear(int lenght)
+    public void Sort() {
+        if (lenght > sortingTypeThreshold)
+            SortFan();
+        else
+            SortLinear();
+    }
+
+    public void SortLinear()
     {
         Vector3 startPosition = (-lenght / 2 + 1) * positionShift;
         if (lenght % 2 == 1)
@@ -51,7 +56,7 @@ public class Hand : MonoBehaviour
         }
     }
 
-    public void SortFan(int lenght)
+    public void SortFan()
     {
         float fanSortingAngleShift = (endAngle - startAngle) / lenght;
         float localStartAngle = startAngle;
@@ -65,9 +70,16 @@ public class Hand : MonoBehaviour
             Quaternion cardRotation = Quaternion.Euler(0, 0, (startAngle + (fanSortingAngleShift * i)) * 0.5f);
             Vector3 position = rotation * fanSortingStartPosition - fanSortingStartPosition;
             position.z = 0.001f * i;
-            cards[i].transform.localPosition += position;
+            cards[i].transform.localPosition = position;
             cards[i].transform.rotation = cardRotation;
             cards[i].cardDisplay.SetRenderOrder(lenght - i);
+        }
+    }
+
+    private void SetCardsClickable(bool active) {
+        for (int i = 0; i < lenght; i++)
+        {
+            cards[i].clickHandler.SetClickable(active);
         }
     }
 
