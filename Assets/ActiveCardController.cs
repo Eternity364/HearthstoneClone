@@ -11,6 +11,7 @@ public class ActiveCardController : MonoBehaviour
     public void PickCard(Card card)
     {
         card.cardDisplay.gameObject.transform.SetParent(this.gameObject.transform);
+        card.transform.rotation = Quaternion.Euler(0, 0, 0);
         pickedCard = card;
     }
 
