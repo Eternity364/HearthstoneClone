@@ -24,8 +24,10 @@ public class ActiveCardController : MonoBehaviour
     
     void Update()
     {
-        if (pickedCard != null) { 
-            pickedCard.transform.localPosition = PositionGetter.GetPosition();
+        if (pickedCard != null) {
+            Vector3 position = PositionGetter.GetPosition();
+            if (position != Vector3.zero)
+                pickedCard.transform.localPosition = PositionGetter.GetPosition();
             if (Input.GetMouseButtonUp(0))
                 DropPickedCard();
         }
