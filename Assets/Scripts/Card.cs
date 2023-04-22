@@ -7,7 +7,9 @@ public class Card : MonoBehaviour
     public CardData data;
 
     [SerializeField]
-    public CardDisplay cardDisplay;
+    public CardDisplay cardDisplay;  
+    [SerializeField]
+    public InHandClickHandler clickHandler;
 
     // Start is called before the first frame update
     void Start()

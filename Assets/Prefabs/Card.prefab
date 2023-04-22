@@ -636,7 +636,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7718d36e74998e4599ac84fce541095, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  card: {fileID: 4421477798839540138}
+  card: {fileID: 4421477798839540136}
 --- !u!1 &2902201617763895606
 GameObject:
   m_ObjectHideFlags: 0
@@ -1033,6 +1033,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardDisplay: {fileID: 4421477798839540139}
+  clickHandler: {fileID: 7867609625535262005}
 --- !u!114 &4421477798839540139
 MonoBehaviour:
   m_ObjectHideFlags: 0

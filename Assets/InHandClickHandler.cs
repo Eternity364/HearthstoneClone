@@ -1,22 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class InHandClickHandler : MonoBehaviour
 {
+    public UnityAction<Card> OnPick;
+
     [SerializeField]
-    public GameObject card;
+    public Card card;
 
     private bool clicked = false;
 
     void OnMouseDown()
     {
         clicked = true;
-    }
-
-    void Update()
-    {
-        if (clicked)
-            card.transform.localPosition = PositionGetter.GetPosition();
+        OnPick.Invoke(card);
+        //print(card.cardDisplay.gameObject.name);
     }
 }

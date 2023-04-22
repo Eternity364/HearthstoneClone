@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Hand : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public class Hand : MonoBehaviour
     float startAngle;
     [SerializeField]
     float endAngle;
+    [SerializeField]
+    ActiveCardController cardController;
 
     void Start()
     {
@@ -31,10 +34,7 @@ public class Hand : MonoBehaviour
 
         for (int i = 0; i < lenght; i++)
         {
-            float zPos = i * zPosiionShift;
-            Vector3 origPos = cards[i].transform.localPosition;
-            Vector3 pos = new Vector3(origPos.x, origPos.y, zPos);
-            cards[i].transform.localPosition = pos;
+            cards[i].clickHandler.OnPick += cardController.PickCard;
         }
     }
 
@@ -64,7 +64,7 @@ public class Hand : MonoBehaviour
             Quaternion rotation = Quaternion.Euler(0, 0, angle);
             Quaternion cardRotation = Quaternion.Euler(0, 0, (startAngle + (fanSortingAngleShift * i)) * 0.5f);
             Vector3 position = rotation * fanSortingStartPosition - fanSortingStartPosition;
-            position.z = 0;
+            position.z = 0.001f * i;
             cards[i].transform.localPosition += position;
             cards[i].transform.rotation = cardRotation;
             cards[i].cardDisplay.SetRenderOrder(lenght - i);
