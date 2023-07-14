@@ -8,6 +8,8 @@ public class InHandClickHandler : MonoBehaviour
     [SerializeField]
     public Card card;
     [SerializeField]
+    public CardPickedRotationManager rotationManager;
+    [SerializeField]
     Collider area;
 
     private bool clicked = false;
@@ -20,6 +22,7 @@ public class InHandClickHandler : MonoBehaviour
     void OnMouseDown()
     {
         clicked = true;
+        rotationManager.SetActive(true);
         OnPick.Invoke(card);
     }
 }
