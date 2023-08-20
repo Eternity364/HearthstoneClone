@@ -2,10 +2,13 @@ using UnityEngine;
 
 public class CardPickedRotationManager : MonoBehaviour
 {
+    [SerializeField]
+    AngleSetter angleSetter;
+
     private bool active = false;
     private float rotation = 0;
     private float speed = 1;
-    private float rotationLimit = 30;
+    private float rotationLimit = 40;
     private Vector3 previousPos;
 
     void Update()
@@ -13,9 +16,10 @@ public class CardPickedRotationManager : MonoBehaviour
         if (active) {
             //rotation += speed;
             float posDiffX = previousPos.x - this.transform.localPosition.x;
-            print(posDiffX);
             Rotate(posDiffX);
             previousPos = this.transform.localPosition;
+            
+            //print(angle);
         }
     }
 
@@ -37,7 +41,6 @@ public class CardPickedRotationManager : MonoBehaviour
         else if(posDiffX > 0)
             rotation = rotationLimit;
 
-        Quaternion qRotation = Quaternion.Euler(0, rotation, 0);
-        this.transform.rotation = qRotation;
+        angleSetter.Set(new Vector2(0, rotation));
     }
 }
