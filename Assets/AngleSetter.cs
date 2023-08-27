@@ -18,7 +18,7 @@ public class AngleSetter : MonoBehaviour
         //     rotation.x,
         //     rotation.y,
         //     0);
-        print(Mathf.Abs(rotation.y) * (this.transform.localPosition.x * angleAdjust.y));
+        //print(Mathf.Abs(rotation.y) * (this.transform.localPosition.x * angleAdjust.y));
         //print(this.transform.localPosition.x);
         this.transform.rotation = qRotation;
     }
