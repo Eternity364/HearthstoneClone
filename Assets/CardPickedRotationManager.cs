@@ -13,14 +13,18 @@ public class CardPickedRotationManager : MonoBehaviour
     private float rotationY = 0;
     private float currentRotationX = 0;
     private float currentRotationY = 0;
-    private float speed = 130;
-    private float possDiffMax = 0.1f;
-    private float rotationLimitX = 50;
-    private float rotationLimitY = 20;
+    private float speed = 160;
+    private float declineSpeedX = 2000;
+    private float declineSpeedY = 1000;
+    
+    private float possDiffMin = 0.01f;
+    private float possDiffMax = 0.07f;
+    private float rotationLimitX = 60;
+    private float rotationLimitY = 30;
     private Vector3 previousPos;
-    private Tweener toZeroTweenX = null;
-    private Tweener toZeroTweenY = null;
-    float tweenerSpeed = 0.5f;
+    float delayToZeroTween = 0;
+    float currentDelayToZeroTweenX = 0f;
+    float currentDelayToZeroTweenY = 0f;
 
     void Update()
     {
@@ -48,63 +52,37 @@ public class CardPickedRotationManager : MonoBehaviour
 
     public void Rotate(float posDiffX, float posDiffY)
     {         
-        void CalculateRotationForAxis(float posDiff, ref float currentRotation, ref float rotation, float rotationLimit, Tweener toZeroTween) {
-                if (toZeroTween != null) {
-                    toZeroTween.Kill();
-                    if (Math.Sign(posDiff) == Math.Sign(currentRotation))
-                        rotation = currentRotation;
-                    else
-                        CalculateRotation(ref rotation);
-                } 
-                else 
-                {
-                    CalculateRotation(ref rotation);
-                }
-
-                void CalculateRotation (ref float rotation) {
+        void CalculateRotationForAxis(float posDiff, ref float currentRotation, ref float rotation, ref float currentDelayToZeroTween,
+             float rotationLimit, float declineSpeed) {
+                if (Math.Abs(posDiff) > possDiffMin) {
                     float rotationCoeff = Math.Abs(posDiff) / possDiffMax;
                     if (rotationCoeff > 1) rotationCoeff = 1;
 
                     float tempRotation = rotationCoeff * rotationLimit;
                     if (tempRotation > Math.Abs(rotation))
                         rotation = Math.Sign(posDiff) * tempRotation;
+                
+                    currentRotation += speed * Time.deltaTime * Math.Sign(posDiff);
+                    if (Math.Sign(currentRotation) == Math.Sign(rotation) && Math.Abs(currentRotation) > Math.Abs(rotation))
+                        currentRotation = rotation;
+
+                    if (Math.Abs(currentRotation) > rotationLimit)
+                        currentRotation = rotationLimit * Math.Sign(currentRotation);
+                } 
+                else
+                {
+                    int prevSign = Math.Sign(currentRotation);
+                    float delta = declineSpeed * Time.deltaTime * Math.Abs(possDiffMax); 
+                    if (Math.Abs(currentRotation) > delta)
+                        currentRotation = (Math.Abs(currentRotation) - delta) * prevSign;
+                    else
+                        currentRotation = 0;
+                    rotation = currentRotation;
                 }
-            
-                currentRotation += speed * Time.deltaTime * Math.Sign(posDiff);
-                if (Math.Sign(currentRotation) == Math.Sign(rotation) && Math.Abs(currentRotation) > Math.Abs(rotation))
-                    currentRotation = rotation;
-
-                if (Math.Abs(currentRotation) > rotationLimit)
-                    currentRotation = rotationLimit * Math.Sign(currentRotation);
         }
 
-        if (posDiffX != 0) {
-            CalculateRotationForAxis(posDiffX, ref currentRotationX, ref rotationX, rotationLimitX, toZeroTweenX);
-        }
-        else if (toZeroTweenX == null && currentRotationX != 0)
-        {   
-            void NullTweener() {
-                toZeroTweenX = null;
-            }
-            TweenCallback callback = NullTweener;
-
-            toZeroTweenX = DOTween.To(()=> currentRotationX, x=> currentRotationX = x, 0, Math.Abs(currentRotationX) / rotationLimitX * tweenerSpeed);
-            toZeroTweenX.SetEase(Ease.OutQuad).OnKill(callback).SetAutoKill(true);
-        }
-        
-        if (posDiffY != 0) {
-            CalculateRotationForAxis(posDiffY, ref currentRotationY, ref rotationY, rotationLimitY, toZeroTweenY);
-        }
-        else if (toZeroTweenY == null && currentRotationY != 0)
-        {   
-            void NullTweener() {
-                toZeroTweenY = null;
-            }
-            TweenCallback callback = NullTweener;
-
-            toZeroTweenY = DOTween.To(()=> currentRotationY, x=> currentRotationY = x, 0, Math.Abs(currentRotationY) / rotationLimitY * tweenerSpeed);
-            toZeroTweenY.SetEase(Ease.OutQuad).OnKill(callback).SetAutoKill(true);
-        }
+        CalculateRotationForAxis(posDiffX, ref currentRotationX, ref rotationX, ref currentDelayToZeroTweenX, rotationLimitX, declineSpeedX);
+        CalculateRotationForAxis(posDiffY, ref currentRotationY, ref rotationY, ref currentDelayToZeroTweenY, rotationLimitY, declineSpeedY);
         
         angleSetter.Set(new Vector2(-currentRotationY, currentRotationX));
     }
