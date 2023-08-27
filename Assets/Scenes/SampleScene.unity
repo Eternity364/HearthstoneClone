@@ -356,10 +356,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card6
       objectReference: {fileID: 0}
-    - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
 --- !u!224 &423278282 stripped
@@ -473,10 +469,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card2
       objectReference: {fileID: 0}
-    - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
 --- !u!114 &620021285 stripped
@@ -504,17 +496,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8917f8599f0a4124bb13684336a1c803, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &868493437 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8321436124563181073, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-  m_PrefabInstance: {fileID: 2071639712}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6962050496202a44984247a0189df786, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &963194225
@@ -870,10 +851,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card7
       objectReference: {fileID: 0}
-    - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
 --- !u!224 &1292020529 stripped
@@ -987,10 +964,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card9
       objectReference: {fileID: 0}
-    - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
 --- !u!224 &1409416687 stripped
@@ -1092,10 +1065,6 @@ PrefabInstance:
     - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Name
       value: Card10
-      objectReference: {fileID: 0}
-    - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
@@ -1199,10 +1168,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card4
       objectReference: {fileID: 0}
-    - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
 --- !u!224 &1538708900 stripped
@@ -1304,10 +1269,6 @@ PrefabInstance:
     - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Name
       value: Card5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
@@ -1422,10 +1383,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card3
       objectReference: {fileID: 0}
-    - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
 --- !u!114 &1850551662 stripped
@@ -1538,14 +1495,6 @@ PrefabInstance:
     - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Name
       value: Card1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8262146026614903110, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-      propertyPath: angleAdjust.x
-      value: 0.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 8262146026614903110, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-      propertyPath: angleAdjust.y
-      value: 0.6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
@@ -1660,10 +1609,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card8
       objectReference: {fileID: 0}
-    - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
 --- !u!224 &2025762449 stripped
@@ -1678,10 +1623,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-      propertyPath: rotationManager
-      value: 
-      objectReference: {fileID: 868493437}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1769,18 +1710,6 @@ PrefabInstance:
     - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Name
       value: Card
-      objectReference: {fileID: 0}
-    - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8262146026614903110, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-      propertyPath: angleAdjust.x
-      value: -200
-      objectReference: {fileID: 0}
-    - target: {fileID: 8262146026614903110, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-      propertyPath: angleAdjust.y
-      value: -200
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
