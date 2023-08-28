@@ -11,6 +11,7 @@ public class ActiveCardController : MonoBehaviour
     public void PickCard(Card card)
     {
         card.cardDisplay.gameObject.transform.SetParent(this.gameObject.transform);
+        card.cardDisplay.SetShadowActive(true);
         card.transform.rotation = Quaternion.Euler(0, 0, 0);
         pickedCard = card;
     }
@@ -18,6 +19,7 @@ public class ActiveCardController : MonoBehaviour
     private void DropPickedCard()
     {
         pickedCard.cardDisplay.gameObject.transform.SetParent(hand.gameObject.transform);
+        pickedCard.cardDisplay.SetShadowActive(false);
         pickedCard = null;
         hand.Sort();
     }

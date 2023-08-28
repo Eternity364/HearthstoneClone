@@ -38,6 +38,8 @@ public class CardDisplay : MonoBehaviour
     [SerializeField]
     private CardData data;
     [SerializeField]
+    private GameObject shadow;
+    [SerializeField]
     private CardRenderOrderSetter cardRenderOrderSetter;
 
     public enum DisplayStates
@@ -87,5 +89,10 @@ public class CardDisplay : MonoBehaviour
         bool back = card.transform.eulerAngles.y > 93.61 && card.transform.eulerAngles.y < 273.75f;
         cardBack.SetActive(back);
         textCanvasGO.SetActive(!back);
+    }
+
+    public void SetShadowActive(bool value)
+    {
+        shadow.SetActive(value);
     }
 }
