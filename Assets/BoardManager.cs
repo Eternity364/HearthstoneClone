@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
+    [SerializeField]
+    CardOnBoardPlacingAnimation placingAnimation;
     List<Card> placingCards = new List<Card>();
 
     public void PlaceCard(Card card)
@@ -13,6 +15,7 @@ public class BoardManager : MonoBehaviour
         Vector3 position = card.transform.position;
         card.transform.localPosition = new Vector3();
         card.IntermediateParent.transform.position = position;
-        print("board");
+
+        placingAnimation.Do(card.IntermediateParent.transform);
     }
 }
