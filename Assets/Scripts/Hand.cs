@@ -51,7 +51,7 @@ public class Hand : MonoBehaviour
         for (int i = 0; i < lenght; i++)
         {
             cards[i].transform.localPosition += startPosition + positionShift * i;
-            cards[i].cardDisplay.SetRenderOrder(i);
+            cards[i].cardDisplay.SetRenderLayer("InHandCard" + i.ToString());
         }
     }
 
@@ -71,7 +71,7 @@ public class Hand : MonoBehaviour
             position.z = 0.001f * i;
             cards[i].transform.localPosition = position;
             cards[i].transform.rotation = cardRotation;
-            cards[i].cardDisplay.SetRenderOrder(lenght - i);
+            cards[i].cardDisplay.SetRenderLayer("InHandCard" + (lenght - i).ToString());
         }
     }
     public void Remove(Card card) {

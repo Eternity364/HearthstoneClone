@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class ActiveCardController : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class ActiveCardController : MonoBehaviour
         card.cardDisplay.SetShadowActive(true);
         card.transform.rotation = Quaternion.Euler(0, 0, 0);
         pickedCard = card;
+        boardManager.StartTempSorting();
+        card.cardDisplay.SetRenderLayer("Active");
     }
 
     private void DropPickedCard()
@@ -34,9 +37,11 @@ public class ActiveCardController : MonoBehaviour
     void Update()
     {
         if (pickedCard != null) {
-            Vector3 position = PositionGetter.GetPosition();
-            if (position != Vector3.zero)
-                pickedCard.transform.localPosition = PositionGetter.GetPosition();
+            Vector3 position = PositionGetter.GetPosition(PositionGetter.ColliderType.ActiveCardController);
+            if (position != Vector3.zero) {
+                pickedCard.transform.localPosition = position;
+                boardManager.ComparePositionsAndSortTemporarily(PositionGetter.GetPosition(PositionGetter.ColliderType.Background).x);
+            }
             if (Input.GetMouseButtonUp(0))
                 DropPickedCard();
         }

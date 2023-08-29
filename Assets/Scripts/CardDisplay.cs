@@ -69,9 +69,9 @@ public class CardDisplay : MonoBehaviour
         cardOnField.SetActive(!isHand);
     }
 
-    public void SetRenderOrder(int order)
+    public void SetRenderLayer(string layer)
     {
-        cardRenderOrderSetter.Set(order);
+        cardRenderOrderSetter.Set(layer);
     }
 
     private void UpdateDisplay() {

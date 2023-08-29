@@ -22,14 +22,14 @@ public class CardRenderOrderSetter : MonoBehaviour
     [SerializeField]
     SpriteRenderer onFieldFront;
 
-    public void Set(int layer) {
-        mainCanvas.sortingLayerName = "InHandCard" + layer.ToString();
-        textCanvas.sortingLayerName = "InHandCard" + layer.ToString();
-        sortGroup.sortingLayerName = "InHandCard" + layer.ToString();
-        inHandImage.sortingLayerName = "InHandCard" + layer.ToString();
-        inHandFront.sortingLayerName = "InHandCard" + layer.ToString();
-        inHandBack.sortingLayerName = "InHandCard" + layer.ToString();
-        onFieldImage.sortingLayerName = "InHandCard" + layer.ToString();
-        onFieldFront.sortingLayerName = "InHandCard" + layer.ToString();
+    public void Set(string layer) {
+        mainCanvas.sortingLayerName = layer;
+        textCanvas.sortingLayerName = layer;
+        sortGroup.sortingLayerName = layer;
+        inHandImage.sortingLayerName = layer;
+        inHandFront.sortingLayerName = layer;
+        inHandBack.sortingLayerName = layer;
+        onFieldImage.sortingLayerName = layer;
+        onFieldFront.sortingLayerName = layer;
     }
 }
