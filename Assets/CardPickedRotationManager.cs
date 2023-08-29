@@ -19,8 +19,8 @@ public class CardPickedRotationManager : MonoBehaviour
     
     private float possDiffMin = 0.01f;
     private float possDiffMax = 0.07f;
-    private float rotationLimitX = 60;
-    private float rotationLimitY = 30;
+    private float rotationLimitX = 35;
+    private float rotationLimitY = 20;
     private Vector3 previousPos;
     float delayToZeroTween = 0;
     float currentDelayToZeroTweenX = 0f;
