@@ -1182,9 +1182,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8917f8599f0a4124bb13684336a1c803, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angleSetter: {fileID: 0}
+  angleSetter: {fileID: 2781721940718277738}
   cardDisplay: {fileID: 4421477798839540139}
+  intermediateParent: {fileID: 2812794235779906125}
   clickHandler: {fileID: 7867609625535262005}
+  rotationManager: {fileID: 8321436124563181073}
 --- !u!114 &4421477798839540139
 MonoBehaviour:
   m_ObjectHideFlags: 0

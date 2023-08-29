@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class Hand : MonoBehaviour
 {
     [SerializeField]
-    Card[] cards;
+    List<Card> cards;
     [SerializeField]
     Vector3 positionShift;
     [SerializeField]
@@ -26,8 +26,6 @@ public class Hand : MonoBehaviour
 
     void Start()
     {
-        lenght = cards.Length;
-
         Sort();
 
         for (int i = 0; i < lenght; i++)
@@ -37,6 +35,7 @@ public class Hand : MonoBehaviour
     }
 
     public void Sort() {
+        lenght = cards.Count;
         if (lenght > sortingTypeThreshold)
             SortFan();
         else
@@ -74,6 +73,9 @@ public class Hand : MonoBehaviour
             cards[i].transform.rotation = cardRotation;
             cards[i].cardDisplay.SetRenderOrder(lenght - i);
         }
+    }
+    public void Remove(Card card) {
+        cards.Remove(card);
     }
 
     private void SetCardsClickable(bool active) {

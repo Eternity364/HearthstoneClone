@@ -6,7 +6,9 @@ public class ActiveCardController : MonoBehaviour
 
     
     [SerializeField]
-    public Hand hand;
+    private Hand hand;
+    [SerializeField]
+    private BoardManager boardManager;
 
     public void PickCard(Card card)
     {
@@ -18,10 +20,14 @@ public class ActiveCardController : MonoBehaviour
 
     private void DropPickedCard()
     {
-        pickedCard.cardDisplay.gameObject.transform.SetParent(hand.gameObject.transform);
-        pickedCard.cardDisplay.SetShadowActive(false);
-        pickedCard = null;
+        //pickedCard.cardDisplay.gameObject.transform.SetParent(hand.gameObject.transform);
+        //pickedCard.cardDisplay.SetShadowActive(false);
+        
+        boardManager.PlaceCard(pickedCard);
+        pickedCard.RotationManager.SetActive(false);
+        hand.Remove(pickedCard);
         hand.Sort();
+        pickedCard = null;
     }
 
     
