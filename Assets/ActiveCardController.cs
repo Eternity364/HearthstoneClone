@@ -19,6 +19,7 @@ public class ActiveCardController : MonoBehaviour
         pickedCard = card;
         boardManager.StartTempSorting();
         card.cardDisplay.SetRenderLayer("Active");
+        hand.SetCardsClickable(false);
     }
 
     private void DropPickedCard()
@@ -31,6 +32,7 @@ public class ActiveCardController : MonoBehaviour
         hand.Remove(pickedCard);
         hand.Sort();
         pickedCard = null;
+        hand.SetCardsClickable(true);
     }
 
     

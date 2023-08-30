@@ -8,21 +8,7 @@ public class CardDisplay : MonoBehaviour
     [SerializeField]
     private GameObject card;
     [SerializeField]
-    private GameObject cardInHand;
-    [SerializeField]
-    private GameObject cardOnField;
-    [SerializeField]
     private GameObject textCanvasGO;
-    [SerializeField]
-    private GameObject inHandTextGO;
-    [SerializeField]
-    private GameObject onFieldTextGO;
-    [SerializeField]
-    private Canvas textCanvas;
-    [SerializeField]
-    private Canvas inHandCanvas;
-    [SerializeField]
-    private Canvas onFieldCanvas;
     [SerializeField]
     private Text inHandAttack;
     [SerializeField]
@@ -45,6 +31,10 @@ public class CardDisplay : MonoBehaviour
     private CardChangingStateAnimation changingStateAnimation;
     [SerializeField]
     private CardRenderOrderSetter cardRenderOrderSetter;
+    public Transform mainObjectsTransform; 
+    [SerializeField]
+    public Transform intermediateObjectsTransform; 
+    [SerializeField]
 
     public enum DisplayStates
     {
@@ -72,6 +62,12 @@ public class CardDisplay : MonoBehaviour
         changingStateAnimation.Do(state);
         currentState = state;
         SetShadowActive(shadowsActive);
+    }
+
+    public void ResetTransform() {
+        mainObjectsTransform.localScale = Vector3.one;
+        mainObjectsTransform.localRotation = Quaternion.Euler(Vector3.zero);
+        mainObjectsTransform.localPosition = Vector3.zero;
     }
 
     public void SetRenderLayer(string layer)

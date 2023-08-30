@@ -29,7 +29,7 @@ public class BoardManager : MonoBehaviour
         card.gameObject.transform.SetParent(playerBoardTransform);
         Vector3 position = card.transform.position;
         card.transform.localPosition = new Vector3();
-        card.intermediateObjectsTransform.position = position;
+        card.cardDisplay.intermediateObjectsTransform.position = position;
 
         void OnFirstPartFinish () {
             card.cardDisplay.ChangeState(CardDisplay.DisplayStates.OnField);
@@ -38,7 +38,7 @@ public class BoardManager : MonoBehaviour
         void OnAnimationFinish () {
             card.cardDisplay.SetRenderLayer("Board");
         }
-        placingAnimation.Do(card.intermediateObjectsTransform, card.mainObjectsTransform, OnFirstPartFinish, OnAnimationFinish);
+        placingAnimation.Do(card.cardDisplay.intermediateObjectsTransform, card.cardDisplay.mainObjectsTransform, OnFirstPartFinish, OnAnimationFinish);
         cardsOnBoard.Insert(cardsOnBoardTemp.IndexOf(tempCard), card);
         card.cardDisplay.SetRenderLayer("LandingOnBoard");
     
@@ -48,9 +48,7 @@ public class BoardManager : MonoBehaviour
     public void ComparePositionsAndSortTemporarily(float xPosition) {
         cardsOnBoardTemp.Remove(tempCard);
         int newIndex = 0;
-        //print("newIndex = " + newIndex);
-        print("cardsOnBoard.Count = " + cardsOnBoard.Count);
-        print("cardsPositions.Count = " + cardsPositions.Count);
+
         for (int i = 0; i < cardsOnBoard.Count; i++)
         {
             if (xPosition < cardsPositions[i].x)
@@ -59,6 +57,7 @@ public class BoardManager : MonoBehaviour
                 newIndex++;
             
         }
+        
         cardsOnBoardTemp.Insert(newIndex, tempCard);
         SortCards(cardsOnBoardTemp);
     }

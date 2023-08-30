@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
+using DG.Tweening;
 
 public class Hand : MonoBehaviour
 {
@@ -21,16 +21,63 @@ public class Hand : MonoBehaviour
     float endAngle;
     [SerializeField]
     ActiveCardController cardController;
+
+    private Dictionary<Card, Tweener> currentAnimations;
+    private Card hoveringCard;
     
     int lenght;
 
     void Start()
     {
+        currentAnimations = new Dictionary<Card, Tweener>();
+
         Sort();
 
         for (int i = 0; i < lenght; i++)
         {
+            cards[i].clickHandler.OnPick += OnCardPick;
             cards[i].clickHandler.OnPick += cardController.PickCard;
+            cards[i].clickHandler.OnMouseEnterCallbacks += OnMouseEnterCardAnimation;
+            cards[i].clickHandler.OnMouseLeaveCallbacks += OnMouseLeaveCardAnimation;
+        }
+    }
+
+    private void OnCardPick(Card card) {
+        if (currentAnimations.ContainsKey(card))
+            currentAnimations[card].Kill();
+        card.cardDisplay.ResetTransform();
+        hoveringCard = null;
+    }
+
+    private void OnMouseEnterCardAnimation(Card card) {
+        if (hoveringCard == null) {
+            hoveringCard = card;
+            Vector3 scale = card.cardDisplay.mainObjectsTransform.localScale;
+            card.cardDisplay.mainObjectsTransform.localScale = Vector3.one * 2;
+
+            Vector3 rotation = card.transform.localRotation.eulerAngles;
+            card.cardDisplay.mainObjectsTransform.localRotation = Quaternion.Euler(-rotation.x, -rotation.y, -rotation.z);
+
+            float duration = 0.3f;
+            Vector3 position = card.cardDisplay.mainObjectsTransform.position;
+            position.y = -0.35f;
+            card.cardDisplay.mainObjectsTransform.position = position;
+            card.cardDisplay.mainObjectsTransform.DOMoveY(-0.3f, duration).SetEase(Ease.OutQuad);
+            
+            card.cardDisplay.SetRenderLayer("Active");
+        }
+    }
+
+    private void OnMouseLeaveCardAnimation(Card card) {
+        if (hoveringCard == card) {
+            hoveringCard = null;
+            card.cardDisplay.mainObjectsTransform.localScale = Vector3.one;
+            card.cardDisplay.mainObjectsTransform.localRotation = Quaternion.Euler(Vector3.zero);
+
+            float duration = 0.45f;
+            card.cardDisplay.mainObjectsTransform.DOLocalMove(new Vector3(), duration).SetEase(Ease.OutQuad);
+            
+            card.cardDisplay.SetRenderLayer("InHandCard" + (cards.Count - cards.IndexOf(card)));
         }
     }
 
@@ -59,8 +106,6 @@ public class Hand : MonoBehaviour
     {
         float fanSortingAngleShift = (endAngle - startAngle) / lenght;
         float localStartAngle = startAngle;
-        // if (lenght % 2 == 1)
-            // localStartAngle += 0.5f * fanSortingAngleShift;
 
         for (int i = 0; i < lenght; i++)
         {
@@ -78,7 +123,7 @@ public class Hand : MonoBehaviour
         cards.Remove(card);
     }
 
-    private void SetCardsClickable(bool active) {
+    public void SetCardsClickable(bool active) {
         for (int i = 0; i < lenght; i++)
         {
             cards[i].clickHandler.SetClickable(active);
@@ -86,15 +131,7 @@ public class Hand : MonoBehaviour
     }
 
     Vector3 RotateTowardsUp(Vector3 start, float angle)
-    {
-        // // if you know start will always be normalized, can skip this step
-        // start.Normalize();
-
-        // Vector3 axis = Vector3.Cross(start, Vector3.up);
-
-        // // handle case where start is colinear with up
-        // if (axis == Vector3.zero) axis = Vector3.right;
-        
+    {        
         return Quaternion.Euler(0, 0, angle) * start;
     }
 }

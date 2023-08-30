@@ -10,10 +10,6 @@ public class Card : MonoBehaviour
     [SerializeField]
     public CardDisplay cardDisplay;  
     [SerializeField]
-    public Transform mainObjectsTransform; 
-    [SerializeField]
-    public Transform intermediateObjectsTransform; 
-    [SerializeField]
     public InHandClickHandler clickHandler;
     [SerializeField]
     private CardPickedRotationManager rotationManager;

@@ -4,13 +4,15 @@ using UnityEngine.Events;
 public class InHandClickHandler : MonoBehaviour
 {
     public UnityAction<Card> OnPick;
+    public UnityAction<Card> OnMouseEnterCallbacks;
+    public UnityAction<Card> OnMouseLeaveCallbacks;
 
     [SerializeField]
     public Card card;
     [SerializeField]
     public CardPickedRotationManager rotationManager;
     [SerializeField]
-    Collider area;
+    BoxCollider2D area;
 
     private bool clicked = false;
 
@@ -24,5 +26,15 @@ public class InHandClickHandler : MonoBehaviour
         clicked = true;
         rotationManager.SetActive(true);
         OnPick.Invoke(card);
+    }
+
+    void OnMouseEnter()
+    {
+        OnMouseEnterCallbacks.Invoke(card);
+    }
+
+    void OnMouseExit()
+    {
+        OnMouseLeaveCallbacks.Invoke(card);
     }
 }

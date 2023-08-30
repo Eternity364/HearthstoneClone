@@ -687,8 +687,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6321888724250314832}
-  - component: {fileID: 9064809625090437110}
-  - component: {fileID: 7867609625535262005}
   m_Layer: 5
   m_Name: InHand
   m_TagString: Untagged
@@ -720,47 +718,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!61 &9064809625090437110
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2769139665862942100}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0.10006119, y: -0.29852295}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 0.24124163, y: 0.34387207}
-  m_EdgeRadius: 0
---- !u!114 &7867609625535262005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2769139665862942100}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7718d36e74998e4599ac84fce541095, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  card: {fileID: 4421477798839540136}
-  rotationManager: {fileID: 8321436124563181073}
-  area: {fileID: 0}
 --- !u!1 &2812794235779906125
 GameObject:
   m_ObjectHideFlags: 0
@@ -771,6 +728,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3711116447626226811}
   - component: {fileID: 2781721940718277738}
+  - component: {fileID: 6830499301166746168}
+  - component: {fileID: 2987097022873872687}
   m_Layer: 0
   m_Name: IntermediateParent
   m_TagString: Untagged
@@ -812,6 +771,47 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   angleAdjust: {x: 0.5, y: 0.5}
+--- !u!61 &6830499301166746168
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2812794235779906125}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.24124163, y: 0.34387207}
+  m_EdgeRadius: 0
+--- !u!114 &2987097022873872687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2812794235779906125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7718d36e74998e4599ac84fce541095, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  card: {fileID: 4421477798839540136}
+  rotationManager: {fileID: 8321436124563181073}
+  area: {fileID: 6830499301166746168}
 --- !u!1 &2902201617763895606
 GameObject:
   m_ObjectHideFlags: 0
@@ -1210,9 +1210,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   angleSetter: {fileID: 2781721940718277738}
   cardDisplay: {fileID: 4421477798839540139}
-  mainObjectsTransform: {fileID: 2756469291153783824}
-  intermediateObjectsTransform: {fileID: 3711116447626226811}
-  clickHandler: {fileID: 7867609625535262005}
+  clickHandler: {fileID: 2987097022873872687}
   rotationManager: {fileID: 8321436124563181073}
 --- !u!114 &4421477798839540139
 MonoBehaviour:
@@ -1227,14 +1225,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   card: {fileID: 4421477798839540138}
-  cardInHand: {fileID: 2769139665862942100}
-  cardOnField: {fileID: 1726465822426360578}
   textCanvasGO: {fileID: 5858612397698634877}
-  inHandTextGO: {fileID: 1698254772491304436}
-  onFieldTextGO: {fileID: 1132263434266024549}
-  textCanvas: {fileID: 4421477798093605703}
-  inHandCanvas: {fileID: 4421477798093605703}
-  onFieldCanvas: {fileID: 4421477798093605703}
   inHandAttack: {fileID: 2438013699566067541}
   inHandHealth: {fileID: 6175638689232618743}
   inHandCost: {fileID: 3852306689595697117}
@@ -1245,6 +1236,8 @@ MonoBehaviour:
   shadowOnBoard: {fileID: 7154596091550685053}
   changingStateAnimation: {fileID: 4301073251957281487}
   cardRenderOrderSetter: {fileID: 2385493366412541295}
+  mainObjectsTransform: {fileID: 2756469291153783824}
+  intermediateObjectsTransform: {fileID: 3711116447626226811}
 --- !u!114 &2385493366412541295
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1728,7 +1721,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6794715544848719399}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0054986477, y: 0.06500001, z: 0.0077228276}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4421477798093605700}
