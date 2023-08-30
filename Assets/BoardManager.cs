@@ -29,7 +29,7 @@ public class BoardManager : MonoBehaviour
         card.gameObject.transform.SetParent(playerBoardTransform);
         Vector3 position = card.transform.position;
         card.transform.localPosition = new Vector3();
-        card.IntermediateParent.transform.position = position;
+        card.intermediateObjectsTransform.position = position;
 
         void OnFirstPartFinish () {
             card.cardDisplay.ChangeState(CardDisplay.DisplayStates.OnField);
@@ -38,7 +38,7 @@ public class BoardManager : MonoBehaviour
         void OnAnimationFinish () {
             card.cardDisplay.SetRenderLayer("Board");
         }
-        placingAnimation.Do(card.IntermediateParent.transform, OnFirstPartFinish, OnAnimationFinish);
+        placingAnimation.Do(card.intermediateObjectsTransform, card.mainObjectsTransform, OnFirstPartFinish, OnAnimationFinish);
         cardsOnBoard.Insert(cardsOnBoardTemp.IndexOf(tempCard), card);
         card.cardDisplay.SetRenderLayer("LandingOnBoard");
     

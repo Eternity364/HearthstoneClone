@@ -38,7 +38,11 @@ public class CardDisplay : MonoBehaviour
     [SerializeField]
     private CardData data;
     [SerializeField]
-    private GameObject shadow;
+    private GameObject shadowInHand;
+    [SerializeField]
+    private GameObject shadowOnBoard;
+    [SerializeField]
+    private CardChangingStateAnimation changingStateAnimation;
     [SerializeField]
     private CardRenderOrderSetter cardRenderOrderSetter;
 
@@ -47,6 +51,9 @@ public class CardDisplay : MonoBehaviour
         InHand = 1,
         OnField = 2
     }
+
+    DisplayStates currentState = DisplayStates.InHand;
+    bool shadowsActive = false;
 
 
     void Update()
@@ -62,11 +69,9 @@ public class CardDisplay : MonoBehaviour
     }
 
     public void ChangeState(DisplayStates state) {
-        bool isHand = state == DisplayStates.InHand;
-        inHandTextGO.SetActive(isHand);
-        onFieldTextGO.SetActive(!isHand);
-        cardInHand.SetActive(isHand);
-        cardOnField.SetActive(!isHand);
+        changingStateAnimation.Do(state);
+        currentState = state;
+        SetShadowActive(shadowsActive);
     }
 
     public void SetRenderLayer(string layer)
@@ -93,6 +98,8 @@ public class CardDisplay : MonoBehaviour
 
     public void SetShadowActive(bool value)
     {
-        shadow.SetActive(value);
+        shadowInHand.SetActive(value && currentState == DisplayStates.InHand);
+        shadowOnBoard.SetActive(value && currentState != DisplayStates.InHand);
+        shadowsActive = value;
     }
 }

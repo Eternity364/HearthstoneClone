@@ -10,16 +10,14 @@ public class Card : MonoBehaviour
     [SerializeField]
     public CardDisplay cardDisplay;  
     [SerializeField]
-    public GameObject intermediateParent; 
+    public Transform mainObjectsTransform; 
+    [SerializeField]
+    public Transform intermediateObjectsTransform; 
     [SerializeField]
     public InHandClickHandler clickHandler;
     [SerializeField]
-    public CardPickedRotationManager rotationManager;
+    private CardPickedRotationManager rotationManager;
 
-    public GameObject IntermediateParent
-    {
-        get => intermediateParent;
-    }
     public CardPickedRotationManager RotationManager
     {
         get => rotationManager;
