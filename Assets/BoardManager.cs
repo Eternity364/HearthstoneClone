@@ -31,10 +31,14 @@ public class BoardManager : MonoBehaviour
         card.transform.localPosition = new Vector3();
         card.IntermediateParent.transform.position = position;
 
+        void OnFirstPartFinish () {
+            card.cardDisplay.ChangeState(CardDisplay.DisplayStates.OnField);
+        }
+
         void OnAnimationFinish () {
             card.cardDisplay.SetRenderLayer("Board");
         }
-        placingAnimation.Do(card.IntermediateParent.transform, OnAnimationFinish);
+        placingAnimation.Do(card.IntermediateParent.transform, OnFirstPartFinish, OnAnimationFinish);
         cardsOnBoard.Insert(cardsOnBoardTemp.IndexOf(tempCard), card);
         card.cardDisplay.SetRenderLayer("LandingOnBoard");
     
