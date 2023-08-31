@@ -22,14 +22,14 @@ public class Hand : MonoBehaviour
     [SerializeField]
     ActiveCardController cardController;
 
-    private Dictionary<Card, Tweener> currentAnimations;
+    private Dictionary<Card, List<Tweener>> currentAnimations;
     private Card hoveringCard;
     
     int lenght;
 
     void Start()
     {
-        currentAnimations = new Dictionary<Card, Tweener>();
+        currentAnimations = new Dictionary<Card, List<Tweener>>();
 
         Sort();
 
@@ -43,15 +43,27 @@ public class Hand : MonoBehaviour
     }
 
     private void OnCardPick(Card card) {
-        if (currentAnimations.ContainsKey(card))
-            currentAnimations[card].Kill();
+        KillCardTweens(card);
         card.cardDisplay.ResetTransform();
         hoveringCard = null;
+    }
+
+    private void KillCardTweens(Card card) {
+        if (currentAnimations.ContainsKey(card))
+        {
+            foreach (Tweener tween1 in currentAnimations[card])
+            {
+                tween1.Kill();
+            }
+        }
     }
 
     private void OnMouseEnterCardAnimation(Card card) {
         if (hoveringCard == null) {
             hoveringCard = card;
+            
+            KillCardTweens(card);
+
             Vector3 scale = card.cardDisplay.mainObjectsTransform.localScale;
             card.cardDisplay.mainObjectsTransform.localScale = Vector3.one * 2;
 
@@ -62,7 +74,10 @@ public class Hand : MonoBehaviour
             Vector3 position = card.cardDisplay.mainObjectsTransform.position;
             position.y = -0.35f;
             card.cardDisplay.mainObjectsTransform.position = position;
-            card.cardDisplay.mainObjectsTransform.DOMoveY(-0.3f, duration).SetEase(Ease.OutQuad);
+            currentAnimations[card] = new List<Tweener>
+            {
+                card.cardDisplay.mainObjectsTransform.DOMoveY(-0.3f, duration).SetEase(Ease.OutQuad)
+            };
             
             card.cardDisplay.SetRenderLayer("Active");
         }
@@ -71,12 +86,20 @@ public class Hand : MonoBehaviour
     private void OnMouseLeaveCardAnimation(Card card) {
         if (hoveringCard == card) {
             hoveringCard = null;
+            KillCardTweens(card);
             card.cardDisplay.mainObjectsTransform.localScale = Vector3.one;
-            card.cardDisplay.mainObjectsTransform.localRotation = Quaternion.Euler(Vector3.zero);
+            Vector3 position = card.cardDisplay.mainObjectsTransform.localPosition;
+            position.x = 0;
+            position.y = 0.14f;
+            card.cardDisplay.mainObjectsTransform.localPosition = position;
 
             float duration = 0.45f;
-            card.cardDisplay.mainObjectsTransform.DOLocalMove(new Vector3(), duration).SetEase(Ease.OutQuad);
-            
+
+            currentAnimations[card] = new List<Tweener>
+            {
+                card.cardDisplay.mainObjectsTransform.DOLocalMove(new Vector3(), duration).SetEase(Ease.OutQuad),
+                card.cardDisplay.mainObjectsTransform.DOLocalRotate(new Vector3(), duration).SetEase(Ease.OutQuad)
+            };
             card.cardDisplay.SetRenderLayer("InHandCard" + (cards.Count - cards.IndexOf(card)));
         }
     }
