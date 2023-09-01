@@ -473,10 +473,10 @@ MonoBehaviour:
   startXAngle: 35
   z: 0
   cubePrefab: {fileID: 194651270}
-  startPosition: {x: 0.2, y: 0.6, z: 0}
+  startPosition: {x: 0, y: 0, z: 0}
   finishPosition1: {x: 1, y: -1, z: 0}
   zMax: -0.3
-  cubeSpeed: 0.35
+  cubeSpeed: 0.7
   delayBetweenCubes: 0.75
   xCurve:
     serializedVersion: 2

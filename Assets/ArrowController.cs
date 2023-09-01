@@ -12,9 +12,7 @@ public class ArrowController : MonoBehaviour
     [SerializeField]
     Cube cubePrefab;
     [SerializeField]
-    Vector3 startPosition = new Vector3(0.2f, 0.6f);
-    [SerializeField]
-    Vector3 finishPosition1 = new Vector3(1f, -1.5f, 0);
+    Vector3 startPosition;
     [SerializeField]
     float zMax = 0.3f;
     [SerializeField]
@@ -28,6 +26,7 @@ public class ArrowController : MonoBehaviour
 
     Dictionary<Cube, float> cubeValues = new Dictionary<Cube, float>();
     float currentDelayBetweenCubes = 1f;
+    Vector3 finishPosition1 = Vector3.zero;
 
     void Update() {
         currentDelayBetweenCubes -= Time.deltaTime;
@@ -47,9 +46,11 @@ public class ArrowController : MonoBehaviour
 
         foreach (Cube cube in keys)
         {
-            cubeValues[cube] += Time.deltaTime * cubeSpeed;
+            cubeValues[cube] += Time.deltaTime * cubeSpeed / (finishPosition1 - startPosition).magnitude;
             SetCubeValues(cube);
         }
+
+        finishPosition1 = PositionGetter.GetPosition(PositionGetter.ColliderType.ActiveCardController);
     }
 
     void SetCubeValues(Cube cube) {
@@ -70,10 +71,16 @@ public class ArrowController : MonoBehaviour
             newVector.z = zCurve.Evaluate(cubeValues[cube]) * zMax;
             cube.transform.localPosition = newVector;
 
-            float angleZ = Vector3.Angle(startPosition, finishPosition1) +90;
+            float angleZ = 180 - Vector3.Angle(finishPosition1 - startPosition, Vector3.right) + 90;
+            float angleX = startXAngle * x * xCurve.Evaluate(cubeValues[cube]);
+            Vector3 differance = finishPosition1 - startPosition;
+            if (differance.y > 0) {
+                angleZ = -angleZ;
+                angleX = -startXAngle * x * xCurve.Evaluate(cubeValues[cube]);
+            }
+            print(angleZ);
             cube.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, angleZ));
-            float angleX = Vector3.Angle(startPosition, finishPosition1) +90;
-            cube.childTransform.localRotation = Quaternion.Euler(new Vector3(startXAngle * x * xCurve.Evaluate(cubeValues[cube]), 0, 0));
+            cube.childTransform.localRotation = Quaternion.Euler(new Vector3(angleX, 0, 0));
         }
         else
         {
