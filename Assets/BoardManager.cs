@@ -145,16 +145,18 @@ public class BoardManager : MonoBehaviour
                 attackAnimationQueue.Enqueue(Empty);
             }
         }
-        if (arrowController.Active) {
+        if (attackingCard != null) {
             attackingCard1.clickHandler.SetClickable(false);
             attackAnimation.DoPreparePart(attackingCard1.cardDisplay.intermediateObjectsTransform, AddToQueue);
+            attackingCard = null;
         }
     }
 
     private void OnMouseButtonDrop() {
+        if (!pointer.gameObject.activeSelf)
+            attackingCard = null;
         arrowController.SetActive(false, Vector2.zero);
         pointer.gameObject.SetActive(false);
-        attackingCard = null;
     }
     
     private void OnEnemyCardMouseEnter(Card card) {
