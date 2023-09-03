@@ -13,17 +13,20 @@ public class BoardManager : MonoBehaviour
     Card tempCard;
     [SerializeField]
     ArrowController arrowController;
+    [SerializeField]
+    List<Card> enemyCardsOnBoard = new List<Card>();
 
     List<Card> placingCards = new List<Card>();
-    List<Card> cardsOnBoard = new List<Card>();
+    List<Card> playerCardsOnBoard = new List<Card>();
     List<Vector3> cardsPositions = new List<Vector3>();
-    List<Card> cardsOnBoardTemp = new List<Card>();
+    List<Card> playerCardsOnBoardTemp = new List<Card>();
 
     float positionShift = 0.4f;
     List<Tweener> sortingTweens;
 
     void Start () {
         sortingTweens = new List<Tweener>();
+        SortCards(enemyCardsOnBoard);
     }
 
     void Update() {
@@ -49,17 +52,17 @@ public class BoardManager : MonoBehaviour
             card.clickHandler.SetClickable(true);
         }
         placingAnimation.Do(card.cardDisplay.intermediateObjectsTransform, card.cardDisplay.mainObjectsTransform, OnFirstPartFinish, OnAnimationFinish);
-        cardsOnBoard.Insert(cardsOnBoardTemp.IndexOf(tempCard), card);
+        playerCardsOnBoard.Insert(playerCardsOnBoardTemp.IndexOf(tempCard), card);
         card.cardDisplay.SetRenderLayer("LandingOnBoard");
     
-        SortCards(cardsOnBoard);
+        SortCards(playerCardsOnBoard);
     }
 
     public void ComparePositionsAndSortTemporarily(float xPosition) {
-        cardsOnBoardTemp.Remove(tempCard);
+        playerCardsOnBoardTemp.Remove(tempCard);
         int newIndex = 0;
 
-        for (int i = 0; i < cardsOnBoard.Count; i++)
+        for (int i = 0; i < playerCardsOnBoard.Count; i++)
         {
             if (xPosition < cardsPositions[i].x)
                 break;
@@ -68,20 +71,20 @@ public class BoardManager : MonoBehaviour
             
         }
         
-        cardsOnBoardTemp.Insert(newIndex, tempCard);
-        SortCards(cardsOnBoardTemp);
+        playerCardsOnBoardTemp.Insert(newIndex, tempCard);
+        SortCards(playerCardsOnBoardTemp);
     }
 
     public void StartTempSorting() {
-        cardsOnBoardTemp = new List<Card>();
+        playerCardsOnBoardTemp = new List<Card>();
         cardsPositions = new List<Vector3>();
-        for (int i = 0; i < cardsOnBoard.Count; i++)
+        for (int i = 0; i < playerCardsOnBoard.Count; i++)
         {
-            cardsOnBoardTemp.Add(cardsOnBoard[i]);
-            cardsPositions.Add(cardsOnBoard[i].transform.localPosition);
+            playerCardsOnBoardTemp.Add(playerCardsOnBoard[i]);
+            cardsPositions.Add(playerCardsOnBoard[i].transform.localPosition);
             
         }
-        cardsOnBoardTemp.Add(tempCard);
+        playerCardsOnBoardTemp.Add(tempCard);
     }
 
     public void SortCards(List<Card> cards) {

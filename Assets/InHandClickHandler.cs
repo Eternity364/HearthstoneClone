@@ -25,16 +25,19 @@ public class InHandClickHandler : MonoBehaviour
     {
         clicked = true;
         rotationManager.SetActive(true);
-        OnPick.Invoke(card);
+        if (OnPick != null)
+            OnPick.Invoke(card);
     }
 
     void OnMouseEnter()
     {
-        OnMouseEnterCallbacks.Invoke(card);
+        if (OnMouseEnterCallbacks != null)
+            OnMouseEnterCallbacks.Invoke(card);
     }
 
     void OnMouseExit()
     {
-        OnMouseLeaveCallbacks.Invoke(card);
+        if (OnMouseLeaveCallbacks != null)
+            OnMouseLeaveCallbacks.Invoke(card);
     }
 }
