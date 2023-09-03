@@ -12,13 +12,14 @@ public class AttackAnimation : MonoBehaviour
         Transform.DOLocalMoveZ(-0.5f, duration).SetEase(Ease.OutQuart).OnComplete(OnFinish);
     }
 
-    public void DoAttackPart(Transform transform, Vector3 target, TweenCallback OnFinish)
+    public Sequence DoAttackPart(Transform transform, Vector3 target, TweenCallback OnFinish, TweenCallback OnFinishHit)
     {
         Sequence mySequence = DOTween.Sequence();
-        mySequence.Append(transform.DOMove(target - new Vector3(0, 0.1f, 0), 0.25f).SetEase(Ease.InCubic));
+        mySequence.Append(transform.DOMove(target - new Vector3(0, 0.1f, 0), 0.25f).SetEase(Ease.InCubic).OnComplete(OnFinishHit));
         mySequence.Append(transform.DOLocalMove(Vector3.zero, 0.45f).SetEase(Ease.OutCubic).OnComplete(OnFinish));
         mySequence.Insert(0.25f, transform.DOLocalRotate(new Vector3(-12, 12, 0), 0.1f).SetEase(Ease.InCubic));
         mySequence.Insert(0.35f, transform.DOLocalRotate(new Vector3(), 0.35f).SetEase(Ease.InCubic));
+        return mySequence;
     }
 
     // // Update is called once per frame

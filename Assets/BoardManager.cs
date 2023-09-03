@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.Events;
 
 public class BoardManager : MonoBehaviour
 {
@@ -19,6 +20,11 @@ public class BoardManager : MonoBehaviour
     List<Card> enemyCardsOnBoard = new List<Card>();
     [SerializeField]
     Transform pointer;
+    [SerializeField]
+    int maxBoardSize = 7;
+
+    
+    public UnityAction<int, int> OnBoardSizeChange;
 
     List<Card> placingCards = new List<Card>();
     List<Card> playerCardsOnBoard = new List<Card>();
@@ -27,11 +33,11 @@ public class BoardManager : MonoBehaviour
     Queue<TweenCallback> attackAnimationQueue = new Queue<TweenCallback>();
 
     float positionShift = 0.4f;
-    List<Tweener> sortingTweens;
+    Dictionary<List<Card>, List<Tweener>> sortingTweens;
     Card attackingCard;
 
     void Start () {
-        sortingTweens = new List<Tweener>();
+        sortingTweens = new Dictionary<List<Card>, List<Tweener>>();
         SortCards(enemyCardsOnBoard);
         for (int i = 0; i < enemyCardsOnBoard.Count; i++)
         {
@@ -69,6 +75,8 @@ public class BoardManager : MonoBehaviour
         card.cardDisplay.SetRenderLayer("LandingOnBoard");
     
         SortCards(playerCardsOnBoard);
+
+        OnBoardSizeChange.Invoke(playerCardsOnBoard.Count, maxBoardSize);
     }
 
     public void ComparePositionsAndSortTemporarily(float xPosition) {
@@ -101,11 +109,13 @@ public class BoardManager : MonoBehaviour
     }
 
     public void SortCards(List<Card> cards) {
-        for (int i = 0; i < sortingTweens.Count; i++)
-        {
-            sortingTweens[i].Kill();
+        if (sortingTweens.ContainsKey(cards)) {
+            for (int i = 0; i < sortingTweens[cards].Count; i++)
+            {
+                sortingTweens[cards][i].Kill();
+            }
         }
-        sortingTweens = new List<Tweener>();
+        sortingTweens[cards] = new List<Tweener>();
 
         float startPositionX = (-cards.Count / 2 + 0.5f) * positionShift;
         if (cards.Count % 2 == 1)
@@ -114,7 +124,7 @@ public class BoardManager : MonoBehaviour
         for (int i = 0; i < cards.Count; i++)
         {
             //cards[i].transform.localPosition = new Vector3(startPositionX + positionShift * i, cards[i].transform.localPosition.y,  cards[i].transform.localPosition.z);
-            sortingTweens.Add(cards[i].transform.DOMoveX(startPositionX + positionShift * i, 0.4f).SetEase(Ease.OutQuad));
+            sortingTweens[cards].Add(cards[i].transform.DOMoveX(startPositionX + positionShift * i, 0.4f).SetEase(Ease.OutQuad));
         }
     }
 
@@ -125,13 +135,27 @@ public class BoardManager : MonoBehaviour
 
     private void OnEnemyCardMouseUp(Card card) {
         Card attackingCard1 = attackingCard;
+        Sequence mySequence = null;
+        
+        void OnFinishHit () {
+            bool dead = PerformAttack(attackingCard1, card);
+            if (dead) {
+                mySequence.Kill();
+                if (attackAnimationQueue.Count >= 1) 
+                    attackAnimationQueue.Dequeue()();
+            }
+        };
         void OnFinishAttack () {
             attackingCard1.clickHandler.SetClickable(true);
             if (attackAnimationQueue.Count >= 1) 
                 attackAnimationQueue.Dequeue()();
         };
         void OnFinishPrepare () {
-            attackAnimation.DoAttackPart(attackingCard1.cardDisplay.intermediateObjectsTransform, card.cardDisplay.intermediateObjectsTransform.position, OnFinishAttack);
+            mySequence = attackAnimation.DoAttackPart(
+                attackingCard1.cardDisplay.intermediateObjectsTransform,
+                card.cardDisplay.intermediateObjectsTransform.position,
+                OnFinishAttack,
+                OnFinishHit);
         };
         void Empty () {
             if (attackAnimationQueue.Count >= 1) 
@@ -139,7 +163,6 @@ public class BoardManager : MonoBehaviour
         };
         void AddToQueue () {
             attackAnimationQueue.Enqueue(OnFinishPrepare);
-            print(attackAnimationQueue.Count);
             if (attackAnimationQueue.Count == 1) {
                 attackAnimationQueue.Dequeue()();
                 attackAnimationQueue.Enqueue(Empty);
@@ -148,8 +171,27 @@ public class BoardManager : MonoBehaviour
         if (attackingCard != null) {
             attackingCard1.clickHandler.SetClickable(false);
             attackAnimation.DoPreparePart(attackingCard1.cardDisplay.intermediateObjectsTransform, AddToQueue);
+            if (attackingCard1.cardDisplay.Data.Attack >= card.cardDisplay.Data.Health) {
+                card.clickHandler.SetClickable(false);
+            }
             attackingCard = null;
         }
+    }
+
+    private bool PerformAttack(Card attacker, Card target) {
+        bool deadTarget = target.DealDamage(attacker.cardDisplay.Data.Attack);
+        bool deadAttacker = attacker.DealDamage(target.cardDisplay.Data.Attack);
+        if (deadTarget) {
+            enemyCardsOnBoard.Remove(target);
+            print(enemyCardsOnBoard.Count);
+            SortCards(enemyCardsOnBoard);
+        }
+        if (deadAttacker) {
+            playerCardsOnBoard.Remove(attacker);
+            SortCards(playerCardsOnBoard);
+            OnBoardSizeChange.Invoke(playerCardsOnBoard.Count, maxBoardSize);
+        }
+        return deadAttacker;
     }
 
     private void OnMouseButtonDrop() {

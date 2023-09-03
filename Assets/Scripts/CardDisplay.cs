@@ -42,6 +42,11 @@ public class CardDisplay : MonoBehaviour
         OnField = 2
     }
 
+    public CardData Data
+    {
+        get { return data; }
+    }
+
     DisplayStates currentState = DisplayStates.InHand;
     bool shadowsActive = false;
 
@@ -76,7 +81,7 @@ public class CardDisplay : MonoBehaviour
         cardRenderOrderSetter.Set(layer);
     }
 
-    private void UpdateDisplay() {
+    public void UpdateDisplay() {
         if (this.data != null) {
             inHandAttack.text = data.Attack.ToString();
             inHandHealth.text = data.Health.ToString();

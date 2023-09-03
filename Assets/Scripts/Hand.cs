@@ -21,6 +21,8 @@ public class Hand : MonoBehaviour
     float endAngle;
     [SerializeField]
     ActiveCardController cardController;
+    [SerializeField]
+    BoardManager board;
 
     private Dictionary<Card, List<Tweener>> currentAnimations;
     private Card hoveringCard;
@@ -40,6 +42,8 @@ public class Hand : MonoBehaviour
             cards[i].clickHandler.OnMouseEnterCallbacks += OnMouseEnterCardAnimation;
             cards[i].clickHandler.OnMouseLeaveCallbacks += OnMouseLeaveCardAnimation;
         }
+
+        board.OnBoardSizeChange += OnBoardSizeChange;
     }
 
     private void OnCardPick(Card card) {
@@ -110,10 +114,10 @@ public class Hand : MonoBehaviour
 
     public void Sort() {
         lenght = cards.Count;
-        if (lenght > sortingTypeThreshold)
+        //if (lenght > sortingTypeThreshold)
             SortFan();
-        else
-            SortLinear();
+        //else
+            //SortLinear();
     }
 
     public void SortLinear()
@@ -155,6 +159,10 @@ public class Hand : MonoBehaviour
         {
             cards[i].clickHandler.SetClickable(active);
         }
+    }    
+
+    public void OnBoardSizeChange(int currentSize, int maxSize) {
+        SetCardsClickable(currentSize <= maxSize);
     }
 
     Vector3 RotateTowardsUp(Vector3 start, float angle)
