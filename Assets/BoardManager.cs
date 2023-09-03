@@ -15,6 +15,8 @@ public class BoardManager : MonoBehaviour
     ArrowController arrowController;
     [SerializeField]
     List<Card> enemyCardsOnBoard = new List<Card>();
+    [SerializeField]
+    Transform pointer;
 
     List<Card> placingCards = new List<Card>();
     List<Card> playerCardsOnBoard = new List<Card>();
@@ -27,11 +29,17 @@ public class BoardManager : MonoBehaviour
     void Start () {
         sortingTweens = new List<Tweener>();
         SortCards(enemyCardsOnBoard);
+        for (int i = 0; i < enemyCardsOnBoard.Count; i++)
+        {
+            enemyCardsOnBoard[i].clickHandler.OnMouseEnterCallbacks += OnEnemyCardMouseEnter;
+            enemyCardsOnBoard[i].clickHandler.OnMouseLeaveCallbacks += OnEnemyCardMouseLeave;
+        }
     }
 
     void Update() {
         if (Input.GetMouseButtonUp(0))
             OnMouseButtonDrop();
+        pointer.localPosition = PositionGetter.GetPosition(PositionGetter.ColliderType.Background);
     }
 
     public void PlaceCard(Card card)
@@ -108,7 +116,18 @@ public class BoardManager : MonoBehaviour
     private void OnCardClick(Card card) {
         arrowController.SetActive(true, card.transform.position);
     }
+
     private void OnMouseButtonDrop() {
         arrowController.SetActive(false, Vector2.zero);
+        pointer.gameObject.SetActive(false);
+    }
+    
+    private void OnEnemyCardMouseEnter(Card card) {
+        if (arrowController.Active)
+            pointer.gameObject.SetActive(true);
+    }
+
+    private void OnEnemyCardMouseLeave(Card card) {
+        pointer.gameObject.SetActive(false);
     }
 }

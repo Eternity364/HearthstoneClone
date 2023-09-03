@@ -730,6 +730,7 @@ GameObject:
   - component: {fileID: 2781721940718277738}
   - component: {fileID: 6830499301166746168}
   - component: {fileID: 2987097022873872687}
+  - component: {fileID: 7103087454263485974}
   m_Layer: 0
   m_Name: IntermediateParent
   m_TagString: Untagged
@@ -811,7 +812,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 4421477798839540136}
   rotationManager: {fileID: 8321436124563181073}
-  area: {fileID: 6830499301166746168}
+  areaRect: {fileID: 6830499301166746168}
+  areaCapsule: {fileID: 7103087454263485974}
+--- !u!70 &7103087454263485974
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2812794235779906125}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 0.175, y: 0.26}
+  m_Direction: 0
 --- !u!1 &2902201617763895606
 GameObject:
   m_ObjectHideFlags: 0
@@ -1224,7 +1242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ab0b813627d7864ab89669d236baf76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  card: {fileID: 4421477798839540138}
+  card: {fileID: 4421477798839540136}
   textCanvasGO: {fileID: 5858612397698634877}
   inHandAttack: {fileID: 2438013699566067541}
   inHandHealth: {fileID: 6175638689232618743}

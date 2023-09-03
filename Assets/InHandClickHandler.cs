@@ -12,13 +12,21 @@ public class InHandClickHandler : MonoBehaviour
     [SerializeField]
     public CardPickedRotationManager rotationManager;
     [SerializeField]
-    BoxCollider2D area;
+    BoxCollider2D areaRect;
+    [SerializeField]
+    CapsuleCollider2D areaCapsule;
 
     private bool clicked = false;
 
     public void SetClickable(bool active)
     {
-        area.enabled = active;
+        areaRect.enabled = active;
+        areaCapsule.enabled = active;
+    }
+
+    public void SetRectAreaClickable(bool active)
+    {
+        areaRect.enabled = active;
     }
 
     void OnMouseDown()

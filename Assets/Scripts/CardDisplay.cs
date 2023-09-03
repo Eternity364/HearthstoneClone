@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class CardDisplay : MonoBehaviour
 {
     [SerializeField]
-    private GameObject card;
+    private Card card;
     [SerializeField]
     private GameObject textCanvasGO;
     [SerializeField]
@@ -62,6 +62,7 @@ public class CardDisplay : MonoBehaviour
         changingStateAnimation.Do(state);
         currentState = state;
         SetShadowActive(shadowsActive);
+        card.clickHandler.SetRectAreaClickable(state == DisplayStates.InHand);
     }
 
     public void ResetTransform() {
@@ -87,7 +88,7 @@ public class CardDisplay : MonoBehaviour
 
     void OnCardTurningVisibility()
     {
-        bool back = card.transform.eulerAngles.y > 93.61 && card.transform.eulerAngles.y < 273.75f;
+        bool back = card.gameObject.transform.eulerAngles.y > 93.61 && card.gameObject.transform.eulerAngles.y < 273.75f;
         cardBack.SetActive(back);
         textCanvasGO.SetActive(!back);
     }

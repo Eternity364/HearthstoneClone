@@ -45,6 +45,11 @@ public class ArrowController : MonoBehaviour
     bool active = false;
     bool alphaCutOff = false;
 
+    public bool Active
+    {
+        get { return active; }
+    }
+
     public void SetActive(bool active, Vector2 fromPosition) { 
         startPosition = fromPosition;
         this.active = active;
@@ -180,7 +185,6 @@ public class ArrowController : MonoBehaviour
             if (cube == lastCube) {
                 float positionAdjustment = (Math.Abs(angleZ) - 180) / 180 * arrowPositionAdjustment;
                 Vector3 newPosition = finishPosition;
-                print(angleZ);
                 
                 if (differance.y > 0) {
                     angleZ += 180;
