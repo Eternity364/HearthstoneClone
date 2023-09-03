@@ -127,18 +127,27 @@ public class BoardManager : MonoBehaviour
         Card attackingCard1 = attackingCard;
         void OnFinishAttack () {
             attackingCard1.clickHandler.SetClickable(true);
-            if (attackAnimationQueue.Count >= 1) attackAnimationQueue.Dequeue()();
+            if (attackAnimationQueue.Count >= 1) 
+                attackAnimationQueue.Dequeue()();
         };
         void OnFinishPrepare () {
             attackAnimation.DoAttackPart(attackingCard1.cardDisplay.intermediateObjectsTransform, card.cardDisplay.intermediateObjectsTransform.position, OnFinishAttack);
         };
+        void Empty () {
+            if (attackAnimationQueue.Count >= 1) 
+                attackAnimationQueue.Dequeue()();
+        };
         void AddToQueue () {
             attackAnimationQueue.Enqueue(OnFinishPrepare);
-            if (attackAnimationQueue.Count == 1) attackAnimationQueue.Dequeue()();
+            print(attackAnimationQueue.Count);
+            if (attackAnimationQueue.Count == 1) {
+                attackAnimationQueue.Dequeue()();
+                attackAnimationQueue.Enqueue(Empty);
+            }
         }
         if (arrowController.Active) {
             attackingCard1.clickHandler.SetClickable(false);
-            attackAnimation.DoPreparePart(attackingCard1.cardDisplay.intermediateObjectsTransform, OnFinishPrepare);
+            attackAnimation.DoPreparePart(attackingCard1.cardDisplay.intermediateObjectsTransform, AddToQueue);
         }
     }
 
