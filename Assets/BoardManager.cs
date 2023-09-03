@@ -11,6 +11,9 @@ public class BoardManager : MonoBehaviour
     Transform playerBoardTransform;
     [SerializeField]
     Card tempCard;
+    [SerializeField]
+    ArrowController arrowController;
+
     List<Card> placingCards = new List<Card>();
     List<Card> cardsOnBoard = new List<Card>();
     List<Vector3> cardsPositions = new List<Vector3>();
@@ -21,6 +24,11 @@ public class BoardManager : MonoBehaviour
 
     void Start () {
         sortingTweens = new List<Tweener>();
+    }
+
+    void Update() {
+        if (Input.GetMouseButtonUp(0))
+            OnMouseButtonDrop();
     }
 
     public void PlaceCard(Card card)
@@ -37,6 +45,8 @@ public class BoardManager : MonoBehaviour
 
         void OnAnimationFinish () {
             card.cardDisplay.SetRenderLayer("Board");
+            card.clickHandler.OnPick += OnCardClick;
+            card.clickHandler.SetClickable(true);
         }
         placingAnimation.Do(card.cardDisplay.intermediateObjectsTransform, card.cardDisplay.mainObjectsTransform, OnFirstPartFinish, OnAnimationFinish);
         cardsOnBoard.Insert(cardsOnBoardTemp.IndexOf(tempCard), card);
@@ -90,5 +100,12 @@ public class BoardManager : MonoBehaviour
             //cards[i].transform.localPosition = new Vector3(startPositionX + positionShift * i, cards[i].transform.localPosition.y,  cards[i].transform.localPosition.z);
             sortingTweens.Add(cards[i].transform.DOMoveX(startPositionX + positionShift * i, 0.4f).SetEase(Ease.OutQuad));
         }
+    }
+
+    private void OnCardClick(Card card) {
+        arrowController.SetActive(true, card.transform.position);
+    }
+    private void OnMouseButtonDrop() {
+        arrowController.SetActive(false, Vector2.zero);
     }
 }

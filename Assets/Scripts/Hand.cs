@@ -46,6 +46,10 @@ public class Hand : MonoBehaviour
         KillCardTweens(card);
         card.cardDisplay.ResetTransform();
         hoveringCard = null;
+        card.clickHandler.OnPick -= OnCardPick;
+        card.clickHandler.OnPick -= cardController.PickCard;
+        card.clickHandler.OnMouseEnterCallbacks -= OnMouseEnterCardAnimation;
+        card.clickHandler.OnMouseLeaveCallbacks -= OnMouseLeaveCardAnimation;
     }
 
     private void KillCardTweens(Card card) {

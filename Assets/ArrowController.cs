@@ -33,29 +33,50 @@ public class ArrowController : MonoBehaviour
     float distanceAlphaCutoff;
     [SerializeField]
     float distanceAlphaTurnOff;
+    [SerializeField]
+    float arrowPositionAdjustment;
 
     Dictionary<Cube, float> cubeValues = new Dictionary<Cube, float>();
+    
+    [SerializeField]
     Vector3 finishPosition = Vector3.zero;
     Vector3 previousFinishPosition = Vector3.zero;
     Cube lastCube;
+    bool active = false;
+    bool alphaCutOff = false;
+
+    public void SetActive(bool active, Vector2 fromPosition) { 
+        startPosition = fromPosition;
+        this.active = active;
+        if (!active) {
+            foreach (Cube cube in cubeValues.Keys)
+            {
+                Destroy(cube.gameObject);
+            }
+            cubeValues = new Dictionary<Cube, float>();
+        }
+        arrow.gameObject.SetActive(active);
+    }
 
     void Update() {        
-        finishPosition = PositionGetter.GetPosition(PositionGetter.ColliderType.Background);
+        if (active) {
+            finishPosition = PositionGetter.GetPosition(PositionGetter.ColliderType.Background);
 
-        if (finishPosition == Vector3.zero)
-            finishPosition = previousFinishPosition;
+            if (finishPosition == Vector3.zero)
+                finishPosition = previousFinishPosition;
 
-        if (cubeValues.Keys.Count == 0) {
-            Cube cube = Instantiate(cubePrefab);
-            cube.gameObject.SetActive(false);
-            cube.transform.SetParent(this.transform);
-            cubeValues[cube] = 0.9f;
-            lastCube = cube;
+            if (cubeValues.Keys.Count == 0) {
+                Cube cube = Instantiate(cubePrefab);
+                cube.gameObject.SetActive(false);
+                cube.transform.SetParent(this.transform);
+                cubeValues[cube] = 0.9f;
+                lastCube = cube;
+            }
+            if (lastCube)
+                CalculateCubePositions();
+
+            previousFinishPosition = finishPosition;
         }
-        if (lastCube)
-            CalculateCubePositions();
-
-        previousFinishPosition = finishPosition;
     }
 
     void CalculateCubePositions() {
@@ -72,6 +93,11 @@ public class ArrowController : MonoBehaviour
         float valueChange = cubeSpeed / (finishPosition - startPosition).magnitude;
         if (valueChange > maxValueChange)
             valueChange = maxValueChange;
+        if (alphaCutOff && (maxDistance > distanceAlphaCutoff)) {
+            cubeValues[lastCube] = 0.9f;
+            alphaCutOff = false;
+        }
+
         cubeValues[lastCube] += Time.deltaTime * valueChange;
         float currValue = cubeValues[lastCube];
         lastCube.gameObject.SetActive(true);
@@ -142,18 +168,29 @@ public class ArrowController : MonoBehaviour
             if (distance < distanceAlphaCutoff) {
                 value /= distance / distanceAlphaCutoff;
                 if (value > 1) value = 1;
-            }
+                alphaCutOff = true;
+            } 
             cube.childTransform.gameObject.SetActive(value < 1);
             cube.childTransform.gameObject.SetActive(distance > distanceAlphaTurnOff);
             float alpha = alphaCurve.Evaluate(value);
             cube.renderer.material.SetVector("_EmissionColor", cube.emissionColor * alpha);
             color.a = alpha;
             cube.renderer.material.color = color;
+
             if (cube == lastCube) {
-                if (differance.y > 0)
+                float positionAdjustment = (Math.Abs(angleZ) - 180) / 180 * arrowPositionAdjustment;
+                Vector3 newPosition = finishPosition;
+                print(angleZ);
+                
+                if (differance.y > 0) {
                     angleZ += 180;
+                }                
+                if (differance.x > 0) {
+                    positionAdjustment = -positionAdjustment;
+                }
+                newPosition.y += positionAdjustment;
                 arrow.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, angleZ));
-                arrow.transform.localPosition = finishPosition;
+                arrow.transform.localPosition = newPosition;
             }
         }
         else

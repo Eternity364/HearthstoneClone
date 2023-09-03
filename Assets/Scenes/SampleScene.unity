@@ -266,7 +266,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 194651268}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8, y: -0.4, z: 0}
+  m_LocalPosition: {x: 8, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 4.42}
   m_Children:
   - {fileID: 533214283}
@@ -323,13 +323,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 282126140}
-  m_LocalRotation: {x: 0.04693208, y: -0, z: -0, w: 0.99889815}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.16, z: -0.060000002}
   m_LocalScale: {x: 0.078, y: 0.07, z: 1}
   m_Children: []
   m_Father: {fileID: 183262141}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 5.38, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &282126142
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -611,84 +611,56 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startXAngle: 35
   cubePrefab: {fileID: 194651270}
-  startPosition: {x: 0, y: 0, z: 0}
-  zMax: -0.5
+  startPosition: {x: -1.5, y: 1, z: 0}
+  zMax: -0.3
   cubeSpeed: 0.45
   finishVectorCutoofDistance: 0.15
-  delayBetweenCubes: 100
   maxValueChange: 1
   distanceBetweenCubes: 0.35
   xCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: -3.7326152
-      outSlope: -3.7326152
+      time: -0.00033911876
+      value: 0.30082473
+      inSlope: -1.4845095
+      outSlope: -1.4845095
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.13849379
-      value: 0.48305598
-      inSlope: -3.3384914
-      outSlope: -3.3384914
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.18057509
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.244113
-      value: 0.20328993
-      inSlope: -2.3055146
-      outSlope: -2.3055146
+      time: 0.1522947
+      value: 0.07423838
+      inSlope: -0.78093356
+      outSlope: -0.78093356
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.2531406
+      outWeight: 0.08961044
     - serializedVersion: 3
-      time: 0.35708454
-      value: 0.047937863
-      inSlope: -0.930725
-      outSlope: -0.930725
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.2685471
-      outWeight: 0.25263155
-    - serializedVersion: 3
-      time: 0.5241612
-      value: 0.0059995763
-      inSlope: -0.04666199
-      outSlope: -0.04666199
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.24854635
-      outWeight: 0.1898069
-    - serializedVersion: 3
-      time: 0.6485395
-      value: 0.054805905
-      inSlope: 0.87662923
-      outSlope: 0.87662923
+      time: 0.4526637
+      value: -0.0010205978
+      inSlope: -0.004524964
+      outSlope: -0.004524964
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.34447932
+      outWeight: 0.08905281
     - serializedVersion: 3
-      time: 0.75277495
-      value: 0.21866608
-      inSlope: 2.022296
-      outSlope: 2.022296
-      tangentMode: 34
+      time: 0.836487
+      value: 0.0759475
+      inSlope: 0.71847713
+      outSlope: 0.71847713
+      tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.33333334
+      outWeight: 0.21808673
     - serializedVersion: 3
-      time: 0.89733887
-      value: 0.57611084
-      inSlope: 2.4725726
-      outSlope: 2.4725726
+      time: 0.9998779
+      value: 0.2996788
+      inSlope: 1.3693006
+      outSlope: 1.3693006
       tangentMode: 34
       weightedMode: 0
       inWeight: 0.33333334
@@ -801,7 +773,8 @@ MonoBehaviour:
   arrow: {fileID: 183262140}
   distanceAlphaCutoff: 1
   distanceAlphaTurnOff: 0.5
-  alphaCutoffValueFrom: 0.3
+  arrowPositionAdjustment: 0.03
+  finishPosition: {x: 0, y: 0, z: 0}
 --- !u!4 &478586567
 Transform:
   m_ObjectHideFlags: 0
@@ -1361,6 +1334,7 @@ MonoBehaviour:
   placingAnimation: {fileID: 1195510629}
   playerBoardTransform: {fileID: 367372458}
   tempCard: {fileID: 551741258}
+  arrowController: {fileID: 478586566}
 --- !u!1 &1248651919
 GameObject:
   m_ObjectHideFlags: 0
