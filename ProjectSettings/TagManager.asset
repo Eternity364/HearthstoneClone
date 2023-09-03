@@ -44,6 +44,12 @@ TagManager:
   - name: Board
     uniqueID: 919621911
     locked: 0
+  - name: Arrow2
+    uniqueID: 3696899461
+    locked: 0
+  - name: Arrow1
+    uniqueID: 1775374363
+    locked: 0
   - name: LandingOnBoard
     uniqueID: 3144962145
     locked: 0

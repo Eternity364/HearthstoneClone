@@ -16,7 +16,7 @@ public class ArrowController : MonoBehaviour
     [SerializeField]
     float cubeSpeed = 0.03f;
     [SerializeField]
-    float delayBetweenCubes = 1f;
+    float finishVectorCutoofDistance = 0.3f;
     [SerializeField]
     float maxValueChange = 1f;
     [SerializeField]
@@ -27,18 +27,23 @@ public class ArrowController : MonoBehaviour
     AnimationCurve zCurve;
     [SerializeField]
     AnimationCurve alphaCurve;
+    [SerializeField]
+    GameObject arrow;
+    [SerializeField]
+    float distanceAlphaCutoff;
+    [SerializeField]
+    float distanceAlphaTurnOff;
 
     Dictionary<Cube, float> cubeValues = new Dictionary<Cube, float>();
-    float currentDelayBetweenCubes = 0f;
-    Vector3 finishPosition1 = Vector3.zero;
+    Vector3 finishPosition = Vector3.zero;
     Vector3 previousFinishPosition = Vector3.zero;
     Cube lastCube;
 
     void Update() {        
-        finishPosition1 = PositionGetter.GetPosition(PositionGetter.ColliderType.Background);
-        if (finishPosition1 == Vector3.zero)
-            finishPosition1 = previousFinishPosition;
-        //print(finishPosition1);
+        finishPosition = PositionGetter.GetPosition(PositionGetter.ColliderType.Background);
+
+        if (finishPosition == Vector3.zero)
+            finishPosition = previousFinishPosition;
 
         if (cubeValues.Keys.Count == 0) {
             Cube cube = Instantiate(cubePrefab);
@@ -47,11 +52,10 @@ public class ArrowController : MonoBehaviour
             cubeValues[cube] = 0.9f;
             lastCube = cube;
         }
-        //print("lastCube = " + lastCube);
         if (lastCube)
             CalculateCubePositions();
 
-        previousFinishPosition = finishPosition1;
+        previousFinishPosition = finishPosition;
     }
 
     void CalculateCubePositions() {
@@ -62,27 +66,18 @@ public class ArrowController : MonoBehaviour
         }
         cubes.Remove(lastCube);
 
-        float maxDistance = (finishPosition1 - startPosition).magnitude;
-        //float previousDistance = (previousFinishPosition - lastCube.transform.localPosition).magnitude;
-        //cubeValues[lastCube] = 1 - (previousDistance / maxDistance);
+        float maxDistance = (finishPosition - startPosition).magnitude;
         if (cubeValues[lastCube] < 0)
             cubeValues[lastCube] = 0.1f;
-        float valueChange = cubeSpeed / (finishPosition1 - startPosition).magnitude;
+        float valueChange = cubeSpeed / (finishPosition - startPosition).magnitude;
         if (valueChange > maxValueChange)
             valueChange = maxValueChange;
         cubeValues[lastCube] += Time.deltaTime * valueChange;
-        //print(valueChange);
         float currValue = cubeValues[lastCube];
         lastCube.gameObject.SetActive(true);
-        // print("prev_dis - " + previousDistance);
-        // print("max_dis - " + maxDistance);
-        //print("cubeValues[lastCube] - " + cubeValues[lastCube]);
-        //print(maxDistance);
         SetCubeValues(lastCube);
-        //print(cubeValues[lastCube]);
 
         int index = cubes.Count;
-        //currValue -= distanceBetweenCubes / maxDistance;
         while (currValue > 0) 
         {   
             index--;
@@ -118,9 +113,10 @@ public class ArrowController : MonoBehaviour
 
     void SetCubeValues(Cube cube) {
         if (cubeValues[cube] < 1) {
-            Vector3 newVector = startPosition + (finishPosition1 - startPosition) * cubeValues[cube];
-            float maxDistance = (finishPosition1 - startPosition).magnitude;
-            float currentDistance = (finishPosition1 - newVector).magnitude;
+            Vector3 cutoffFinishPosition = finishPosition - (finishPosition - startPosition).normalized * finishVectorCutoofDistance;
+            Vector3 newVector = startPosition + (cutoffFinishPosition - startPosition) * cubeValues[cube];
+            float maxDistance = (cutoffFinishPosition - startPosition).magnitude;
+            float currentDistance = (cutoffFinishPosition - newVector).magnitude;
             
             float x = 1;
             if ((maxDistance - currentDistance) < 0.5f * maxDistance) {
@@ -131,9 +127,9 @@ public class ArrowController : MonoBehaviour
             newVector.z = zCurve.Evaluate(value) * zMax;
             cube.transform.localPosition = newVector;
 
-            float angleZ = 180 - Vector3.Angle(finishPosition1 - startPosition, Vector3.right) + 90;
+            float angleZ = 180 - Vector3.Angle(cutoffFinishPosition - startPosition, Vector3.right) + 90;
             float angleX = startXAngle * x * xCurve.Evaluate(value);
-            Vector3 differance = finishPosition1 - startPosition;
+            Vector3 differance = cutoffFinishPosition - startPosition;
             if (differance.y > 0) {
                 angleZ = -angleZ;
                 angleX = -angleX;
@@ -141,11 +137,24 @@ public class ArrowController : MonoBehaviour
             cube.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, angleZ));
             cube.childTransform.localRotation = Quaternion.Euler(new Vector3(angleX, 0, 0));
             Color color = cube.renderer.material.color;
-            color.a = 1 * alphaCurve.Evaluate(value);
-            cube.renderer.material.SetVector("_EmissionColor", cube.emissionColor * alphaCurve.Evaluate(value));
+
+            float distance = (finishPosition - startPosition).magnitude;
+            if (distance < distanceAlphaCutoff) {
+                value /= distance / distanceAlphaCutoff;
+                if (value > 1) value = 1;
+            }
+            cube.childTransform.gameObject.SetActive(value < 1);
+            cube.childTransform.gameObject.SetActive(distance > distanceAlphaTurnOff);
+            float alpha = alphaCurve.Evaluate(value);
+            cube.renderer.material.SetVector("_EmissionColor", cube.emissionColor * alpha);
+            color.a = alpha;
             cube.renderer.material.color = color;
-            if (cube == lastCube)
-                 print(cube.renderer.material.color.a);
+            if (cube == lastCube) {
+                if (differance.y > 0)
+                    angleZ += 180;
+                arrow.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, angleZ));
+                arrow.transform.localPosition = finishPosition;
+            }
         }
         else
         {
