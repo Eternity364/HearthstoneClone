@@ -1077,9 +1077,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   arrow: {fileID: 183262140}
+  arrowChildTransform: {fileID: 282126141}
   distanceAlphaCutoff: 1
   distanceAlphaTurnOff: 0.5
-  arrowPositionAdjustment: 0.03
+  positionAdjustment: 0.13
   finishPosition: {x: 0, y: 0, z: 0}
 --- !u!4 &478586567
 Transform:

@@ -30,11 +30,13 @@ public class ArrowController : MonoBehaviour
     [SerializeField]
     GameObject arrow;
     [SerializeField]
+    Transform arrowChildTransform;
+    [SerializeField]
     float distanceAlphaCutoff;
     [SerializeField]
     float distanceAlphaTurnOff;
     [SerializeField]
-    float arrowPositionAdjustment;
+    float positionAdjustment;
 
     Dictionary<Cube, float> cubeValues = new Dictionary<Cube, float>();
     
@@ -155,7 +157,7 @@ public class ArrowController : MonoBehaviour
             }
 
             float value = cubeValues[cube];
-            newVector.z = zCurve.Evaluate(value) * zMax;
+            newVector.z = zCurve.Evaluate(value) * zMax * Math.Abs(startPosition.x) * positionAdjustment;
             cube.transform.localPosition = newVector;
 
             float angleZ = 180 - Vector3.Angle(cutoffFinishPosition - startPosition, Vector3.right) + 90;
@@ -177,22 +179,26 @@ public class ArrowController : MonoBehaviour
             } 
             cube.childTransform.gameObject.SetActive(value < 1);
             cube.childTransform.gameObject.SetActive(distance > distanceAlphaTurnOff);
+            Vector3 childPosition = cube.childTransform.localPosition;
+            //childPosition.x = -startPosition.x / maxDistance * positionAdjustment; 
+            cube.childTransform.localPosition = childPosition;
+            print(childPosition.x);
             float alpha = alphaCurve.Evaluate(value);
             cube.renderer.material.SetVector("_EmissionColor", cube.emissionColor * alpha);
             color.a = alpha;
             cube.renderer.material.color = color;
 
             if (cube == lastCube) {
-                float positionAdjustment = (Math.Abs(angleZ) - 180) / 180 * arrowPositionAdjustment;
                 Vector3 newPosition = finishPosition;
+
+
+                Vector3 childPos = arrowChildTransform.localPosition;
                 
                 if (differance.y > 0) {
                     angleZ += 180;
-                }                
-                if (differance.x > 0) {
-                    positionAdjustment = -positionAdjustment;
-                }
-                newPosition.y += positionAdjustment;
+                }        
+                childPos.x = -childPos.x;
+                
                 arrow.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, angleZ));
                 arrow.transform.localPosition = newPosition;
             }
