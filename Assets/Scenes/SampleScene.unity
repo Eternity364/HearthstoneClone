@@ -1901,6 +1901,7 @@ GameObject:
   - component: {fileID: 1195510628}
   - component: {fileID: 1195510630}
   - component: {fileID: 1195510629}
+  - component: {fileID: 1195510631}
   m_Layer: 0
   m_Name: Board
   m_TagString: Untagged
@@ -1950,6 +1951,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   placingAnimation: {fileID: 1195510629}
+  attackAnimation: {fileID: 1195510631}
   playerBoardTransform: {fileID: 367372458}
   tempCard: {fileID: 551741258}
   arrowController: {fileID: 478586566}
@@ -1960,6 +1962,18 @@ MonoBehaviour:
   - {fileID: 693329727}
   - {fileID: 1226271139}
   pointer: {fileID: 1549283567}
+--- !u!114 &1195510631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1195510627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65ef64ae84c74fd439b9056c9626ff58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1226271137
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -4,6 +4,7 @@ using UnityEngine.Events;
 public class InHandClickHandler : MonoBehaviour
 {
     public UnityAction<Card> OnPick;
+    public UnityAction<Card> OnMouseUpEvents;
     public UnityAction<Card> OnMouseEnterCallbacks;
     public UnityAction<Card> OnMouseLeaveCallbacks;
 
@@ -16,7 +17,7 @@ public class InHandClickHandler : MonoBehaviour
     [SerializeField]
     CapsuleCollider2D areaCapsule;
 
-    private bool clicked = false;
+    bool mouseEntered = false;
 
     public void SetClickable(bool active)
     {
@@ -31,21 +32,36 @@ public class InHandClickHandler : MonoBehaviour
 
     void OnMouseDown()
     {
-        clicked = true;
         rotationManager.SetActive(true);
         if (OnPick != null)
             OnPick.Invoke(card);
     }
 
+    // void OnMouseUp()
+    // {
+    //     print("yep");
+    //     if (OnMouseUpEvents != null)
+    //         OnMouseUpEvents.Invoke(card);
+    // }
+
     void OnMouseEnter()
     {
+        mouseEntered = true;
         if (OnMouseEnterCallbacks != null)
             OnMouseEnterCallbacks.Invoke(card);
     }
 
     void OnMouseExit()
     {
+        mouseEntered = false;
         if (OnMouseLeaveCallbacks != null)
             OnMouseLeaveCallbacks.Invoke(card);
+    }
+
+    void Update() {
+        if (Input.GetMouseButtonUp (0) && mouseEntered) {
+            if (OnMouseUpEvents != null)
+                OnMouseUpEvents.Invoke(card);
+        }
     }
 }

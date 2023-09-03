@@ -8,6 +8,8 @@ public class BoardManager : MonoBehaviour
     [SerializeField]
     CardOnBoardPlacingAnimation placingAnimation;
     [SerializeField]
+    AttackAnimation attackAnimation;
+    [SerializeField]
     Transform playerBoardTransform;
     [SerializeField]
     Card tempCard;
@@ -22,9 +24,11 @@ public class BoardManager : MonoBehaviour
     List<Card> playerCardsOnBoard = new List<Card>();
     List<Vector3> cardsPositions = new List<Vector3>();
     List<Card> playerCardsOnBoardTemp = new List<Card>();
+    Queue<TweenCallback> attackAnimationQueue = new Queue<TweenCallback>();
 
     float positionShift = 0.4f;
     List<Tweener> sortingTweens;
+    Card attackingCard;
 
     void Start () {
         sortingTweens = new List<Tweener>();
@@ -33,6 +37,7 @@ public class BoardManager : MonoBehaviour
         {
             enemyCardsOnBoard[i].clickHandler.OnMouseEnterCallbacks += OnEnemyCardMouseEnter;
             enemyCardsOnBoard[i].clickHandler.OnMouseLeaveCallbacks += OnEnemyCardMouseLeave;
+            enemyCardsOnBoard[i].clickHandler.OnMouseUpEvents += OnEnemyCardMouseUp;
         }
     }
 
@@ -115,11 +120,32 @@ public class BoardManager : MonoBehaviour
 
     private void OnCardClick(Card card) {
         arrowController.SetActive(true, card.transform.position);
+        attackingCard = card;
+    }
+
+    private void OnEnemyCardMouseUp(Card card) {
+        Card attackingCard1 = attackingCard;
+        void OnFinishAttack () {
+            attackingCard1.clickHandler.SetClickable(true);
+            if (attackAnimationQueue.Count >= 1) attackAnimationQueue.Dequeue()();
+        };
+        void OnFinishPrepare () {
+            attackAnimation.DoAttackPart(attackingCard1.cardDisplay.intermediateObjectsTransform, card.cardDisplay.intermediateObjectsTransform.position, OnFinishAttack);
+        };
+        void AddToQueue () {
+            attackAnimationQueue.Enqueue(OnFinishPrepare);
+            if (attackAnimationQueue.Count == 1) attackAnimationQueue.Dequeue()();
+        }
+        if (arrowController.Active) {
+            attackingCard1.clickHandler.SetClickable(false);
+            attackAnimation.DoPreparePart(attackingCard1.cardDisplay.intermediateObjectsTransform, OnFinishPrepare);
+        }
     }
 
     private void OnMouseButtonDrop() {
         arrowController.SetActive(false, Vector2.zero);
         pointer.gameObject.SetActive(false);
+        attackingCard = null;
     }
     
     private void OnEnemyCardMouseEnter(Card card) {
