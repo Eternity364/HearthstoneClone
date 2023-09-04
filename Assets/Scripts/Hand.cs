@@ -114,22 +114,24 @@ public class Hand : MonoBehaviour
 
     public void Sort() {
         lenght = cards.Count;
-        //if (lenght > sortingTypeThreshold)
+        if (lenght > sortingTypeThreshold)
             SortFan();
-        //else
-            //SortLinear();
+        else
+            SortLinear();
     }
 
     public void SortLinear()
     {
-        Vector3 startPosition = (-lenght / 2 + 1) * positionShift;
+        Vector3 startPosition = (-lenght / 2 + + 0.5f) * positionShift;
         if (lenght % 2 == 1)
-            startPosition -= positionShift;
+            startPosition -= positionShift * 0.5f;
 
         for (int i = 0; i < lenght; i++)
         {
-            cards[i].transform.localPosition += startPosition + positionShift * i;
-            cards[i].cardDisplay.SetRenderLayer("InHandCard" + i.ToString());
+            cards[i].transform.localPosition = startPosition + positionShift * i;
+            cards[i].cardDisplay.SetRenderLayer("InHandCard" + (lenght - i).ToString());
+            Quaternion rotation = Quaternion.Euler(0, 0, 0);
+            cards[i].transform.rotation = rotation;
         }
     }
 
@@ -162,7 +164,7 @@ public class Hand : MonoBehaviour
     }    
 
     public void OnBoardSizeChange(int currentSize, int maxSize) {
-        SetCardsClickable(currentSize <= maxSize);
+        SetCardsClickable(!board.IsFilled);
     }
 
     Vector3 RotateTowardsUp(Vector3 start, float angle)

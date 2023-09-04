@@ -32,6 +32,11 @@ public class BoardManager : MonoBehaviour
     List<Card> playerCardsOnBoardTemp = new List<Card>();
     Queue<TweenCallback> attackAnimationQueue = new Queue<TweenCallback>();
 
+    public bool IsFilled
+    {
+        get { return playerCardsOnBoard.Count == maxBoardSize; }
+    }
+
     float positionShift = 0.4f;
     Dictionary<List<Card>, List<Tweener>> sortingTweens;
     Card attackingCard;

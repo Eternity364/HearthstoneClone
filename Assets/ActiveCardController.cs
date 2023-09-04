@@ -32,7 +32,8 @@ public class ActiveCardController : MonoBehaviour
         hand.Remove(pickedCard);
         hand.Sort();
         pickedCard = null;
-        hand.SetCardsClickable(true);
+        if (!boardManager.IsFilled)
+            hand.SetCardsClickable(true);
     }
 
     
