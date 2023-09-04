@@ -3,6 +3,7 @@ using UnityEngine;
 public class CardData
 {
     private int health, attack, cost;
+    private int maxHealth;
     public int Health
     {
         get { return health; }
@@ -10,6 +11,10 @@ public class CardData
         {
             health = value;
         }
+    }
+    public int MaxHealth
+    {
+        get { return maxHealth; }
     }
     public int Attack
     {
@@ -37,5 +42,6 @@ public class CardData
         Health = health;
         Attack = attack;
         Cost = cost;
+        maxHealth = health;
     }
 }

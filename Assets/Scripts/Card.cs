@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
-    public CardData data;
+    [SerializeField]
+    int health;
+    [SerializeField]
+    int attack;
+    [SerializeField]
+    int cost;
     public AngleSetter angleSetter;
 
     [SerializeField]
@@ -19,11 +24,9 @@ public class Card : MonoBehaviour
         get => rotationManager;
     }
 
-    // Start is called before the first frame update
     void Start()
     {
-        data = new CardData(2, 3, 4);
-        cardDisplay.SetData(data);
+        cardDisplay.SetData(new CardData(health, attack, cost));
     }
     
     public bool DealDamage(int damage)

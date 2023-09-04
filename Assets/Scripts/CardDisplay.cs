@@ -35,6 +35,7 @@ public class CardDisplay : MonoBehaviour
     [SerializeField]
     public Transform intermediateObjectsTransform; 
     [SerializeField]
+    Color lackHealth; 
 
     public enum DisplayStates
     {
@@ -88,6 +89,8 @@ public class CardDisplay : MonoBehaviour
             inHandCost.text = data.Cost.ToString();
             onFieldAttack.text = data.Attack.ToString();
             onFieldHealth.text = data.Health.ToString();
+            if (data.Health < data.MaxHealth)
+                onFieldHealth.color = lackHealth;
         }
     }
 

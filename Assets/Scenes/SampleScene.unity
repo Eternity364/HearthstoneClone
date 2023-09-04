@@ -438,6 +438,14 @@ PrefabInstance:
       propertyPath: m_LocalScale.y
       value: 1.56
       objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: attack
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: health
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -525,6 +533,18 @@ PrefabInstance:
     - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Name
       value: Card2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.cost
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.attack
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.health
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6830499301166746168, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Enabled
@@ -738,6 +758,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1248651920}
     m_Modifications:
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: cost
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: attack
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: health
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -826,6 +858,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card6
       objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.cost
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.attack
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.health
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
 --- !u!224 &423278282 stripped
@@ -871,6 +915,18 @@ PrefabInstance:
     - target: {fileID: 3711116447626226811, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_LocalScale.y
       value: 1.56
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: cost
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: attack
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: health
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Pivot.x
@@ -959,6 +1015,18 @@ PrefabInstance:
     - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Name
       value: Card1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.cost
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.attack
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.health
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 6830499301166746168, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Enabled
@@ -1237,6 +1305,14 @@ PrefabInstance:
       propertyPath: m_LocalScale.y
       value: 1.56
       objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: attack
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: health
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1324,6 +1400,18 @@ PrefabInstance:
     - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Name
       value: Card3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.cost
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.attack
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.health
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6830499301166746168, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Enabled
@@ -1510,6 +1598,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1248651920}
     m_Modifications:
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: cost
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: attack
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: health
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1520,7 +1620,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1598,6 +1698,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card2
       objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.cost
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.attack
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.health
+      value: 16
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
 --- !u!114 &620021285 stripped
@@ -1654,6 +1766,14 @@ PrefabInstance:
     - target: {fileID: 3711116447626226811, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_LocalScale.y
       value: 1.56
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: attack
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: health
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Pivot.x
@@ -1742,6 +1862,18 @@ PrefabInstance:
     - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Name
       value: Card4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.cost
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.attack
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.health
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 6830499301166746168, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Enabled
@@ -2115,6 +2247,14 @@ PrefabInstance:
       propertyPath: m_LocalScale.y
       value: 1.56
       objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: attack
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: health
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2202,6 +2342,18 @@ PrefabInstance:
     - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Name
       value: Card5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.cost
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.attack
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.health
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6830499301166746168, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Enabled
@@ -2308,6 +2460,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1248651920}
     m_Modifications:
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: cost
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: attack
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: health
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2395,6 +2559,18 @@ PrefabInstance:
     - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Name
       value: Card7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.cost
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.attack
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.health
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
@@ -2566,6 +2742,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1248651920}
     m_Modifications:
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: cost
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: attack
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: health
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2654,6 +2842,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card9
       objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.cost
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.attack
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.health
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
 --- !u!224 &1409416687 stripped
@@ -2668,6 +2868,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1248651920}
     m_Modifications:
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: cost
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: attack
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: health
+      value: 16
+      objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2756,6 +2968,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card10
       objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.cost
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.attack
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.health
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
 --- !u!224 &1465511692 stripped
@@ -2770,6 +2994,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1248651920}
     m_Modifications:
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: cost
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: attack
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: health
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2857,6 +3093,18 @@ PrefabInstance:
     - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Name
       value: Card4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.cost
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.attack
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.health
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
@@ -3050,6 +3298,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1248651920}
     m_Modifications:
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: cost
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: attack
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: health
+      value: 14
+      objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3137,6 +3397,18 @@ PrefabInstance:
     - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Name
       value: Card5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.cost
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.attack
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.health
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
@@ -3242,6 +3514,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1248651920}
     m_Modifications:
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: cost
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: attack
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: health
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3252,7 +3536,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_AnchorMax.x
@@ -3330,6 +3614,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card3
       objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.attack
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.health
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
 --- !u!114 &1850551662 stripped
@@ -3355,6 +3647,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1248651920}
     m_Modifications:
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: cost
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: attack
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: health
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3365,7 +3669,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_RootOrder
-      value: 10
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_AnchorMax.x
@@ -3442,6 +3746,18 @@ PrefabInstance:
     - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Name
       value: Card1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.cost
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.attack
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.health
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
@@ -3561,6 +3877,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1248651920}
     m_Modifications:
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: cost
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: attack
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: health
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540137, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3648,6 +3976,18 @@ PrefabInstance:
     - target: {fileID: 4421477798839540138, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: m_Name
       value: Card8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.cost
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.attack
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.health
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
