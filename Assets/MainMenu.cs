@@ -1,21 +1,35 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField] private Button but;
+    [SerializeField] private GameObject game;
+    [SerializeField] private Button startClient;
+    [SerializeField] private Button startServer;
+    [SerializeField] private GameObject serverStartedText;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    private void Start() {
+        startClient.onClick.AddListener(() => {
+            StartClient();
+        });
+        startServer.onClick.AddListener(() => {
+            StartServer();
+        });
     }
 
-    // Update is called once per frame
-    void Update()
+    private void StartClient()
     {
-        
+        game.SetActive(true);
+        gameObject.SetActive(false);
+        NetworkManager.Singleton.StartClient();
+    }
+
+    private void StartServer()
+    {
+        serverStartedText.SetActive(true);
+        startClient.gameObject.SetActive(false);
+        startServer.gameObject.SetActive(false);
+        NetworkManager.Singleton.StartServer();
     }
 }
