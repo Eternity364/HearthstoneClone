@@ -12,13 +12,35 @@ public class GameState : NetworkBehaviour {
     private void Update() {
         if (NetworkManager.Singleton.IsConnectedClient && Input.GetKeyDown("k"))
         {
-            TestServerRpc();
+            TestServerRpc(new ServerRpcParams());
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void TestServerRpc() {
+    private void TestServerRpc(ServerRpcParams rpcParams) {
         networkStringTest.Value = Random.Range(0, 100);
-        text.text = networkStringTest.Value.ToString();
+
+        IReadOnlyList<ulong> clientsIds = NetworkManager.Singleton.ConnectedClientsIds;
+        List<ulong> clientsIdsWithoutCurrentClientId = new List<ulong>();
+        for (int i = 0; i < clientsIds.Count; i++)
+        {
+            if (clientsIds[i] != rpcParams.Receive.SenderClientId)
+                clientsIdsWithoutCurrentClientId.Add(clientsIds[i]);
+        }
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = clientsIdsWithoutCurrentClientId.AsReadOnly()
+            }
+        };
+
+        TestClientRpc(networkStringTest.Value, clientRpcParams);
+    }
+
+    [ClientRpc]
+    private void TestClientRpc(int value, ClientRpcParams clientRpcParams = default) {
+        text.text = value.ToString();
     }
 }
