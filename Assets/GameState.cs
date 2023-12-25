@@ -10,10 +10,15 @@ public class GameState : NetworkBehaviour {
     private NetworkVariable<int> networkStringTest = new NetworkVariable<int>(0);
 
     private void Update() {
-        if (NetworkManager.Singleton.IsServer && Input.GetKeyDown("k"))
+        if (NetworkManager.Singleton.IsConnectedClient && Input.GetKeyDown("k"))
         {
-            networkStringTest.Value = Random.Range(0, 100);
+            TestServerRpc();
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void TestServerRpc() {
+        networkStringTest.Value = Random.Range(0, 100);
         text.text = networkStringTest.Value.ToString();
     }
 }
