@@ -180,9 +180,7 @@ public class ArrowController : MonoBehaviour
             cube.childTransform.gameObject.SetActive(value < 1);
             cube.childTransform.gameObject.SetActive(distance > distanceAlphaTurnOff);
             Vector3 childPosition = cube.childTransform.localPosition;
-            //childPosition.x = -startPosition.x / maxDistance * positionAdjustment; 
             cube.childTransform.localPosition = childPosition;
-            print(childPosition.x);
             float alpha = alphaCurve.Evaluate(value);
             cube.renderer.material.SetVector("_EmissionColor", cube.emissionColor * alpha);
             color.a = alpha;

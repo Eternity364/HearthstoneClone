@@ -4,43 +4,47 @@ using UnityEngine;
 using Unity.Netcode;
 using Unity.Collections;
 using TMPro;
+using UnityEngine.Events;
 
 public class GameState : NetworkBehaviour {
     [SerializeField] TextMeshProUGUI  text;
     private NetworkVariable<int> networkStringTest = new NetworkVariable<int>(0);
+    [SerializeField]
+    BoardManager boardManager;
 
-    private void Update() {
-        if (NetworkManager.Singleton.IsConnectedClient && Input.GetKeyDown("k"))
-        {
-            TestServerRpc(new ServerRpcParams());
-        }
+    private void Start() {
+        boardManager.OnCardAttack += AttemptToPerformAttack;
+    }
+
+    private void AttemptToPerformAttack(bool attackerIsPlayer, int attackerIndex, int targetIndex) {
+        AttemptToPerformAttackServerRpc(attackerIsPlayer, attackerIndex, targetIndex, new ServerRpcParams());
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void TestServerRpc(ServerRpcParams rpcParams) {
-        networkStringTest.Value = Random.Range(0, 100);
-
-        IReadOnlyList<ulong> clientsIds = NetworkManager.Singleton.ConnectedClientsIds;
-        List<ulong> clientsIdsWithoutCurrentClientId = new List<ulong>();
-        for (int i = 0; i < clientsIds.Count; i++)
-        {
-            if (clientsIds[i] != rpcParams.Receive.SenderClientId)
-                clientsIdsWithoutCurrentClientId.Add(clientsIds[i]);
-        }
+    private void AttemptToPerformAttackServerRpc(bool attackerIsPlayer, int attackerIndex, int targetIndex, ServerRpcParams rpcParams) {
+        // IReadOnlyList<ulong> clientsIds = NetworkManager.Singleton.ConnectedClientsIds;
+        // List<ulong> clientsIdsWithoutCurrentClientId = new List<ulong>();
+        // for (int i = 0; i < clientsIds.Count; i++)
+        // {
+        //     if (clientsIds[i] != rpcParams.Receive.SenderClientId)
+        //         clientsIdsWithoutCurrentClientId.Add(clientsIds[i]);
+        // }
 
         ClientRpcParams clientRpcParams = new ClientRpcParams
         {
             Send = new ClientRpcSendParams
             {
-                TargetClientIds = clientsIdsWithoutCurrentClientId.AsReadOnly()
+                TargetClientIds = NetworkManager.Singleton.ConnectedClientsIds
             }
         };
 
-        TestClientRpc(networkStringTest.Value, clientRpcParams);
+        PerformAttackClientRpc(attackerIsPlayer, attackerIndex, targetIndex, clientRpcParams);
     }
 
     [ClientRpc]
-    private void TestClientRpc(int value, ClientRpcParams clientRpcParams = default) {
-        text.text = value.ToString();
+    private void PerformAttackClientRpc(bool attackerIsPlayer, int attackerIndex, int targetIndex, ClientRpcParams rpdParams) {
+        
+        print("ClientRPCAttack");
+        boardManager.PerformAttackByIndex(attackerIsPlayer, attackerIndex, targetIndex);
     }
 }

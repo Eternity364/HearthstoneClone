@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.Events;
+using Unity.Netcode;
 
 public class BoardManager : MonoBehaviour
 {
@@ -25,6 +26,7 @@ public class BoardManager : MonoBehaviour
 
     
     public UnityAction<int, int> OnBoardSizeChange;
+    public UnityAction<bool, int, int> OnCardAttack;
 
     List<Card> placingCards = new List<Card>();
     List<Card> playerCardsOnBoard = new List<Card>();
@@ -48,7 +50,7 @@ public class BoardManager : MonoBehaviour
         {
             enemyCardsOnBoard[i].clickHandler.OnMouseEnterCallbacks += OnEnemyCardMouseEnter;
             enemyCardsOnBoard[i].clickHandler.OnMouseLeaveCallbacks += OnEnemyCardMouseLeave;
-            enemyCardsOnBoard[i].clickHandler.OnMouseUpEvents += OnEnemyCardMouseUp;
+            enemyCardsOnBoard[i].clickHandler.OnMouseUpEvents += AttemptToPerformAttack;
         }
     }
 
@@ -133,17 +135,52 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    public void PerformAttackByIndex(bool attackerIsPlayer, int attackerIndex, int targetIndex) {
+        Card attacker, target;
+        if (attackerIsPlayer) {
+            attacker = playerCardsOnBoard[attackerIndex];
+            target = enemyCardsOnBoard[targetIndex];
+        } 
+        else 
+        {
+            attacker = enemyCardsOnBoard[attackerIndex];
+            target = playerCardsOnBoard[targetIndex];
+        }
+        attackingCard = attacker;
+        PerformAttack(target);
+    }
+
+    private bool FinishAttack(Card attacker, Card target) {
+        bool deadTarget = target.DealDamage(attacker.cardDisplay.Data.Attack);
+        bool deadAttacker = attacker.DealDamage(target.cardDisplay.Data.Attack);
+        if (deadTarget) {
+            enemyCardsOnBoard.Remove(target);
+            SortCards(enemyCardsOnBoard);
+        }
+        if (deadAttacker) {
+            playerCardsOnBoard.Remove(attacker);
+            SortCards(playerCardsOnBoard);
+            OnBoardSizeChange.Invoke(playerCardsOnBoard.Count, maxBoardSize);
+        }
+        return deadAttacker;
+    }
+
     private void OnCardClick(Card card) {
         arrowController.SetActive(true, card.transform.position);
         attackingCard = card;
     }
 
-    private void OnEnemyCardMouseUp(Card card) {
+    private void AttemptToPerformAttack(Card card) {
+        if (attackingCard != null)
+            OnCardAttack.Invoke(true, playerCardsOnBoard.IndexOf(attackingCard), enemyCardsOnBoard.IndexOf(card));
+    }
+
+    private void PerformAttack(Card card) {
         Card attackingCard1 = attackingCard;
         Sequence mySequence = null;
         
         void OnFinishHit () {
-            bool dead = PerformAttack(attackingCard1, card);
+            bool dead = FinishAttack(attackingCard1, card);
             if (dead) {
                 mySequence.Kill();
                 if (attackAnimationQueue.Count >= 1) 
@@ -181,22 +218,6 @@ public class BoardManager : MonoBehaviour
             }
             attackingCard = null;
         }
-    }
-
-    private bool PerformAttack(Card attacker, Card target) {
-        bool deadTarget = target.DealDamage(attacker.cardDisplay.Data.Attack);
-        bool deadAttacker = attacker.DealDamage(target.cardDisplay.Data.Attack);
-        if (deadTarget) {
-            enemyCardsOnBoard.Remove(target);
-            print(enemyCardsOnBoard.Count);
-            SortCards(enemyCardsOnBoard);
-        }
-        if (deadAttacker) {
-            playerCardsOnBoard.Remove(attacker);
-            SortCards(playerCardsOnBoard);
-            OnBoardSizeChange.Invoke(playerCardsOnBoard.Count, maxBoardSize);
-        }
-        return deadAttacker;
     }
 
     private void OnMouseButtonDrop() {
