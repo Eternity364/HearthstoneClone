@@ -9,6 +9,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button startServer;
     [SerializeField] private Button startSinglePlayer;
     [SerializeField] private GameObject serverStartedText;
+    [SerializeField] private GameObject waitingForOpponentText;
     [SerializeField] private PlayerConnectionManager playerConnectionManager;
     [SerializeField] private SinglePlayerControlScheme singlePlayerControlScheme;
     [SerializeField] private NetworkControlScheme networkControlScheme;
@@ -25,13 +26,14 @@ public class MainMenu : MonoBehaviour
         startSinglePlayer.onClick.AddListener(() => {
             StartSinglePlayer();
         });
+
+        playerConnectionManager.Initialize(StartClient, ShowWaitingForOpponentText);
     }
 
     private void StartNetworkClient()
     {
         NetworkManager.Singleton.StartClient();
         controlScheme = networkControlScheme;
-        StartClient();
     }
 
     private void StartServer()
@@ -41,7 +43,6 @@ public class MainMenu : MonoBehaviour
         startServer.gameObject.SetActive(false);
         startSinglePlayer.gameObject.SetActive(false);
         NetworkManager.Singleton.StartServer();
-        playerConnectionManager.Initialize();
     }
 
     private void StartSinglePlayer()
@@ -55,5 +56,13 @@ public class MainMenu : MonoBehaviour
         game.SetActive(true);
         gameObject.SetActive(false);
         controlScheme.Initialize();
+    }
+
+    private void ShowWaitingForOpponentText()
+    {
+        waitingForOpponentText.SetActive(true);
+        startClient.gameObject.SetActive(false);
+        startServer.gameObject.SetActive(false);
+        startSinglePlayer.gameObject.SetActive(false);
     }
 }

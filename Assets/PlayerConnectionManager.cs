@@ -4,15 +4,20 @@ using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.Assertions;
 using UnityEngine.Networking;
+using System;
 
 public class PlayerConnectionManager : NetworkBehaviour 
 {
     private PlayerPair playerPair;
+    private Action OnOnePlayerConnected;
+    private Action OnPairComplete;
 
-    public void Initialize()
+    public void Initialize(Action OnPairComplete, Action OnOnePlayerConnected)
     {
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
         playerPair = new PlayerPair(0, 0);
+        this.OnPairComplete = OnPairComplete;
+        this.OnOnePlayerConnected = OnOnePlayerConnected;
     }
 
     public bool IsClientIdPlayer(ulong clientId)
@@ -28,6 +33,13 @@ public class PlayerConnectionManager : NetworkBehaviour
             playerPair.EnemyID = clientId;
         
 
+        bool isPairCompleted = playerPair.IsPairCompleted();
+        SendClientInfo(IsClientIdPlayer(clientId), isPairCompleted, clientId);
+        if (isPairCompleted) 
+            SendClientInfo(IsClientIdPlayer(clientId), isPairCompleted, playerPair.GetOpponentID(clientId));
+    }
+
+    private void SendClientInfo(bool isPlayer, bool isPairCompleted, ulong clientId) {
         ClientRpcParams clientRpcParams = new ClientRpcParams
         {
             Send = new ClientRpcSendParams
@@ -35,13 +47,18 @@ public class PlayerConnectionManager : NetworkBehaviour
                 TargetClientIds = new ulong[]{clientId}
             }
         };
-        SendClientInfoClientRpc(IsClientIdPlayer(clientId), clientRpcParams);
+        SendInfoClientRpc(isPlayer, isPairCompleted, clientRpcParams);
     }
 
     [ClientRpc]
-    private void SendClientInfoClientRpc(bool isPlayer, ClientRpcParams rpdParams) {
-
+    private void SendInfoClientRpc(bool isPlayer, bool isPairCompleted, ClientRpcParams rpdParams) {
         print("IsPlayer = " + isPlayer);
+        print("isPairCompleted = " + isPairCompleted);
+
+        if (isPairCompleted)
+            OnPairComplete();
+        else
+            OnOnePlayerConnected();
     }
 }
 
@@ -65,6 +82,20 @@ public class PlayerPair {
     {
         Assert.IsTrue(IsClientIdInPair(clientId));
         return clientId == PlayerID;
+    }
+
+    public ulong GetOpponentID(ulong clientId)
+    {
+        Assert.IsTrue(IsClientIdInPair(clientId));
+        if (clientId != PlayerID)
+            return PlayerID;
+        else
+            return EnemyID;
+    }
+
+    public bool IsPairCompleted()
+    {
+        return PlayerID != 0 && EnemyID != 0;
     }
 
     public ulong PlayerID
