@@ -39,6 +39,7 @@ public class MainMenu : MonoBehaviour
         serverStartedText.SetActive(true);
         startClient.gameObject.SetActive(false);
         startServer.gameObject.SetActive(false);
+        startSinglePlayer.gameObject.SetActive(false);
         NetworkManager.Singleton.StartServer();
         //playerConnectionManager.Initialize();
     }
