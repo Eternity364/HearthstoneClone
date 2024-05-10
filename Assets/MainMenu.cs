@@ -9,7 +9,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button startServer;
     [SerializeField] private Button startSinglePlayer;
     [SerializeField] private GameObject serverStartedText;
-    //[SerializeField] private PlayerConnectionManager playerConnectionManager;
+    [SerializeField] private PlayerConnectionManager playerConnectionManager;
     [SerializeField] private SinglePlayerControlScheme singlePlayerControlScheme;
     [SerializeField] private NetworkControlScheme networkControlScheme;
     private ControlScheme controlScheme;
@@ -41,7 +41,7 @@ public class MainMenu : MonoBehaviour
         startServer.gameObject.SetActive(false);
         startSinglePlayer.gameObject.SetActive(false);
         NetworkManager.Singleton.StartServer();
-        //playerConnectionManager.Initialize();
+        playerConnectionManager.Initialize();
     }
 
     private void StartSinglePlayer()

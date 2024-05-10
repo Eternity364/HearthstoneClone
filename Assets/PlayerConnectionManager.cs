@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.Assertions;
+using UnityEngine.Networking;
 
-public class PlayerConnectionManager : MonoBehaviour
+public class PlayerConnectionManager : NetworkBehaviour 
 {
     private PlayerPair playerPair;
 
@@ -25,8 +26,23 @@ public class PlayerConnectionManager : MonoBehaviour
             playerPair.PlayerID = clientId;
         else
             playerPair.EnemyID = clientId;
+        
+
+        ClientRpcParams clientRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[]{clientId}
+            }
+        };
+        SendClientInfoClientRpc(IsClientIdPlayer(clientId), clientRpcParams);
     }
 
+    [ClientRpc]
+    private void SendClientInfoClientRpc(bool isPlayer, ClientRpcParams rpdParams) {
+
+        print("IsPlayer = " + isPlayer);
+    }
 }
 
 public class PlayerPair {
@@ -47,7 +63,7 @@ public class PlayerPair {
 
     public bool IsClientIdPlayer(ulong clientId)
     {
-        Assert.IsFalse(IsClientIdInPair(clientId));
+        Assert.IsTrue(IsClientIdInPair(clientId));
         return clientId == PlayerID;
     }
 
