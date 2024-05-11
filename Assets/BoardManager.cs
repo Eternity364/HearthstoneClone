@@ -18,7 +18,9 @@ public class BoardManager : MonoBehaviour
     [SerializeField]
     ArrowController arrowController;
     [SerializeField]
-    List<Card> enemyCardsOnBoard = new List<Card>();
+    List<Card> enemyCardsSet;
+    [SerializeField]
+    List<Card> playerCardsSet;
     [SerializeField]
     Transform pointer;
     [SerializeField]
@@ -29,6 +31,7 @@ public class BoardManager : MonoBehaviour
     public UnityAction<bool, int, int> OnCardAttack;
 
     List<Card> placingCards = new List<Card>();
+    List<Card> enemyCardsOnBoard;
     List<Card> playerCardsOnBoard = new List<Card>();
     List<Vector3> cardsPositions = new List<Vector3>();
     List<Card> playerCardsOnBoardTemp = new List<Card>();
@@ -44,8 +47,32 @@ public class BoardManager : MonoBehaviour
     Card attackingCard;
 
     void Start () {
+    }
+
+    public void Initialize (bool isPlayer) {
         sortingTweens = new Dictionary<List<Card>, List<Tweener>>();
+
+        void AddPlayerCards (List<Card> cardsSet) {
+            for (int i = 0; i < cardsSet.Count; i++)
+            {
+                PlaceCard(cardsSet[i], false);
+            }
+        }
+
+        if (isPlayer) 
+        {
+            enemyCardsOnBoard = enemyCardsSet;
+            AddPlayerCards(playerCardsSet);
+        } 
+        else
+        {
+            enemyCardsOnBoard = playerCardsSet;
+            AddPlayerCards(enemyCardsSet);
+        }
+
+        SortCards(playerCardsSet);
         SortCards(enemyCardsOnBoard);
+
         for (int i = 0; i < enemyCardsOnBoard.Count; i++)
         {
             enemyCardsOnBoard[i].clickHandler.OnMouseEnterCallbacks += OnEnemyCardMouseEnter;
@@ -60,7 +87,7 @@ public class BoardManager : MonoBehaviour
         pointer.localPosition = PositionGetter.GetPosition(PositionGetter.ColliderType.Background);
     }
 
-    public void PlaceCard(Card card)
+    public void PlaceCard(Card card, bool withAnimation = true)
     {
         placingCards.Add(card);
         card.gameObject.transform.SetParent(playerBoardTransform);
@@ -77,13 +104,20 @@ public class BoardManager : MonoBehaviour
             card.clickHandler.OnPick += OnCardClick;
             card.clickHandler.SetClickable(true);
         }
-        placingAnimation.Do(card.cardDisplay.intermediateObjectsTransform, card.cardDisplay.mainObjectsTransform, OnFirstPartFinish, OnAnimationFinish);
-        playerCardsOnBoard.Insert(playerCardsOnBoardTemp.IndexOf(tempCard), card);
-        card.cardDisplay.SetRenderLayer("LandingOnBoard");
     
-        SortCards(playerCardsOnBoard);
-
-        OnBoardSizeChange.Invoke(playerCardsOnBoard.Count, maxBoardSize);
+        if (withAnimation) 
+        {
+            playerCardsOnBoard.Insert(playerCardsOnBoardTemp.IndexOf(tempCard), card);
+            card.cardDisplay.SetRenderLayer("LandingOnBoard");
+            placingAnimation.Do(card.cardDisplay.intermediateObjectsTransform, card.cardDisplay.mainObjectsTransform, OnFirstPartFinish, OnAnimationFinish);
+            SortCards(playerCardsOnBoard);
+            OnBoardSizeChange.Invoke(playerCardsOnBoard.Count, maxBoardSize);
+        }
+        else
+        {
+            playerCardsOnBoard.Add(card);
+            OnAnimationFinish();
+        }
     }
 
     public void ComparePositionsAndSortTemporarily(float xPosition) {

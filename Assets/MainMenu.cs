@@ -13,6 +13,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private PlayerConnectionManager playerConnectionManager;
     [SerializeField] private SinglePlayerControlScheme singlePlayerControlScheme;
     [SerializeField] private NetworkControlScheme networkControlScheme;
+    [SerializeField] private BoardManager boardManager;
     private ControlScheme controlScheme;
 
     private void Start() {
@@ -48,14 +49,15 @@ public class MainMenu : MonoBehaviour
     private void StartSinglePlayer()
     {
         controlScheme = singlePlayerControlScheme;
-        StartClient();
+        StartClient(true);
     }
 
-    private void StartClient()
+    private void StartClient(bool isPlayer)
     {
+        boardManager.Initialize(isPlayer);
+        controlScheme.Initialize();
         game.SetActive(true);
         gameObject.SetActive(false);
-        controlScheme.Initialize();
     }
 
     private void ShowWaitingForOpponentText()

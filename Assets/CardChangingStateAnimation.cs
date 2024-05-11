@@ -21,7 +21,6 @@ public class CardChangingStateAnimation : MonoBehaviour
     CanvasGroup OnBoardTextGroup;
 
 
-    // Update is called once per frame
     public void Do(CardDisplay.DisplayStates toState)
     {
         SpriteRenderer fromImage = InHandImage;

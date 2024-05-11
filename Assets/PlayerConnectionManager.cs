@@ -10,9 +10,9 @@ public class PlayerConnectionManager : NetworkBehaviour
 {
     private PlayerPair playerPair;
     private Action OnOnePlayerConnected;
-    private Action OnPairComplete;
+    private Action<bool> OnPairComplete;
 
-    public void Initialize(Action OnPairComplete, Action OnOnePlayerConnected)
+    public void Initialize(Action<bool> OnPairComplete, Action OnOnePlayerConnected)
     {
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
         playerPair = new PlayerPair(0, 0);
@@ -56,7 +56,7 @@ public class PlayerConnectionManager : NetworkBehaviour
         print("isPairCompleted = " + isPairCompleted);
 
         if (isPairCompleted)
-            OnPairComplete();
+            OnPairComplete(isPlayer);
         else
             OnOnePlayerConnected();
     }
