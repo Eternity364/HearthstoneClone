@@ -4457,6 +4457,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placingAnimation: {fileID: 1195510629}
   attackAnimation: {fileID: 1195510631}
+  enemyBoardTransform: {fileID: 518797772}
   playerBoardTransform: {fileID: 367372458}
   tempCard: {fileID: 551741258}
   arrowController: {fileID: 478586566}

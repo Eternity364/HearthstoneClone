@@ -12,6 +12,8 @@ public class BoardManager : MonoBehaviour
     [SerializeField]
     AttackAnimation attackAnimation;
     [SerializeField]
+    Transform enemyBoardTransform;
+    [SerializeField]
     Transform playerBoardTransform;
     [SerializeField]
     Card tempCard;
@@ -31,7 +33,7 @@ public class BoardManager : MonoBehaviour
     public UnityAction<bool, int, int> OnCardAttack;
 
     List<Card> placingCards = new List<Card>();
-    List<Card> enemyCardsOnBoard;
+    List<Card> enemyCardsOnBoard = new List<Card>();
     List<Card> playerCardsOnBoard = new List<Card>();
     List<Vector3> cardsPositions = new List<Vector3>();
     List<Card> playerCardsOnBoardTemp = new List<Card>();
@@ -52,25 +54,34 @@ public class BoardManager : MonoBehaviour
     public void Initialize (bool isPlayer) {
         sortingTweens = new Dictionary<List<Card>, List<Tweener>>();
 
+        void AddEnemyCards (List<Card> cardsSet) {
+            for (int i = 0; i < cardsSet.Count; i++)
+            {
+                enemyCardsOnBoard.Add(cardsSet[i]);
+                cardsSet[i].gameObject.transform.SetParent(enemyBoardTransform);
+                cardsSet[i].gameObject.transform.localPosition = Vector3.zero;
+            }
+        }
         void AddPlayerCards (List<Card> cardsSet) {
             for (int i = 0; i < cardsSet.Count; i++)
             {
+                //cardsSet[i].gameObject.transform.localPosition = Vector3.zero;
                 PlaceCard(cardsSet[i], false);
             }
         }
 
         if (isPlayer) 
         {
-            enemyCardsOnBoard = enemyCardsSet;
+            AddEnemyCards(enemyCardsSet);
             AddPlayerCards(playerCardsSet);
         } 
         else
         {
-            enemyCardsOnBoard = playerCardsSet;
+            AddEnemyCards(playerCardsSet);
             AddPlayerCards(enemyCardsSet);
         }
 
-        SortCards(playerCardsSet);
+        SortCards(playerCardsOnBoard);
         SortCards(enemyCardsOnBoard);
 
         for (int i = 0; i < enemyCardsOnBoard.Count; i++)
@@ -93,7 +104,6 @@ public class BoardManager : MonoBehaviour
         card.gameObject.transform.SetParent(playerBoardTransform);
         Vector3 position = card.transform.position;
         card.transform.localPosition = new Vector3();
-        card.cardDisplay.intermediateObjectsTransform.position = position;
 
         void OnFirstPartFinish () {
             card.cardDisplay.ChangeState(CardDisplay.DisplayStates.OnField);
@@ -107,6 +117,7 @@ public class BoardManager : MonoBehaviour
     
         if (withAnimation) 
         {
+            card.cardDisplay.intermediateObjectsTransform.position = position;
             playerCardsOnBoard.Insert(playerCardsOnBoardTemp.IndexOf(tempCard), card);
             card.cardDisplay.SetRenderLayer("LandingOnBoard");
             placingAnimation.Do(card.cardDisplay.intermediateObjectsTransform, card.cardDisplay.mainObjectsTransform, OnFirstPartFinish, OnAnimationFinish);

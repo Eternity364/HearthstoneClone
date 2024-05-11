@@ -36,7 +36,7 @@ public class PlayerConnectionManager : NetworkBehaviour
         bool isPairCompleted = playerPair.IsPairCompleted();
         SendClientInfo(IsClientIdPlayer(clientId), isPairCompleted, clientId);
         if (isPairCompleted) 
-            SendClientInfo(IsClientIdPlayer(clientId), isPairCompleted, playerPair.GetOpponentID(clientId));
+            SendClientInfo(IsClientIdPlayer(playerPair.GetOpponentID(clientId)), isPairCompleted, playerPair.GetOpponentID(clientId));
     }
 
     private void SendClientInfo(bool isPlayer, bool isPairCompleted, ulong clientId) {
