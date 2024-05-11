@@ -2923,6 +2923,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardManager: {fileID: 1195510630}
+  playerConnectionManager: {fileID: 1813137498}
 --- !u!1 &792295049
 GameObject:
   m_ObjectHideFlags: 0

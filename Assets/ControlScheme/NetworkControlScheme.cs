@@ -5,6 +5,8 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     private NetworkVariable<int> networkStringTest = new NetworkVariable<int>(0);
     [SerializeField]
     BoardManager boardManager;
+    [SerializeField]
+    PlayerConnectionManager playerConnectionManager;
 
     BoardManager ControlScheme.bManager
     {
@@ -20,23 +22,23 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
 
     [ServerRpc(RequireOwnership = false)]
     private void AttemptToPerformAttackServerRpc(bool attackerIsPlayer, int attackerIndex, int targetIndex, ServerRpcParams rpcParams) {
-        // IReadOnlyList<ulong> clientsIds = NetworkManager.Singleton.ConnectedClientsIds;
-        // List<ulong> clientsIdsWithoutCurrentClientId = new List<ulong>();
-        // for (int i = 0; i < clientsIds.Count; i++)
-        // {
-        //     if (clientsIds[i] != rpcParams.Receive.SenderClientId)
-        //         clientsIdsWithoutCurrentClientId.Add(clientsIds[i]);
-        // }
-
-        ClientRpcParams clientRpcParams = new ClientRpcParams
+        ClientRpcParams playerRpcParams = new ClientRpcParams
         {
             Send = new ClientRpcSendParams
             {
-                TargetClientIds = NetworkManager.Singleton.ConnectedClientsIds
+                TargetClientIds = new ulong[]{playerConnectionManager.PlayerID}
             }
         };
 
-        PerformAttackClientRpc(attackerIsPlayer, attackerIndex, targetIndex, clientRpcParams);
+        ClientRpcParams enemyRpcParams = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[]{playerConnectionManager.EnemyID}
+            }
+        };
+        PerformAttackClientRpc(attackerIsPlayer, attackerIndex, targetIndex, playerRpcParams);
+        PerformAttackClientRpc(!attackerIsPlayer, attackerIndex, targetIndex, enemyRpcParams);
     }
 
     [ClientRpc]

@@ -11,6 +11,21 @@ public class PlayerConnectionManager : NetworkBehaviour
     private PlayerPair playerPair;
     private Action OnOnePlayerConnected;
     private Action<bool> OnPairComplete;
+    
+    public ulong PlayerID
+    {
+        get
+        {
+            return playerPair.PlayerID;
+        }
+    }
+    public ulong EnemyID
+    {
+        get
+        {
+            return playerPair.EnemyID;
+        }
+    }
 
     public void Initialize(Action<bool> OnPairComplete, Action OnOnePlayerConnected)
     {
