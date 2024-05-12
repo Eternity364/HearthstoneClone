@@ -198,14 +198,21 @@ public class BoardManager : MonoBehaviour
     private bool FinishAttack(Card attacker, Card target) {
         bool deadTarget = target.DealDamage(attacker.cardDisplay.Data.Attack);
         bool deadAttacker = attacker.DealDamage(target.cardDisplay.Data.Attack);
+        List<Card> attackerSet = playerCardsOnBoard;
+        List<Card> targetSet = enemyCardsOnBoard;
+        if (enemyCardsOnBoard.Contains(attacker)) {
+            attackerSet = enemyCardsOnBoard;
+            targetSet = playerCardsOnBoard;
+        }
+
         if (deadTarget) {
-            enemyCardsOnBoard.Remove(target);
-            SortCards(enemyCardsOnBoard);
+            targetSet.Remove(target);
+            SortCards(targetSet);
         }
         if (deadAttacker) {
-            playerCardsOnBoard.Remove(attacker);
-            SortCards(playerCardsOnBoard);
-            OnBoardSizeChange.Invoke(playerCardsOnBoard.Count, maxBoardSize);
+            attackerSet.Remove(attacker);
+            SortCards(attackerSet);
+            OnBoardSizeChange.Invoke(attackerSet.Count, maxBoardSize);
         }
         return deadAttacker;
     }
