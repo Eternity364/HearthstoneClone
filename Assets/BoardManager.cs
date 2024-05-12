@@ -214,6 +214,7 @@ public class BoardManager : MonoBehaviour
             SortCards(attackerSet);
             OnBoardSizeChange.Invoke(attackerSet.Count, maxBoardSize);
         }
+
         return deadAttacker;
     }
 
@@ -241,6 +242,7 @@ public class BoardManager : MonoBehaviour
         };
         void OnFinishAttack () {
             attackingCard1.clickHandler.SetClickable(true);
+            attackingCard1.cardDisplay.SetRenderLayer("Board");
             if (attackAnimationQueue.Count >= 1) 
                 attackAnimationQueue.Dequeue()();
         };
@@ -264,6 +266,7 @@ public class BoardManager : MonoBehaviour
         }
         if (attackingCard != null) {
             attackingCard1.clickHandler.SetClickable(false);
+            attackingCard.cardDisplay.SetRenderLayer("Attacking");
             attackAnimation.DoPreparePart(attackingCard1.cardDisplay.intermediateObjectsTransform, AddToQueue);
             if (attackingCard1.cardDisplay.Data.Attack >= card.cardDisplay.Data.Health) {
                 card.clickHandler.SetClickable(false);
