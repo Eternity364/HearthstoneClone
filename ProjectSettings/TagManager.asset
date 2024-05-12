@@ -44,6 +44,9 @@ TagManager:
   - name: Board
     uniqueID: 919621911
     locked: 0
+  - name: Attacking
+    uniqueID: 533380719
+    locked: 0
   - name: Arrow2
     uniqueID: 3696899461
     locked: 0

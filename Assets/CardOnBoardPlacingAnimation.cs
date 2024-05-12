@@ -9,6 +9,7 @@ public class CardOnBoardPlacingAnimation : MonoBehaviour
     // Update is called once per frame
     public void Do(Transform cardTransform, Transform mainObjectsTransform, TweenCallback OnFirstPartFinish, TweenCallback OnFinish)
     {
+        print("yep cock");
         Sequence mySequencePosition = DOTween.Sequence();
         float duration = 0.6f;
         mySequencePosition.Append(cardTransform.DOLocalMove(new Vector3(-0.3f * cardTransform.localPosition.x, 0.1f, -1.2f), duration).SetEase(Ease.OutQuart).OnComplete(OnFirstPartFinish));
