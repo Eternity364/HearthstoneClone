@@ -37,6 +37,8 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
                 TargetClientIds = new ulong[]{playerConnectionManager.EnemyID}
             }
         };
+        if (!playerConnectionManager.IsClientIdPlayer(rpcParams.Receive.SenderClientId))
+            attackerIsPlayer = !attackerIsPlayer;
         PerformAttackClientRpc(attackerIsPlayer, attackerIndex, targetIndex, playerRpcParams);
         PerformAttackClientRpc(!attackerIsPlayer, attackerIndex, targetIndex, enemyRpcParams);
     }
