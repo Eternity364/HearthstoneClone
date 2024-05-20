@@ -17,7 +17,6 @@ public class MainMenu : MonoBehaviour
     private ControlScheme controlScheme;
 
     private void Start() {
-
         startClient.onClick.AddListener(() => {
             StartNetworkClient();
         });
