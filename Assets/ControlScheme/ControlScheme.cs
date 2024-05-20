@@ -9,5 +9,5 @@ public interface ControlScheme
         bManager.OnCardAttack += AttemptToPerformAttack;
     }
 
-    void AttemptToPerformAttack(bool attackerIsPlayer, int attackerIndex, int targetIndex);
+    void AttemptToPerformAttack(PlayerState state, int attackerIndex, int targetIndex);
 }

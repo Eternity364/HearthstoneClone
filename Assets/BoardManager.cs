@@ -20,9 +20,9 @@ public class BoardManager : MonoBehaviour
     [SerializeField]
     ArrowController arrowController;
     [SerializeField]
-    List<Card> enemyCardsSet;
+    public List<Card> enemyCardsSet;
     [SerializeField]
-    List<Card> playerCardsSet;
+    public List<Card> playerCardsSet;
     [SerializeField]
     Transform pointer;
     [SerializeField]
@@ -30,26 +30,31 @@ public class BoardManager : MonoBehaviour
 
     
     public UnityAction<int, int> OnBoardSizeChange;
-    public UnityAction<bool, int, int> OnCardAttack;
+    public UnityAction<PlayerState, int, int> OnCardAttack;
 
-    List<Card> placingCards = new List<Card>();
-    List<Card> enemyCardsOnBoard = new List<Card>();
-    List<Card> playerCardsOnBoard = new List<Card>();
-    List<Vector3> cardsPositions = new List<Vector3>();
-    List<Card> playerCardsOnBoardTemp = new List<Card>();
-    Queue<TweenCallback> attackAnimationQueue = new Queue<TweenCallback>();
+    private List<Card> placingCards = new List<Card>();
+    private List<Card> enemyCardsOnBoard = new List<Card>();
+    private List<Card> playerCardsOnBoard = new List<Card>();
+    private List<Vector3> cardsPositions = new List<Vector3>();
+    private List<Card> playerCardsOnBoardTemp = new List<Card>();
+    private Queue<TweenCallback> attackAnimationQueue = new Queue<TweenCallback>();
 
     public bool IsFilled
     {
         get { return playerCardsOnBoard.Count == maxBoardSize; }
     }
-
-    float positionShift = 0.4f;
-    Dictionary<List<Card>, List<Tweener>> sortingTweens;
-    Card attackingCard;
-
-    void Start () {
+    public List<Card> PlayerCardsOnBoard
+    {
+        get { return playerCardsOnBoard; }
     }
+    public List<Card> EnemyCardsOnBoard
+    {
+        get { return enemyCardsOnBoard; }
+    }
+
+    private float positionShift = 0.4f;
+    private Dictionary<List<Card>, List<Tweener>> sortingTweens;
+    private Card attackingCard;
 
     public void Initialize (bool isPlayer) {
         sortingTweens = new Dictionary<List<Card>, List<Tweener>>();
@@ -90,6 +95,11 @@ public class BoardManager : MonoBehaviour
             enemyCardsOnBoard[i].clickHandler.OnMouseLeaveCallbacks += OnEnemyCardMouseLeave;
             enemyCardsOnBoard[i].clickHandler.OnMouseUpEvents += AttemptToPerformAttack;
         }
+
+        
+        
+        GameState gameState = new GameState(playerCardsOnBoard, enemyCardsOnBoard);
+        print(gameState.ToJson());
     }
 
     void Update() {
@@ -196,8 +206,8 @@ public class BoardManager : MonoBehaviour
     }
 
     private bool FinishAttack(Card attacker, Card target) {
-        bool deadTarget = target.DealDamage(attacker.cardDisplay.Data.Attack);
-        bool deadAttacker = attacker.DealDamage(target.cardDisplay.Data.Attack);
+        bool deadTarget = target.DealDamage(attacker.GetData().Attack);
+        bool deadAttacker = attacker.DealDamage(target.GetData().Attack);
         List<Card> attackerSet = playerCardsOnBoard;
         List<Card> targetSet = enemyCardsOnBoard;
         if (enemyCardsOnBoard.Contains(attacker)) {
@@ -225,7 +235,7 @@ public class BoardManager : MonoBehaviour
 
     private void AttemptToPerformAttack(Card card) {
         if (attackingCard != null)
-            OnCardAttack.Invoke(true, playerCardsOnBoard.IndexOf(attackingCard), enemyCardsOnBoard.IndexOf(card));
+            OnCardAttack.Invoke(PlayerState.Player, playerCardsOnBoard.IndexOf(attackingCard), enemyCardsOnBoard.IndexOf(card));
     }
 
     private void PerformAttack(Card card) {
@@ -268,7 +278,7 @@ public class BoardManager : MonoBehaviour
             attackingCard1.clickHandler.SetClickable(false);
             attackingCard.cardDisplay.SetRenderLayer("Attacking");
             attackAnimation.DoPreparePart(attackingCard1.cardDisplay.intermediateObjectsTransform, AddToQueue);
-            if (attackingCard1.cardDisplay.Data.Attack >= card.cardDisplay.Data.Health) {
+            if (attackingCard1.GetData().Attack >= card.GetData().Health) {
                 card.clickHandler.SetClickable(false);
             }
             attackingCard = null;

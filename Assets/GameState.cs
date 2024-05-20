@@ -1,50 +1,73 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
-using Unity.Collections;
-using TMPro;
-using UnityEngine.Events;
+using UnityEngine.Assertions;
 
-public class GameState : NetworkBehaviour {
-    [SerializeField] TextMeshProUGUI  text;
-    private NetworkVariable<int> networkStringTest = new NetworkVariable<int>(0);
-    [SerializeField]
-    BoardManager boardManager;
+[Serializable]
+public class GameState
+{
+    public List<CardData> playerCardsData;
+    public List<CardData> opponentCardsData;
 
-    private void Start() {
-        boardManager.OnCardAttack += AttemptToPerformAttack;
-    }
+    public GameState(List<Card> playerCards, List<Card> opponentCards)
+    {
+        playerCardsData = new List<CardData>();
+        opponentCardsData = new List<CardData>();
 
-    private void AttemptToPerformAttack(bool attackerIsPlayer, int attackerIndex, int targetIndex) {
-        AttemptToPerformAttackServerRpc(attackerIsPlayer, attackerIndex, targetIndex, new ServerRpcParams());
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void AttemptToPerformAttackServerRpc(bool attackerIsPlayer, int attackerIndex, int targetIndex, ServerRpcParams rpcParams) {
-        // IReadOnlyList<ulong> clientsIds = NetworkManager.Singleton.ConnectedClientsIds;
-        // List<ulong> clientsIdsWithoutCurrentClientId = new List<ulong>();
-        // for (int i = 0; i < clientsIds.Count; i++)
-        // {
-        //     if (clientsIds[i] != rpcParams.Receive.SenderClientId)
-        //         clientsIdsWithoutCurrentClientId.Add(clientsIds[i]);
-        // }
-
-        ClientRpcParams clientRpcParams = new ClientRpcParams
+        for (int i = 0; i < playerCards.Count; i++)
         {
-            Send = new ClientRpcSendParams
-            {
-                TargetClientIds = NetworkManager.Singleton.ConnectedClientsIds
-            }
-        };
+            CardData data = playerCards[i].GetData();
+            playerCardsData.Add(new CardData(data.MaxHealth, data.Attack, data.Cost));
+            playerCardsData[i].Health = data.Health;
+        }
 
-        PerformAttackClientRpc(attackerIsPlayer, attackerIndex, targetIndex, clientRpcParams);
+        for (int i = 0; i < opponentCards.Count; i++)
+        {
+            CardData data = opponentCards[i].GetData();
+            opponentCardsData.Add(new CardData(data.MaxHealth, data.Attack, data.Cost));
+            opponentCardsData[i].Health = data.Health;
+        }
     }
 
-    [ClientRpc]
-    private void PerformAttackClientRpc(bool attackerIsPlayer, int attackerIndex, int targetIndex, ClientRpcParams rpdParams) {
-        
-        print("ClientRPCAttack");
-        boardManager.PerformAttackByIndex(attackerIsPlayer, attackerIndex, targetIndex);
+    public void Attack(PlayerState attackerState, int attackerIndex, PlayerState targetState, int targetIndex) {
+        Assert.IsTrue(attackerState != targetState);
+        List<CardData> attackerCardsData = GetListByState(attackerState);
+        List<CardData> targetCardsData = GetListByState(targetState);;
+        if (attackerState == PlayerState.Enemy)
+        {
+            attackerCardsData = opponentCardsData;
+            targetCardsData = playerCardsData;
+        }
+
+        CardData attackerData = attackerCardsData[attackerIndex];
+        CardData targetData = targetCardsData[targetIndex];
+        targetData.Health -= attackerData.Attack;
+        attackerData.Health -= targetData.Attack;
+        if (targetData.Health <= 0) {
+            targetCardsData.RemoveAt(targetIndex);
+        }
+        if (attackerData.Health <= 0) {
+            attackerCardsData.RemoveAt(attackerIndex);
+        }
+    }
+
+    public List<CardData> GetListByState(PlayerState state) {
+        if (state == PlayerState.Player)
+            return playerCardsData;
+        else
+            return opponentCardsData; 
+    }
+
+    public string ToJson() {
+        return JsonUtility.ToJson(this); 
+    }
+
+    public byte[] GetHash() {
+        return SecurityHelper.Hash(ToJson());
+    }
+
+    public string GetStringHash() {
+        return SecurityHelper.GetHexStringFromHash(GetHash());
     }
 }

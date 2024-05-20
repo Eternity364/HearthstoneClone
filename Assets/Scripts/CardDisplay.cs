@@ -51,6 +51,10 @@ public class CardDisplay : MonoBehaviour
     DisplayStates currentState = DisplayStates.InHand;
     bool shadowsActive = false;
 
+    void Awake()
+    {
+        UpdateDisplay();
+    }
 
     void Update()
     {

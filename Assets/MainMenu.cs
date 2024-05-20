@@ -15,6 +15,8 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private NetworkControlScheme networkControlScheme;
     [SerializeField] private BoardManager boardManager;
     private ControlScheme controlScheme;
+    private GameState gameState;
+    
 
     private void Start() {
         startClient.onClick.AddListener(() => {
@@ -43,6 +45,8 @@ public class MainMenu : MonoBehaviour
         startServer.gameObject.SetActive(false);
         startSinglePlayer.gameObject.SetActive(false);
         NetworkManager.Singleton.StartServer();
+        gameState = new GameState(boardManager.playerCardsSet, boardManager.enemyCardsSet);
+        GameStateInstance.SetInstance(gameState);
     }
 
     private void StartSinglePlayer()
@@ -53,10 +57,10 @@ public class MainMenu : MonoBehaviour
 
     private void StartClient(bool isPlayer)
     {
-        boardManager.Initialize(isPlayer);
-        controlScheme.Initialize();
         game.SetActive(true);
         gameObject.SetActive(false);
+        boardManager.Initialize(isPlayer);
+        controlScheme.Initialize();
     }
 
     private void ShowWaitingForOpponentText()
@@ -66,4 +70,26 @@ public class MainMenu : MonoBehaviour
         startServer.gameObject.SetActive(false);
         startSinglePlayer.gameObject.SetActive(false);
     }
+}
+
+public static class GameStateInstance
+{
+    private static GameState instance;
+ 
+    public static GameState Instance
+    {
+        get { return instance; }
+    }
+ 
+    public static void SetInstance(GameState instance)
+    {
+        if (GameStateInstance.instance == null)
+           GameStateInstance.instance =  instance;
+    }
+}
+
+public enum PlayerState : int
+{
+    Player = 0,
+    Enemy = 1,
 }

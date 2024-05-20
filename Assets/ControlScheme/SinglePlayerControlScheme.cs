@@ -12,7 +12,7 @@ public class SinglePlayerControlScheme : MonoBehaviour, ControlScheme {
         }
     }
 
-    void ControlScheme.AttemptToPerformAttack(bool attackerIsPlayer, int attackerIndex, int targetIndex) {
-        boardManager.PerformAttackByIndex(attackerIsPlayer, attackerIndex, targetIndex);
+    void ControlScheme.AttemptToPerformAttack(PlayerState state, int attackerIndex, int targetIndex) {
+        boardManager.PerformAttackByIndex(state == PlayerState.Player, attackerIndex, targetIndex);
     }
 }

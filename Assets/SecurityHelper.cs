@@ -4,18 +4,18 @@ using System.Security.Cryptography;
 
 public class SecurityHelper
 {
-    public static string Hash(string data)
+    public static byte[] Hash(string data)
     {
         byte[] textToBytes = Encoding.UTF8.GetBytes(data);
         SHA256Managed mySHA256 = new SHA256Managed();
 
         byte[] hashValue = mySHA256.ComputeHash(textToBytes);
 
-        return GetHexStringFromHash(hashValue);
+        return hashValue;
 
     }
 
-    private static string GetHexStringFromHash(byte[] hash)
+    public static string GetHexStringFromHash(byte[] hash)
     {
         string hexString = String.Empty;
 

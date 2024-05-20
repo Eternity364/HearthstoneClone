@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
-    [SerializeField]
-    int health;
-    [SerializeField]
-    int attack;
-    [SerializeField]
-    int cost;
     public AngleSetter angleSetter;
 
     [SerializeField]
@@ -26,7 +20,6 @@ public class Card : MonoBehaviour
 
     void Start()
     {
-        cardDisplay.SetData(new CardData(health, attack, cost));
     }
     
     public bool DealDamage(int damage)
@@ -36,6 +29,10 @@ public class Card : MonoBehaviour
         bool dead = cardDisplay.Data.Health <= 0;
         if (dead) StartDeathAnimation();
         return dead;
+    }
+
+    public CardData GetData() {
+        return cardDisplay.Data;
     }
     
     void StartDeathAnimation()

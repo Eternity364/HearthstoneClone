@@ -1,9 +1,12 @@
+using System;
 using UnityEngine;
 
+[Serializable]
 public class CardData
 {
-    private int health, attack, cost;
-    private int maxHealth;
+    [SerializeField] private int health, attack, cost;
+    [SerializeField] private int maxHealth;
+    
     public int Health
     {
         get { return health; }
