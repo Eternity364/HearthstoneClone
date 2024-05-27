@@ -9,8 +9,9 @@ public class GameState
 {
     public List<CardData> playerCardsData;
     public List<CardData> opponentCardsData;
+    public Action<PlayerState, int> OnCardDead;
 
-    public GameState(List<Card> playerCards, List<Card> opponentCards)
+    public GameState(List<Card> playerCards, List<Card> opponentCards, Action<PlayerState, int> OnCardDead)
     {
         playerCardsData = new List<CardData>();
         opponentCardsData = new List<CardData>();
@@ -28,17 +29,14 @@ public class GameState
             opponentCardsData.Add(new CardData(data.MaxHealth, data.Attack, data.Cost));
             opponentCardsData[i].Health = data.Health;
         }
+
+        this.OnCardDead = OnCardDead;
     }
 
     public void Attack(PlayerState attackerState, int attackerIndex, PlayerState targetState, int targetIndex) {
         Assert.IsTrue(attackerState != targetState);
         List<CardData> attackerCardsData = GetListByState(attackerState);
         List<CardData> targetCardsData = GetListByState(targetState);;
-        if (attackerState == PlayerState.Enemy)
-        {
-            attackerCardsData = opponentCardsData;
-            targetCardsData = playerCardsData;
-        }
 
         CardData attackerData = attackerCardsData[attackerIndex];
         CardData targetData = targetCardsData[targetIndex];
@@ -46,9 +44,11 @@ public class GameState
         attackerData.Health -= targetData.Attack;
         if (targetData.Health <= 0) {
             targetCardsData.RemoveAt(targetIndex);
+            OnCardDead(targetState, targetIndex);
         }
         if (attackerData.Health <= 0) {
             attackerCardsData.RemoveAt(attackerIndex);
+            OnCardDead(attackerState, attackerIndex);
         }
     }
 

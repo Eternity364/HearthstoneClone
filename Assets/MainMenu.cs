@@ -45,8 +45,11 @@ public class MainMenu : MonoBehaviour
         startServer.gameObject.SetActive(false);
         startSinglePlayer.gameObject.SetActive(false);
         NetworkManager.Singleton.StartServer();
-        gameState = new GameState(boardManager.playerCardsSet, boardManager.enemyCardsSet);
+        gameState = new GameState(boardManager.playerCardsSet, boardManager.enemyCardsSet, OnCardDead);
         GameStateInstance.SetInstance(gameState);
+    }
+
+    private void OnCardDead(PlayerState state, int index) {
     }
 
     private void StartSinglePlayer()
@@ -61,6 +64,8 @@ public class MainMenu : MonoBehaviour
         gameObject.SetActive(false);
         boardManager.Initialize(isPlayer);
         controlScheme.Initialize();
+        gameState = new GameState(boardManager.PlayerCardsOnBoard, boardManager.EnemyCardsOnBoard, boardManager.OnCardDead);
+        GameStateInstance.SetInstance(gameState);
     }
 
     private void ShowWaitingForOpponentText()

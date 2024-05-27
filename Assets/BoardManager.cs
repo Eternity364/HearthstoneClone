@@ -95,11 +95,6 @@ public class BoardManager : MonoBehaviour
             enemyCardsOnBoard[i].clickHandler.OnMouseLeaveCallbacks += OnEnemyCardMouseLeave;
             enemyCardsOnBoard[i].clickHandler.OnMouseUpEvents += AttemptToPerformAttack;
         }
-
-        
-        
-        GameState gameState = new GameState(playerCardsOnBoard, enemyCardsOnBoard);
-        print(gameState.ToJson());
     }
 
     void Update() {
@@ -205,6 +200,22 @@ public class BoardManager : MonoBehaviour
         PerformAttack(target);
     }
 
+    public void PerformAttackByCard(Card attacker, Card target) {
+        attackingCard = attacker;
+        PerformAttack(target);
+    }
+
+    public void OnCardDead(PlayerState state, int index) {
+        if (state == PlayerState.Player) {
+            playerCardsOnBoard[index].clickHandler.SetClickable(false);
+            playerCardsOnBoard.RemoveAt(index);
+        }
+        if (state == PlayerState.Enemy) {
+            enemyCardsOnBoard[index].clickHandler.SetClickable(false);
+            enemyCardsOnBoard.RemoveAt(index);
+        }
+    }
+
     private bool FinishAttack(Card attacker, Card target) {
         bool deadTarget = target.DealDamage(attacker.GetData().Attack);
         bool deadAttacker = attacker.DealDamage(target.GetData().Attack);
@@ -215,13 +226,12 @@ public class BoardManager : MonoBehaviour
             targetSet = playerCardsOnBoard;
         }
 
-        if (deadTarget) {
-            targetSet.Remove(target);
+        if (deadTarget || deadAttacker) {
             SortCards(targetSet);
-        }
-        if (deadAttacker) {
-            attackerSet.Remove(attacker);
             SortCards(attackerSet);
+        }
+        
+        if (deadAttacker) {
             OnBoardSizeChange.Invoke(attackerSet.Count, maxBoardSize);
         }
 
