@@ -31,8 +31,6 @@ public class BoardManager : MonoBehaviour
     
     public UnityAction<int, int> OnBoardSizeChange;
     public UnityAction<PlayerState, int, int> OnCardAttack;
-
-    private List<Card> placingCards = new List<Card>();
     private List<Card> enemyCardsOnBoard = new List<Card>();
     private List<Card> playerCardsOnBoard = new List<Card>();
     private List<Vector3> cardsPositions = new List<Vector3>();
@@ -71,7 +69,7 @@ public class BoardManager : MonoBehaviour
             for (int i = 0; i < cardsSet.Count; i++)
             {
                 //cardsSet[i].gameObject.transform.localPosition = Vector3.zero;
-                PlaceCard(cardsSet[i], false);
+                PlaceCard(cardsSet[i], PlayerState.Player, false);
             }
         }
 
@@ -103,12 +101,8 @@ public class BoardManager : MonoBehaviour
         pointer.localPosition = PositionGetter.GetPosition(PositionGetter.ColliderType.Background);
     }
 
-    public void PlaceCard(Card card, bool withAnimation = true)
+    public void PlaceCard(Card card, PlayerState side, bool withAnimation = true, int forcedIndex = -1)
     {
-        placingCards.Add(card);
-        card.gameObject.transform.SetParent(playerBoardTransform);
-        Vector3 position = card.transform.position;
-        card.transform.localPosition = new Vector3();
 
         void OnFirstPartFinish () {
             card.cardDisplay.ChangeState(CardDisplay.DisplayStates.OnField);
@@ -119,19 +113,33 @@ public class BoardManager : MonoBehaviour
             card.clickHandler.OnPick += OnCardClick;
             card.clickHandler.SetClickable(true);
         }
+
+        List<Card> cards = playerCardsOnBoard;
+        if (side == PlayerState.Player) {
+            card.gameObject.transform.SetParent(playerBoardTransform);
+        }
+        else {
+            cards = enemyCardsOnBoard;
+            card.gameObject.transform.SetParent(enemyBoardTransform);
+        }
+        Vector3 position = card.transform.position;
+        card.transform.localPosition = new Vector3();
     
         if (withAnimation) 
         {
             card.cardDisplay.intermediateObjectsTransform.position = position;
-            playerCardsOnBoard.Insert(playerCardsOnBoardTemp.IndexOf(tempCard), card);
+            int index = forcedIndex;
+            if (index == -1)
+                index = playerCardsOnBoardTemp.IndexOf(tempCard);
+            cards.Insert(index, card);
             card.cardDisplay.SetRenderLayer("LandingOnBoard");
             placingAnimation.Do(card.cardDisplay.intermediateObjectsTransform, card.cardDisplay.mainObjectsTransform, OnFirstPartFinish, OnAnimationFinish);
-            SortCards(playerCardsOnBoard);
-            OnBoardSizeChange.Invoke(playerCardsOnBoard.Count, maxBoardSize);
+            SortCards(cards);
+            OnBoardSizeChange.Invoke(cards.Count, maxBoardSize);
         }
         else
         {
-            playerCardsOnBoard.Add(card);
+            cards.Add(card);
             OnAnimationFinish();
         }
     }
@@ -230,7 +238,7 @@ public class BoardManager : MonoBehaviour
             SortCards(targetSet);
             SortCards(attackerSet);
         }
-        
+
         if (deadAttacker) {
             OnBoardSizeChange.Invoke(attackerSet.Count, maxBoardSize);
         }

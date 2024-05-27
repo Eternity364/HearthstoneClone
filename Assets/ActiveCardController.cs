@@ -27,7 +27,7 @@ public class ActiveCardController : MonoBehaviour
         //pickedCard.cardDisplay.gameObject.transform.SetParent(hand.gameObject.transform);
         //pickedCard.cardDisplay.SetShadowActive(false);
         
-        boardManager.PlaceCard(pickedCard);
+        boardManager.PlaceCard(pickedCard, PlayerState.Player);
         pickedCard.RotationManager.SetActive(false);
         hand.Remove(pickedCard);
         hand.Sort();

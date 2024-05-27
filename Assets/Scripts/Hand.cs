@@ -55,8 +55,17 @@ public class Hand : MonoBehaviour
                 cards[i].cardDisplay.SetCardFrontActive(false);
                 cards[i].clickHandler.SetClickable(false);
             }
+
+            //StartCoroutine(StartTestCardPlacing());
         }
     }
+
+    // IEnumerator StartTestCardPlacing()
+    // {
+    //     yield return new WaitForSeconds(3);
+
+    //     PlaceCard(cards[2], 2);
+    // }
 
     private void OnCardPick(Card card) {
         KillCardTweens(card);
@@ -76,6 +85,13 @@ public class Hand : MonoBehaviour
                 tween1.Kill();
             }
         }
+    }
+
+    private void PlaceCard(Card card, int index) {
+        board.PlaceCard(card, playerState, true, index);
+        card.cardDisplay.SetCardFrontActive(true);
+        cards.RemoveAt(index);
+        Sort();
     }
 
     private void OnMouseEnterCardAnimation(Card card) {
