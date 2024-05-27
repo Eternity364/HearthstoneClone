@@ -56,11 +56,6 @@ public class CardDisplay : MonoBehaviour
         UpdateDisplay();
     }
 
-    void Update()
-    {
-        OnCardTurningVisibility();
-    }
-
     public void SetData(CardData data)
     {
         //if (this.data == null)
@@ -86,6 +81,12 @@ public class CardDisplay : MonoBehaviour
         cardRenderOrderSetter.Set(layer);
     }
 
+    public void SetCardFrontActive(bool active)
+    {
+        cardBack.SetActive(!active);
+        textCanvasGO.SetActive(active);
+    }
+
     public void UpdateDisplay() {
         if (this.data != null) {
             inHandAttack.text = data.Attack.ToString();
@@ -98,12 +99,12 @@ public class CardDisplay : MonoBehaviour
         }
     }
 
-    void OnCardTurningVisibility()
-    {
-        bool back = card.gameObject.transform.eulerAngles.y > 93.61 && card.gameObject.transform.eulerAngles.y < 273.75f;
-        cardBack.SetActive(back);
-        textCanvasGO.SetActive(!back);
-    }
+    // void OnCardTurningVisibility()
+    // {
+    //     bool back = card.gameObject.transform.eulerAngles.y > 93.61 && card.gameObject.transform.eulerAngles.y < 273.75f;
+    //     cardBack.SetActive(back);
+    //     textCanvasGO.SetActive(!back);
+    // }
 
     public void SetShadowActive(bool value)
     {

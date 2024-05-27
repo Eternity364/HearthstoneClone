@@ -22,7 +22,9 @@ public class Hand : MonoBehaviour
     [SerializeField]
     ActiveCardController cardController;
     [SerializeField]
-    BoardManager board;
+    BoardManager board;  
+    [SerializeField]
+    PlayerState playerState;
 
     private Dictionary<Card, List<Tweener>> currentAnimations;
     private Card hoveringCard;
@@ -35,15 +37,25 @@ public class Hand : MonoBehaviour
 
         Sort();
 
-        for (int i = 0; i < lenght; i++)
-        {
-            cards[i].clickHandler.OnPick += OnCardPick;
-            cards[i].clickHandler.OnPick += cardController.PickCard;
-            cards[i].clickHandler.OnMouseEnterCallbacks += OnMouseEnterCardAnimation;
-            cards[i].clickHandler.OnMouseLeaveCallbacks += OnMouseLeaveCardAnimation;
-        }
+        if (playerState == PlayerState.Player) {
+            for (int i = 0; i < lenght; i++)
+            {
+                cards[i].clickHandler.OnPick += OnCardPick;
+                cards[i].clickHandler.OnPick += cardController.PickCard;
+                cards[i].clickHandler.OnMouseEnterCallbacks += OnMouseEnterCardAnimation;
+                cards[i].clickHandler.OnMouseLeaveCallbacks += OnMouseLeaveCardAnimation;
+            }
 
-        board.OnBoardSizeChange += OnBoardSizeChange;
+            board.OnBoardSizeChange += OnBoardSizeChange;
+        } 
+        else
+        {
+            for (int i = 0; i < cards.Count; i++)
+            {
+                cards[i].cardDisplay.SetCardFrontActive(false);
+                cards[i].clickHandler.SetClickable(false);
+            }
+        }
     }
 
     private void OnCardPick(Card card) {
@@ -143,12 +155,14 @@ public class Hand : MonoBehaviour
         for (int i = 0; i < lenght; i++)
         {
             float angle = localStartAngle + (fanSortingAngleShift * i);
+            Quaternion originalRotation = cards[i].transform.rotation;
             Quaternion rotation = Quaternion.Euler(0, 0, angle);
-            Quaternion cardRotation = Quaternion.Euler(0, 0, (startAngle + (fanSortingAngleShift * i)) * 0.5f);
+            Quaternion cardRotation = Quaternion.Euler(0, 0, (startAngle + (fanSortingAngleShift * i)) * 0.5f); 
+            print("angle = " + (startAngle + (fanSortingAngleShift * i)) * 0.5f);
             Vector3 position = rotation * fanSortingStartPosition - fanSortingStartPosition;
             position.z = 0.001f * i;
             cards[i].transform.localPosition = position;
-            cards[i].transform.rotation = cardRotation;
+            cards[i].transform.localRotation = cardRotation;
             cards[i].cardDisplay.SetRenderLayer("InHandCard" + (lenght - i).ToString());
         }
     }

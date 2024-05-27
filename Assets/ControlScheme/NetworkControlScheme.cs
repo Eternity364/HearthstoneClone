@@ -68,8 +68,6 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         string clientHash = SecurityHelper.GetHexStringFromHash(stateHash);
         if (serverHash == clientHash) {        
             PerformAttackerMoveClientRpc(attackerRpcParams);
-            print("player_count = " + state.GetReveresed().playerCardsData.Count);
-            print("oppo_count = " + state.GetReveresed().opponentCardsData.Count);
             PerformTargetMoveClientRpc(attackerIndex, targetIndex, state.GetReveresed().GetHash(), targetRpcParams);
         }
     }
@@ -84,8 +82,6 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         attacker = boardManager.EnemyCardsOnBoard[attackerIndex];
         target = boardManager.PlayerCardsOnBoard[targetIndex];
         GameStateInstance.Instance.Attack(PlayerState.Enemy, attackerIndex, PlayerState.Player, targetIndex);
-        print("player_count = " + GameStateInstance.Instance.playerCardsData.Count);
-        print("oppo_count = " + GameStateInstance.Instance.opponentCardsData.Count);
 
         string serverHash = SecurityHelper.GetHexStringFromHash(stateHash);
         string clientHash = GameStateInstance.Instance.GetStringHash();
