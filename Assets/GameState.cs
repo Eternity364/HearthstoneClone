@@ -9,6 +9,7 @@ public class GameState
 {
     public List<CardData> playerCardsData;
     public List<CardData> opponentCardsData;
+    [NonSerialized]
     public Action<PlayerState, int> OnCardDead;
 
     public GameState(List<Card> playerCards, List<Card> opponentCards, Action<PlayerState, int> OnCardDead)
@@ -33,6 +34,28 @@ public class GameState
         this.OnCardDead = OnCardDead;
     }
 
+    private GameState(List<CardData> playerCards, List<CardData> opponentCards)
+    {
+        playerCardsData = new List<CardData>();
+        opponentCardsData = new List<CardData>();
+
+        for (int i = 0; i < playerCards.Count; i++)
+        {
+            CardData data = playerCards[i];
+            playerCardsData.Add(new CardData(data.MaxHealth, data.Attack, data.Cost));
+            playerCardsData[i].Health = data.Health;
+        }
+
+        for (int i = 0; i < opponentCards.Count; i++)
+        {
+            CardData data = opponentCards[i];
+            opponentCardsData.Add(new CardData(data.MaxHealth, data.Attack, data.Cost));
+            opponentCardsData[i].Health = data.Health;
+        }
+
+        this.OnCardDead = OnCardDeadEmpty;
+    }
+
     public void Attack(PlayerState attackerState, int attackerIndex, PlayerState targetState, int targetIndex) {
         Assert.IsTrue(attackerState != targetState);
         List<CardData> attackerCardsData = GetListByState(attackerState);
@@ -50,6 +73,13 @@ public class GameState
             attackerCardsData.RemoveAt(attackerIndex);
             OnCardDead(attackerState, attackerIndex);
         }
+    }
+
+    public void OnCardDeadEmpty(PlayerState state, int index) {
+    }
+
+    public GameState GetReveresed() {
+        return new GameState(opponentCardsData, playerCardsData);
     }
 
     public List<CardData> GetListByState(PlayerState state) {

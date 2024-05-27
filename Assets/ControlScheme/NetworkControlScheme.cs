@@ -23,11 +23,11 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         attacker = boardManager.PlayerCardsOnBoard[attackerIndex];
         target = boardManager.EnemyCardsOnBoard[targetIndex];
         GameStateInstance.Instance.Attack(PlayerState.Player, attackerIndex, PlayerState.Enemy, targetIndex);
-        AttemptToPerformAttackServerRpc(true, attackerIndex, targetIndex, GameStateInstance.Instance.GetHash(), new ServerRpcParams());
+        AttemptToPerformAttackServerRpc(attackerIndex, targetIndex, GameStateInstance.Instance.GetHash(), new ServerRpcParams());
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void AttemptToPerformAttackServerRpc(bool attackerIsPlayer, int attackerIndex, int targetIndex, byte[] stateHash, ServerRpcParams rpcParams) {
+    private void AttemptToPerformAttackServerRpc(int attackerIndex, int targetIndex, byte[] stateHash, ServerRpcParams rpcParams) {
         ClientRpcParams playerRpcParams = new ClientRpcParams
         {
             Send = new ClientRpcSendParams
@@ -43,8 +43,9 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
                 TargetClientIds = new ulong[]{playerConnectionManager.EnemyID}
             }
         };
+        bool attackerIsPlayer = true;
         if (!playerConnectionManager.IsClientIdPlayer(rpcParams.Receive.SenderClientId))
-            attackerIsPlayer = !attackerIsPlayer;
+            attackerIsPlayer = false;
 
         PlayerState attackerState = PlayerState.Player;
         PlayerState targetState = PlayerState.Enemy;
@@ -55,15 +56,22 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         }
         
         GameStateInstance.Instance.Attack(attackerState, attackerIndex, targetState, targetIndex);
-        string serverHash = GameStateInstance.Instance.GetStringHash();
+        ClientRpcParams attackerRpcParams = playerRpcParams;
+        ClientRpcParams targetRpcParams = enemyRpcParams;
+        GameState state = GameStateInstance.Instance;
+        if (!attackerIsPlayer) {
+            state = GameStateInstance.Instance.GetReveresed();
+            attackerRpcParams = enemyRpcParams;
+            targetRpcParams = playerRpcParams;
+        }
+        string serverHash = state.GetStringHash();
         string clientHash = SecurityHelper.GetHexStringFromHash(stateHash);
         if (serverHash == clientHash) {        
-            PerformAttackerMoveClientRpc(playerRpcParams);
-            PerformTargetMoveClientRpc(attackerIndex, targetIndex, GameStateInstance.Instance.GetHash(), enemyRpcParams);
+            PerformAttackerMoveClientRpc(attackerRpcParams);
+            print("player_count = " + state.GetReveresed().playerCardsData.Count);
+            print("oppo_count = " + state.GetReveresed().opponentCardsData.Count);
+            PerformTargetMoveClientRpc(attackerIndex, targetIndex, state.GetReveresed().GetHash(), targetRpcParams);
         }
-
-        print("atta = " + attackerIndex);
-        print("tar = " + targetIndex);
     }
 
     [ClientRpc]
@@ -75,12 +83,13 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     private void PerformTargetMoveClientRpc(int attackerIndex, int targetIndex, byte[] stateHash, ClientRpcParams rpdParams) {
         attacker = boardManager.EnemyCardsOnBoard[attackerIndex];
         target = boardManager.PlayerCardsOnBoard[targetIndex];
-        print("atta = " + attackerIndex);
-        print("tar = " + targetIndex);
-        print(GameStateInstance.Instance.ToJson());
         GameStateInstance.Instance.Attack(PlayerState.Enemy, attackerIndex, PlayerState.Player, targetIndex);
-        
-        //if (stateHash == GameStateInstance.Instance.GetHash())
+        print("player_count = " + GameStateInstance.Instance.playerCardsData.Count);
+        print("oppo_count = " + GameStateInstance.Instance.opponentCardsData.Count);
+
+        string serverHash = SecurityHelper.GetHexStringFromHash(stateHash);
+        string clientHash = GameStateInstance.Instance.GetStringHash();
+        if (serverHash == clientHash)
             boardManager.PerformAttackByCard(attacker, target);
     }
 }
