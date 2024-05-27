@@ -110,8 +110,14 @@ public class BoardManager : MonoBehaviour
 
         void OnAnimationFinish () {
             card.cardDisplay.SetRenderLayer("Board");
-            card.clickHandler.OnPick += OnCardClick;
             card.clickHandler.SetClickable(true);
+            if (side == PlayerState.Player) 
+                card.clickHandler.OnPick += OnCardClick;
+            else {
+                card.clickHandler.OnMouseEnterCallbacks += OnEnemyCardMouseEnter;
+                card.clickHandler.OnMouseLeaveCallbacks += OnEnemyCardMouseLeave;
+                card.clickHandler.OnMouseUpEvents += AttemptToPerformAttack;
+            }
         }
 
         List<Card> cards = playerCardsOnBoard;

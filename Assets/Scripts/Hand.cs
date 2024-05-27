@@ -56,16 +56,16 @@ public class Hand : MonoBehaviour
                 cards[i].clickHandler.SetClickable(false);
             }
 
-            //StartCoroutine(StartTestCardPlacing());
+            StartCoroutine(StartTestCardPlacing());
         }
     }
 
-    // IEnumerator StartTestCardPlacing()
-    // {
-    //     yield return new WaitForSeconds(3);
+    IEnumerator StartTestCardPlacing()
+    {
+        yield return new WaitForSeconds(3);
 
-    //     PlaceCard(cards[2], 2);
-    // }
+        PlaceCard(cards[2], 2);
+    }
 
     private void OnCardPick(Card card) {
         KillCardTweens(card);
