@@ -5,31 +5,25 @@ using Unity.Netcode;
 using UnityEngine.Assertions;
 using UnityEngine.Networking;
 using System;
+using TMPro;
 
 public class PlayerConnectionManager : NetworkBehaviour 
 {
+    [SerializeField]
+    GameInstanceManager gameInstanceManager;
+    [SerializeField]
+    GameObject game;
+    [SerializeField]
+    TextMeshProUGUI instanceIdtext;
+
     private PlayerPair playerPair;
     private Action OnOnePlayerConnected;
     private Action<bool> OnPairComplete;
-    
-    public ulong PlayerID
-    {
-        get
-        {
-            return playerPair.PlayerID;
-        }
-    }
-    public ulong EnemyID
-    {
-        get
-        {
-            return playerPair.EnemyID;
-        }
-    }
 
     public void Initialize(Action<bool> OnPairComplete, Action OnOnePlayerConnected)
     {
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+        NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
         playerPair = new PlayerPair(0, 0);
         this.OnPairComplete = OnPairComplete;
         this.OnOnePlayerConnected = OnOnePlayerConnected;
@@ -50,15 +44,39 @@ public class PlayerConnectionManager : NetworkBehaviour
 
         bool isPairCompleted = playerPair.IsPairCompleted();
         bool isPlayer = IsClientIdPlayer(clientId);
-        SendClientInfo(IsClientIdPlayer(clientId), isPairCompleted, clientId);
         if (isPairCompleted) {
             ulong opponentID = playerPair.GetOpponentID(clientId);
             bool isPlayer1 = IsClientIdPlayer(opponentID);
-            SendClientInfo(IsClientIdPlayer(playerPair.GetOpponentID(clientId)), isPairCompleted, playerPair.GetOpponentID(clientId));
+            GameInstance instance = gameInstanceManager.Create(playerPair);
+            ulong instanceId = Convert.ToUInt64(gameInstanceManager.GetInstanceID(instance));
+            SendClientInfo(IsClientIdPlayer(clientId), isPairCompleted, instanceId, clientId);
+            SendClientInfo(IsClientIdPlayer(playerPair.GetOpponentID(clientId)), isPairCompleted, instanceId, playerPair.GetOpponentID(clientId));
+            playerPair = new PlayerPair(0, 0);
+        }
+        else
+        {
+            SendClientInfo(IsClientIdPlayer(clientId), isPairCompleted, 9999, clientId);
         }
     }
 
-    private void SendClientInfo(bool isPlayer, bool isPairCompleted, ulong clientId) {
+    private void OnClientDisconnected(ulong clientId) {
+        GameInstance instance = gameInstanceManager.GetInstanceByPlayerID(clientId);
+        if (instance != null) {
+            ulong opponentID = instance.Pair.GetOpponentID(clientId);
+            gameInstanceManager.Remove(instance);
+            
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[]{opponentID}
+                }
+            };
+            SendClientShutDownClientRpc(clientRpcParams);
+        }
+    }
+
+    private void SendClientInfo(bool isPlayer, bool isPairCompleted, ulong instanceId, ulong clientId) {
         ClientRpcParams clientRpcParams = new ClientRpcParams
         {
             Send = new ClientRpcSendParams
@@ -66,18 +84,22 @@ public class PlayerConnectionManager : NetworkBehaviour
                 TargetClientIds = new ulong[]{clientId}
             }
         };
-        SendInfoClientRpc(isPlayer, isPairCompleted, clientRpcParams);
+        SendInfoClientRpc(isPlayer, isPairCompleted, instanceId, clientRpcParams);
     }
 
     [ClientRpc]
-    private void SendInfoClientRpc(bool isPlayer, bool isPairCompleted, ClientRpcParams rpdParams) {
-        print("IsPlayer = " + isPlayer);
-        print("isPairCompleted = " + isPairCompleted);
-
+    private void SendInfoClientRpc(bool isPlayer, bool isPairCompleted, ulong instanceId, ClientRpcParams rpdParams) {
         if (isPairCompleted)
             OnPairComplete(isPlayer);
         else
             OnOnePlayerConnected();
+        instanceIdtext.SetText(instanceId.ToString());
+    }
+    
+    [ClientRpc]
+    private void SendClientShutDownClientRpc(ClientRpcParams rpdParams) {
+        game.SetActive(false);
+        Application.Quit();
     }
 }
 

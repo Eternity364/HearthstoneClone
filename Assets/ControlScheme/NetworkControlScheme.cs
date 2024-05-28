@@ -11,8 +11,9 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     ActiveCardController activeCardController;
     [SerializeField]
     Hand opponentHand;
+    [SerializeField]
+    GameInstanceManager gameInstanceManager;
 
-    
     private Card attacker, target;
 
     BoardManager ControlScheme.bManager
@@ -46,67 +47,71 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
 
     [ServerRpc(RequireOwnership = false)]
     private void AttemptToPerformAttackServerRpc(int attackerIndex, int targetIndex, byte[] stateHash, ServerRpcParams rpcParams) {
-        ClientRpcParams playerRpcParams = CreateClientRpcParams(playerConnectionManager.PlayerID);
-        ClientRpcParams enemyRpcParams = CreateClientRpcParams(playerConnectionManager.EnemyID);
+        GameInstance instance = gameInstanceManager.GetInstanceByPlayerID(rpcParams.Receive.SenderClientId);
+        if (instance != null) {
+            ClientRpcParams playerRpcParams = CreateClientRpcParams(instance.Pair.PlayerID);
+            ClientRpcParams enemyRpcParams = CreateClientRpcParams(instance.Pair.EnemyID);
 
-        bool attackerIsPlayer = true;
-        if (!playerConnectionManager.IsClientIdPlayer(rpcParams.Receive.SenderClientId))
-            attackerIsPlayer = false;
+            bool attackerIsPlayer = true;
+            if (!instance.Pair.IsClientIdPlayer(rpcParams.Receive.SenderClientId))
+                attackerIsPlayer = false;
 
-        PlayerState attackerState = PlayerState.Player;
-        PlayerState targetState = PlayerState.Enemy;
-        if (!attackerIsPlayer)
-        {
-            attackerState = PlayerState.Enemy;
-            targetState = PlayerState.Player;
-        }
-        
-        GameStateInstance.Instance.Attack(attackerState, attackerIndex, targetState, targetIndex);
-        ClientRpcParams attackerRpcParams = playerRpcParams;
-        ClientRpcParams targetRpcParams = enemyRpcParams;
-        GameState state = GameStateInstance.Instance;
-        if (!attackerIsPlayer) {
-            state = GameStateInstance.Instance.GetReveresed();
-            attackerRpcParams = enemyRpcParams;
-            targetRpcParams = playerRpcParams;
-        }
-        string serverHash = state.GetStringHash();
-        string clientHash = SecurityHelper.GetHexStringFromHash(stateHash);
-        if (serverHash == clientHash) {        
-            state.GetReveresed().PrintCounts();
-            PerformAttackerMoveClientRpc(attackerRpcParams);
-            PerformTargetMoveClientRpc(attackerIndex, targetIndex, state.GetReveresed().GetHash(), targetRpcParams);
+            PlayerState attackerState = PlayerState.Player;
+            PlayerState targetState = PlayerState.Enemy;
+            if (!attackerIsPlayer)
+            {
+                attackerState = PlayerState.Enemy;
+                targetState = PlayerState.Player;
+            }
+            
+            instance.GameState.Attack(attackerState, attackerIndex, targetState, targetIndex);
+            ClientRpcParams attackerRpcParams = playerRpcParams;
+            ClientRpcParams targetRpcParams = enemyRpcParams;
+            GameState state = instance.GameState;
+            if (!attackerIsPlayer) {
+                state = instance.GameState.GetReveresed();
+                attackerRpcParams = enemyRpcParams;
+                targetRpcParams = playerRpcParams;
+            }
+            string serverHash = state.GetStringHash();
+            string clientHash = SecurityHelper.GetHexStringFromHash(stateHash);
+            if (serverHash == clientHash) {        
+                PerformAttackerMoveClientRpc(attackerRpcParams);
+                PerformTargetMoveClientRpc(attackerIndex, targetIndex, state.GetReveresed().GetHash(), targetRpcParams);
+            }
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void AttemptToPerformCardPlacementServerRpc(int handIndex, int boardIndex, byte[] stateHash, ServerRpcParams rpcParams) {
-        ClientRpcParams playerRpcParams = CreateClientRpcParams(playerConnectionManager.PlayerID);
-        ClientRpcParams enemyRpcParams = CreateClientRpcParams(playerConnectionManager.EnemyID);
+        GameInstance instance = gameInstanceManager.GetInstanceByPlayerID(rpcParams.Receive.SenderClientId);
+        if (instance != null) {
+            ClientRpcParams playerRpcParams = CreateClientRpcParams(instance.Pair.PlayerID);
+            ClientRpcParams enemyRpcParams = CreateClientRpcParams(instance.Pair.EnemyID);
 
-        bool IsPlayer = playerConnectionManager.IsClientIdPlayer(rpcParams.Receive.SenderClientId);
+            bool IsPlayer = instance.Pair.IsClientIdPlayer(rpcParams.Receive.SenderClientId);
 
-        PlayerState state = PlayerState.Player;
-        if (!IsPlayer)
-        {
-            state = PlayerState.Enemy;
-        }
-        
-        GameStateInstance.Instance.PlaceCard(state, handIndex, boardIndex);
-        ClientRpcParams placementClientRpcParams = enemyRpcParams;
-        ClientRpcParams controlReleaseClientRpcParams = playerRpcParams;
-        GameState gameState = GameStateInstance.Instance;
-        if (!IsPlayer) {
-            gameState = GameStateInstance.Instance.GetReveresed();
-            placementClientRpcParams = playerRpcParams;
-            controlReleaseClientRpcParams = enemyRpcParams;
-        }
-        string serverHash = gameState.GetStringHash();
-        string clientHash = SecurityHelper.GetHexStringFromHash(stateHash);
-        if (serverHash == clientHash) {        
-            //gameState.GetReveresed().PrintCounts();
-            PerformCardPlacementClientRpc(handIndex, boardIndex, gameState.GetReveresed().GetHash(), placementClientRpcParams);
-            PerformControlReleaseClientRpc(controlReleaseClientRpcParams);
+            PlayerState state = PlayerState.Player;
+            if (!IsPlayer)
+            {
+                state = PlayerState.Enemy;
+            }
+            
+            instance.GameState.PlaceCard(state, handIndex, boardIndex);
+            ClientRpcParams placementClientRpcParams = enemyRpcParams;
+            ClientRpcParams controlReleaseClientRpcParams = playerRpcParams;
+            GameState gameState = instance.GameState;
+            if (!IsPlayer) {
+                gameState = instance.GameState.GetReveresed();
+                placementClientRpcParams = playerRpcParams;
+                controlReleaseClientRpcParams = enemyRpcParams;
+            }
+            string serverHash = gameState.GetStringHash();
+            string clientHash = SecurityHelper.GetHexStringFromHash(stateHash);
+            if (serverHash == clientHash) {        
+                PerformCardPlacementClientRpc(handIndex, boardIndex, gameState.GetReveresed().GetHash(), placementClientRpcParams);
+                PerformControlReleaseClientRpc(controlReleaseClientRpcParams);
+            }
         }
     }
         
