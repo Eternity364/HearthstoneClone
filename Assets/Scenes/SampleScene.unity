@@ -168,6 +168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardManager: {fileID: 1195510630}
+  activeCardController: {fileID: 146545957}
 --- !u!1 &146545951
 GameObject:
   m_ObjectHideFlags: 0
@@ -618,6 +619,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: data.health
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
       value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1098,6 +1103,10 @@ PrefabInstance:
       propertyPath: data.health
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1467,6 +1476,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: data.health
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
       value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -2805,6 +2818,10 @@ PrefabInstance:
       propertyPath: data.health
       value: 16
       objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
+      value: 16
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3227,6 +3244,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boardManager: {fileID: 1195510630}
   playerConnectionManager: {fileID: 1813137498}
+  activeCardController: {fileID: 146545957}
+  opponentHand: {fileID: 1127139880}
 --- !u!1001 &789774082
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3345,6 +3364,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: data.health
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
       value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -4786,6 +4809,7 @@ MonoBehaviour:
   endAngle: 65
   cardController: {fileID: 146545957}
   board: {fileID: 1195510630}
+  playerState: 1
 --- !u!1001 &1136331876
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4904,6 +4928,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: data.health
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
       value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -5534,7 +5562,7 @@ GameObject:
   - component: {fileID: 1248651920}
   - component: {fileID: 1248651921}
   m_Layer: 0
-  m_Name: Hand
+  m_Name: PlayerHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5596,6 +5624,7 @@ MonoBehaviour:
   endAngle: 65
   cardController: {fileID: 146545957}
   board: {fileID: 1195510630}
+  playerState: 0
 --- !u!1001 &1292020528
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5714,6 +5743,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: data.health
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
       value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -6002,6 +6035,10 @@ PrefabInstance:
       propertyPath: data.health
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6130,6 +6167,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: data.health
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
       value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -6271,6 +6312,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: data.health
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
       value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -6448,6 +6493,10 @@ PrefabInstance:
       propertyPath: data.health
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6576,6 +6625,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: data.health
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -6992,6 +7045,10 @@ PrefabInstance:
       propertyPath: data.health
       value: 12
       objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7211,6 +7268,8 @@ MonoBehaviour:
   singlePlayerControlScheme: {fileID: 100974083}
   networkControlScheme: {fileID: 730986753}
   boardManager: {fileID: 1195510630}
+  playerHand: {fileID: 1248651921}
+  opponentHand: {fileID: 1127139880}
 --- !u!1 &1630633470
 GameObject:
   m_ObjectHideFlags: 0
@@ -7362,6 +7421,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: data.health
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
       value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -7589,6 +7652,10 @@ PrefabInstance:
       propertyPath: data.health
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7752,6 +7819,10 @@ PrefabInstance:
       propertyPath: data.health
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7891,6 +7962,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: data.health
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
       value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -8281,6 +8356,10 @@ PrefabInstance:
       propertyPath: data.health
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8420,6 +8499,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: data.health
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
       value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -8655,6 +8738,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: data.health
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      propertyPath: data.maxHealth
       value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []

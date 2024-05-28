@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.Events;
 
 public class ActiveCardController : MonoBehaviour
 {
@@ -11,7 +11,11 @@ public class ActiveCardController : MonoBehaviour
     [SerializeField]
     private BoardManager boardManager;
 
-    public void PickCard(Card card)
+    public UnityAction<PlayerState, int, int> OnCardDrop;
+    private int handIndex;
+    
+
+    public void PickCard(Card card, int handIndex)
     {
         card.cardDisplay.gameObject.transform.SetParent(this.gameObject.transform);
         card.cardDisplay.SetShadowActive(true);
@@ -20,13 +24,11 @@ public class ActiveCardController : MonoBehaviour
         boardManager.StartTempSorting();
         card.cardDisplay.SetRenderLayer("Active");
         hand.SetCardsClickable(false);
+        this.handIndex = handIndex;
     }
 
     private void DropPickedCard()
-    {
-        //pickedCard.cardDisplay.gameObject.transform.SetParent(hand.gameObject.transform);
-        //pickedCard.cardDisplay.SetShadowActive(false);
-        
+    {        
         boardManager.PlaceCard(pickedCard, PlayerState.Player);
         pickedCard.RotationManager.SetActive(false);
         hand.Remove(pickedCard);
@@ -34,6 +36,8 @@ public class ActiveCardController : MonoBehaviour
         pickedCard = null;
         if (!boardManager.IsFilled)
             hand.SetCardsClickable(true);
+
+        OnCardDrop.Invoke(PlayerState.Player, handIndex, boardManager.TempIndex);
     }
 
     

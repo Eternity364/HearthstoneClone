@@ -14,6 +14,8 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private SinglePlayerControlScheme singlePlayerControlScheme;
     [SerializeField] private NetworkControlScheme networkControlScheme;
     [SerializeField] private BoardManager boardManager;
+    [SerializeField] private Hand playerHand;
+    [SerializeField] private Hand opponentHand;
     private ControlScheme controlScheme;
     private GameState gameState;
     
@@ -45,8 +47,9 @@ public class MainMenu : MonoBehaviour
         startServer.gameObject.SetActive(false);
         startSinglePlayer.gameObject.SetActive(false);
         NetworkManager.Singleton.StartServer();
-        gameState = new GameState(boardManager.playerCardsSet, boardManager.enemyCardsSet, OnCardDead);
+        gameState = new GameState(boardManager.playerCardsSet, boardManager.enemyCardsSet, playerHand.cards, opponentHand.cards, OnCardDead);
         GameStateInstance.SetInstance(gameState);
+        print("lll = " + GameStateInstance.Instance.GetStringHash());
     }
 
     private void OnCardDead(PlayerState state, int index) {
@@ -64,8 +67,9 @@ public class MainMenu : MonoBehaviour
         gameObject.SetActive(false);
         boardManager.Initialize(isPlayer);
         controlScheme.Initialize();
-        gameState = new GameState(boardManager.PlayerCardsOnBoard, boardManager.EnemyCardsOnBoard, boardManager.OnCardDead);
+        gameState = new GameState(boardManager.PlayerCardsOnBoard, boardManager.EnemyCardsOnBoard, playerHand.cards, opponentHand.cards, boardManager.OnCardDead);
         GameStateInstance.SetInstance(gameState);
+        print("lll = " + GameStateInstance.Instance.GetStringHash());
     }
 
     private void ShowWaitingForOpponentText()

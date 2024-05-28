@@ -49,6 +49,10 @@ public class BoardManager : MonoBehaviour
     {
         get { return enemyCardsOnBoard; }
     }
+    public int TempIndex
+    {
+        get { return playerCardsOnBoardTemp.IndexOf(tempCard); }
+    }
 
     private float positionShift = 0.4f;
     private Dictionary<List<Card>, List<Tweener>> sortingTweens;
@@ -103,7 +107,6 @@ public class BoardManager : MonoBehaviour
 
     public void PlaceCard(Card card, PlayerState side, bool withAnimation = true, int forcedIndex = -1)
     {
-
         void OnFirstPartFinish () {
             card.cardDisplay.ChangeState(CardDisplay.DisplayStates.OnField);
         }
@@ -137,6 +140,7 @@ public class BoardManager : MonoBehaviour
             int index = forcedIndex;
             if (index == -1)
                 index = playerCardsOnBoardTemp.IndexOf(tempCard);
+
             cards.Insert(index, card);
             card.cardDisplay.SetRenderLayer("LandingOnBoard");
             placingAnimation.Do(card.cardDisplay.intermediateObjectsTransform, card.cardDisplay.mainObjectsTransform, OnFirstPartFinish, OnAnimationFinish);

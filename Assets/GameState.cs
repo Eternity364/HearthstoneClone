@@ -9,49 +9,38 @@ public class GameState
 {
     public List<CardData> playerCardsData;
     public List<CardData> opponentCardsData;
+    public List<CardData> playerCardsInHandData;
+    public List<CardData> opponentCardsInHandData;
     [NonSerialized]
     public Action<PlayerState, int> OnCardDead;
 
-    public GameState(List<Card> playerCards, List<Card> opponentCards, Action<PlayerState, int> OnCardDead)
+    public GameState(List<Card> playerCards, List<Card> opponentCards, 
+        List<Card> playerCardsInHand, List<Card> opponentCardsInHand, Action<PlayerState, int> OnCardDead)
     {
         playerCardsData = new List<CardData>();
         opponentCardsData = new List<CardData>();
+        playerCardsInHandData = new List<CardData>();
+        opponentCardsInHandData = new List<CardData>();
 
-        for (int i = 0; i < playerCards.Count; i++)
-        {
-            CardData data = playerCards[i].GetData();
-            playerCardsData.Add(new CardData(data.MaxHealth, data.Attack, data.Cost));
-            playerCardsData[i].Health = data.Health;
-        }
-
-        for (int i = 0; i < opponentCards.Count; i++)
-        {
-            CardData data = opponentCards[i].GetData();
-            opponentCardsData.Add(new CardData(data.MaxHealth, data.Attack, data.Cost));
-            opponentCardsData[i].Health = data.Health;
-        }
+        AddDataFromCardList(playerCards, playerCardsData);
+        AddDataFromCardList(opponentCards, opponentCardsData);
+        AddDataFromCardList(playerCardsInHand, playerCardsInHandData);
+        AddDataFromCardList(opponentCardsInHand, opponentCardsInHandData);
 
         this.OnCardDead = OnCardDead;
     }
 
-    private GameState(List<CardData> playerCards, List<CardData> opponentCards)
+    private GameState(List<CardData> playerCards, List<CardData> opponentCards, List<CardData> playerCardsInHand, List<CardData> opponentCardsInHand)
     {
         playerCardsData = new List<CardData>();
         opponentCardsData = new List<CardData>();
+        playerCardsInHandData = new List<CardData>();
+        opponentCardsInHandData = new List<CardData>();
 
-        for (int i = 0; i < playerCards.Count; i++)
-        {
-            CardData data = playerCards[i];
-            playerCardsData.Add(new CardData(data.MaxHealth, data.Attack, data.Cost));
-            playerCardsData[i].Health = data.Health;
-        }
-
-        for (int i = 0; i < opponentCards.Count; i++)
-        {
-            CardData data = opponentCards[i];
-            opponentCardsData.Add(new CardData(data.MaxHealth, data.Attack, data.Cost));
-            opponentCardsData[i].Health = data.Health;
-        }
+        AddDataFromCardDataList(playerCards, playerCardsData);
+        AddDataFromCardDataList(opponentCards, opponentCardsData);
+        AddDataFromCardDataList(playerCardsInHand, playerCardsInHandData);
+        AddDataFromCardDataList(opponentCardsInHand, opponentCardsInHandData);
 
         this.OnCardDead = OnCardDeadEmpty;
     }
@@ -75,11 +64,24 @@ public class GameState
         }
     }
 
+    public void PlaceCard(PlayerState side, int handIndex, int boardIndex) {
+        List<CardData> handDatas = playerCardsInHandData;
+        List<CardData> boardDatas = playerCardsData;
+        if (side == PlayerState.Enemy) {
+            handDatas = opponentCardsInHandData;
+            boardDatas = opponentCardsData;
+        }
+
+        CardData data = handDatas[handIndex];
+        handDatas.RemoveAt(handIndex);
+        boardDatas.Insert(boardIndex, data);
+    }
+
     public void OnCardDeadEmpty(PlayerState state, int index) {
     }
 
     public GameState GetReveresed() {
-        return new GameState(opponentCardsData, playerCardsData);
+        return new GameState(opponentCardsData, playerCardsData, opponentCardsInHandData, playerCardsInHandData);
     }
 
     public List<CardData> GetListByState(PlayerState state) {
@@ -99,5 +101,31 @@ public class GameState
 
     public string GetStringHash() {
         return SecurityHelper.GetHexStringFromHash(GetHash());
+    }
+
+    // For test purposes
+    public void PrintCounts() {
+        Debug.Log("playerCardsData = " + playerCardsData.Count);
+        Debug.Log("opponentCardsData = " + opponentCardsData.Count);
+        Debug.Log("playerCardsInHandData = " + playerCardsInHandData.Count);
+        Debug.Log("opponentCardsInHandData = " + opponentCardsInHandData.Count);
+    }
+
+    private void AddDataFromCardList(List<Card> from, List<CardData> to) {
+        for (int i = 0; i < from.Count; i++)
+        {
+            CardData data = from[i].GetData();
+            to.Add(new CardData(data.MaxHealth, data.Attack, data.Cost));
+            to[i].Health = data.Health;
+        }
+    }
+
+    private void AddDataFromCardDataList(List<CardData> from, List<CardData> to) {
+        for (int i = 0; i < from.Count; i++)
+        {
+            CardData data = from[i];
+            to.Add(new CardData(data.MaxHealth, data.Attack, data.Cost));
+            to[i].Health = data.Health;
+        }
     }
 }
