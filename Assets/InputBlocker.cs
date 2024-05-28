@@ -22,14 +22,32 @@ public class InputBlocker : MonoBehaviour
     [SerializeField] private BoardManager boardManager;
     [SerializeField] private Hand playerHand;
 
-    void Start()
+    private List<InputBlock> blocks = new List<InputBlock>();
+
+    void Awake()
     {
         InputBlockerInstace.SetInstance(this);
     }
 
-    public void SetActive(bool value)
+    public InputBlock AddBlock()
     {
-        boardManager.SetInputActive(value);
-        playerHand.SetCardsClickable(value);
+        InputBlock block = new InputBlock();
+        blocks.Add(block);
+        Update();
+        return block;
+    }  
+
+    public void RemoveBlock(InputBlock block)
+    {
+        blocks.Remove(block);
+        Update();
+    }
+
+    public void Update()
+    {
+        boardManager.SetInputActive(blocks.Count == 0);
+        playerHand.SetCardsClickable(blocks.Count == 0);
     }
 }
+
+public class InputBlock {}

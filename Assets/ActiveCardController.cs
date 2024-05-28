@@ -36,6 +36,7 @@ public class ActiveCardController : MonoBehaviour
         pickedCard = null;
         if (!boardManager.IsFilled)
             hand.SetCardsClickable(true);
+        InputBlockerInstace.Instance.Update();
 
         OnCardDrop.Invoke(PlayerState.Player, handIndex, boardManager.TempIndex);
     }

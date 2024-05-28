@@ -13,4 +13,5 @@ public interface ControlScheme
 
     void AttemptToPerformAttack(PlayerState state, int attackerIndex, int targetIndex);
     void AttemptToPerformCardPlacement(PlayerState state, int handIndex, int boardIndex);
+    public void AttemptToStartNextTurn();
 }

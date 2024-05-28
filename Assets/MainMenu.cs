@@ -16,6 +16,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private BoardManager boardManager;
     [SerializeField] private Hand playerHand;
     [SerializeField] private Hand opponentHand;
+    [SerializeField] private Button endTurnButton;
     private ControlScheme controlScheme;
     private GameState gameState;
     
@@ -63,6 +64,12 @@ public class MainMenu : MonoBehaviour
         controlScheme.Initialize();
         gameState = new GameState(boardManager.PlayerCardsOnBoard, boardManager.EnemyCardsOnBoard, playerHand.cards, opponentHand.cards, boardManager.OnCardDead);
         GameStateInstance.SetInstance(gameState);
+        endTurnButton.onClick.AddListener(controlScheme.AttemptToStartNextTurn);
+        endTurnButton.gameObject.SetActive(isPlayer);
+        if (!isPlayer) {
+            NetworkControlScheme netControl = (NetworkControlScheme)controlScheme;
+            netControl.AddInputBlock();
+        }
     }
 
     private void ShowWaitingForOpponentText()

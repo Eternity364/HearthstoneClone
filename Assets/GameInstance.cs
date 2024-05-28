@@ -26,6 +26,11 @@ public class GameInstance
         this.state = state;
     }
 
+    public void SetTurn(PlayerState turn)
+    {
+        currentTurn = turn;
+    }
+
     void OnUpdate(float dt)
     {
         

@@ -28,4 +28,7 @@ public class SinglePlayerControlScheme : MonoBehaviour, ControlScheme {
 
     void ControlScheme.AttemptToPerformCardPlacement(PlayerState state, int handIndex, int boardIndex) {
     }
+
+    void ControlScheme.AttemptToStartNextTurn() {
+    }
 }

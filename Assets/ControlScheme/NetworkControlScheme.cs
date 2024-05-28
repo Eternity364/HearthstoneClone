@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.UI;
 using Unity.Netcode;
+using System.Collections.Generic;
 
 public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     private NetworkVariable<int> networkStringTest = new NetworkVariable<int>(0);
@@ -13,8 +15,11 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     Hand opponentHand;
     [SerializeField]
     GameInstanceManager gameInstanceManager;
+    [SerializeField]
+    Button EndTurnButton;
 
     private Card attacker, target;
+    private Queue<InputBlock> blocks = new Queue<InputBlock>();
 
     BoardManager ControlScheme.bManager
     {
@@ -31,18 +36,62 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         }
     }
 
+    public void AddInputBlock(InputBlock block) {
+        blocks.Enqueue(block);
+    }
+
+    public void AddInputBlock() {
+        InputBlock block = InputBlockerInstace.Instance.AddBlock();
+        blocks.Enqueue(block);
+    }
+
+    public void DequeueInputBlock() {
+        InputBlock block = blocks.Dequeue();
+        if (block != null) {
+            InputBlockerInstace.Instance.RemoveBlock(block);
+        }
+    }
+
     void ControlScheme.AttemptToPerformAttack(PlayerState attackerState, int attackerIndex, int targetIndex) {
         attacker = boardManager.PlayerCardsOnBoard[attackerIndex];
         target = boardManager.EnemyCardsOnBoard[targetIndex];
         GameStateInstance.Instance.Attack(PlayerState.Player, attackerIndex, PlayerState.Enemy, targetIndex);
         AttemptToPerformAttackServerRpc(attackerIndex, targetIndex, GameStateInstance.Instance.GetHash(), new ServerRpcParams());
-        InputBlockerInstace.Instance.SetActive(false);
+        AddInputBlock();
     }
 
     void ControlScheme.AttemptToPerformCardPlacement(PlayerState state, int handIndex, int boardIndex) {
         GameStateInstance.Instance.PlaceCard(PlayerState.Player, handIndex, boardIndex);
         AttemptToPerformCardPlacementServerRpc(handIndex, boardIndex, GameStateInstance.Instance.GetHash(), new ServerRpcParams());
-        InputBlockerInstace.Instance.SetActive(false);
+        AddInputBlock();
+    }
+
+    void ControlScheme.AttemptToStartNextTurn() {
+        AddInputBlock();
+        EndTurnButton.gameObject.SetActive(false);
+        AttemptToStartNextTurnServerRpc(GameStateInstance.Instance.GetHash(), new ServerRpcParams());
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void AttemptToStartNextTurnServerRpc(byte[] stateHash, ServerRpcParams rpcParams) {
+        GameInstance instance = gameInstanceManager.GetInstanceByPlayerID(rpcParams.Receive.SenderClientId);
+        if (instance != null) {
+            ulong opponentID = instance.Pair.GetOpponentID(rpcParams.Receive.SenderClientId);
+            PlayerState state = PlayerState.Enemy;
+            GameState gameState = instance.GameState;
+            if (instance.Pair.PlayerID == opponentID) {
+                state = PlayerState.Player;
+                gameState = instance.GameState.GetReveresed();
+            }
+            instance.SetTurn(state);
+            
+            ClientRpcParams playerRpcParams = CreateClientRpcParams(opponentID);
+            string serverHash = gameState.GetStringHash();
+            string clientHash = SecurityHelper.GetHexStringFromHash(stateHash);
+            if (serverHash == clientHash) { 
+                SetNewTurnClientRpc(gameState.GetReveresed().GetHash(), playerRpcParams);
+            }
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -114,6 +163,16 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
             }
         }
     }
+
+    [ClientRpc]
+    private void SetNewTurnClientRpc(byte[] stateHash, ClientRpcParams rpdParams) {
+        string serverHash = SecurityHelper.GetHexStringFromHash(stateHash);
+        string clientHash = GameStateInstance.Instance.GetStringHash();
+        if (serverHash == clientHash) {
+            DequeueInputBlock();
+            EndTurnButton.gameObject.SetActive(true);
+        }
+    }
         
     [ClientRpc]
     private void PerformCardPlacementClientRpc(int handIndex, int boardIndex, byte[] stateHash, ClientRpcParams rpdParams) {
@@ -129,13 +188,13 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     [ClientRpc]
     private void PerformControlReleaseClientRpc(ClientRpcParams rpdParams) {
         //boardManager.PerformAttackByCard(attacker, target);
-        InputBlockerInstace.Instance.SetActive(true);
+        DequeueInputBlock();
     }
 
     [ClientRpc]
     private void PerformAttackerMoveClientRpc(ClientRpcParams rpdParams) {
         boardManager.PerformAttackByCard(attacker, target);
-        InputBlockerInstace.Instance.SetActive(true);
+        DequeueInputBlock();
     }
 
     [ClientRpc]

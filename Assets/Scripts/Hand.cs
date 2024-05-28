@@ -31,7 +31,7 @@ public class Hand : MonoBehaviour
     
     int lenght;
 
-    void Start()
+    void Awake()
     {
         currentAnimations = new Dictionary<Card, List<Tweener>>();
 
@@ -194,6 +194,7 @@ public class Hand : MonoBehaviour
 
     public void OnBoardSizeChange(int currentSize, int maxSize) {
         SetCardsClickable(!board.IsFilled);
+        InputBlockerInstace.Instance.Update();
     }
 
     Vector3 RotateTowardsUp(Vector3 start, float angle)
