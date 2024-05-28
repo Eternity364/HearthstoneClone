@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameInstanceManager : MonoBehaviour
 {
@@ -10,10 +11,11 @@ public class GameInstanceManager : MonoBehaviour
 
     List<GameInstance> instances = new List<GameInstance>();
 
-    public GameInstance Create(PlayerPair pair)
+    public GameInstance Create(PlayerPair pair, UnityAction<GameInstance> OnTimerRunOut)
     {
         GameState gameState = new GameState(boardManager.playerCardsSet, boardManager.enemyCardsSet, playerHand.cards, opponentHand.cards, OnCardDead);
-        GameInstance newInstance = new GameInstance(pair, 60, gameState);
+        GameInstance newInstance = new GameInstance(pair, 5, gameState);
+        newInstance.OnTimerRunOut += OnTimerRunOut;
         instances.Add(newInstance);
         return newInstance;
     }
@@ -42,14 +44,11 @@ public class GameInstanceManager : MonoBehaviour
     private void OnCardDead(PlayerState state, int index) {
     }
 
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        
+        for (int i = 0; i < instances.Count; i++)
+        {
+            instances[i].OnUpdate(Time.deltaTime);
+        }
     }
 }

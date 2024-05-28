@@ -15,6 +15,8 @@ public class PlayerConnectionManager : NetworkBehaviour
     GameObject game;
     [SerializeField]
     TextMeshProUGUI instanceIdtext;
+    [SerializeField]
+    NetworkControlScheme networkControl;
 
     private PlayerPair playerPair;
     private Action OnOnePlayerConnected;
@@ -47,7 +49,7 @@ public class PlayerConnectionManager : NetworkBehaviour
         if (isPairCompleted) {
             ulong opponentID = playerPair.GetOpponentID(clientId);
             bool isPlayer1 = IsClientIdPlayer(opponentID);
-            GameInstance instance = gameInstanceManager.Create(playerPair);
+            GameInstance instance = gameInstanceManager.Create(playerPair, networkControl.ForceEndTurn);
             ulong instanceId = Convert.ToUInt64(gameInstanceManager.GetInstanceID(instance));
             SendClientInfo(IsClientIdPlayer(clientId), isPairCompleted, instanceId, clientId);
             SendClientInfo(IsClientIdPlayer(playerPair.GetOpponentID(clientId)), isPairCompleted, instanceId, playerPair.GetOpponentID(clientId));
@@ -112,6 +114,17 @@ public class PlayerPair {
     public PlayerPair(ulong playerID, ulong enemyID) {
         PlayerID = playerID;
         EnemyID = enemyID;
+    }
+    
+    public ulong GetIdByPlayerState(PlayerState state)
+    {
+        if (state == PlayerState.Player) {
+            return PlayerID;
+        } 
+        else
+        {
+            return EnemyID;
+        }
     }
     
     public bool IsClientIdInPair(ulong clientId)

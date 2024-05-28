@@ -8380,6 +8380,7 @@ MonoBehaviour:
   gameInstanceManager: {fileID: 1357903805}
   game: {fileID: 162728236}
   instanceIdtext: {fileID: 171316000}
+  networkControl: {fileID: 730986753}
 --- !u!114 &1815195168 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4421477798839540136, guid: af2a47af879d41941beb454e1f5834e3, type: 3}

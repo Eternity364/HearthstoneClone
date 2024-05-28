@@ -71,6 +71,26 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         EndTurnButton.gameObject.SetActive(false);
         AttemptToStartNextTurnServerRpc(GameStateInstance.Instance.GetHash(), new ServerRpcParams());
     }
+    
+    public void ForceEndTurn(GameInstance instance) {
+        PlayerState currentTurn = instance.currentTurn;
+        ulong currentId = instance.Pair.GetIdByPlayerState(currentTurn);
+        ulong nextId = instance.Pair.GetOpponentID(currentId);
+        instance.currentTimer = 0;
+        instance.currentTurn = PlayerState.Enemy;
+        if (currentTurn == PlayerState.Enemy)
+            instance.currentTurn = PlayerState.Player;
+
+        
+        ClientRpcParams currentRpcParams = CreateClientRpcParams(currentId);
+        ClientRpcParams nextRpcParams = CreateClientRpcParams(nextId);
+        GameState state = instance.GameState;
+        if (currentTurn == PlayerState.Player)
+            state = state.GetReveresed();
+
+        SetNewTurnClientRpc(state.GetHash(), true, nextRpcParams);
+        SetNewTurnClientRpc(state.GetReveresed().GetHash(), false, currentRpcParams);
+    }
 
     [ServerRpc(RequireOwnership = false)]
     private void AttemptToStartNextTurnServerRpc(byte[] stateHash, ServerRpcParams rpcParams) {
@@ -89,7 +109,7 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
             string serverHash = gameState.GetStringHash();
             string clientHash = SecurityHelper.GetHexStringFromHash(stateHash);
             if (serverHash == clientHash) { 
-                SetNewTurnClientRpc(gameState.GetReveresed().GetHash(), playerRpcParams);
+                SetNewTurnClientRpc(gameState.GetReveresed().GetHash(), true, playerRpcParams);
             }
         }
     }
@@ -165,12 +185,15 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     }
 
     [ClientRpc]
-    private void SetNewTurnClientRpc(byte[] stateHash, ClientRpcParams rpdParams) {
+    private void SetNewTurnClientRpc(byte[] stateHash, bool value, ClientRpcParams rpdParams) {
         string serverHash = SecurityHelper.GetHexStringFromHash(stateHash);
         string clientHash = GameStateInstance.Instance.GetStringHash();
         if (serverHash == clientHash) {
-            DequeueInputBlock();
-            EndTurnButton.gameObject.SetActive(true);
+            if (value) 
+                DequeueInputBlock();
+            else
+                AddInputBlock();
+            EndTurnButton.gameObject.SetActive(value);
         }
     }
         
