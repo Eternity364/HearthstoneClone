@@ -105,6 +105,14 @@ public class BoardManager : MonoBehaviour
         pointer.localPosition = PositionGetter.GetPosition(PositionGetter.ColliderType.Background);
     }
 
+    public void SetInputActive(bool value)
+    {
+        for (int i = 0; i < playerCardsOnBoard.Count; i++)
+        {
+            playerCardsOnBoard[i].clickHandler.SetClickable(value);
+        }
+    }
+
     public void PlaceCard(Card card, PlayerState side, bool withAnimation = true, int forcedIndex = -1)
     {
         void OnFirstPartFinish () {

@@ -35,11 +35,13 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         target = boardManager.EnemyCardsOnBoard[targetIndex];
         GameStateInstance.Instance.Attack(PlayerState.Player, attackerIndex, PlayerState.Enemy, targetIndex);
         AttemptToPerformAttackServerRpc(attackerIndex, targetIndex, GameStateInstance.Instance.GetHash(), new ServerRpcParams());
+        InputBlockerInstace.Instance.SetActive(false);
     }
 
     void ControlScheme.AttemptToPerformCardPlacement(PlayerState state, int handIndex, int boardIndex) {
         GameStateInstance.Instance.PlaceCard(PlayerState.Player, handIndex, boardIndex);
         AttemptToPerformCardPlacementServerRpc(handIndex, boardIndex, GameStateInstance.Instance.GetHash(), new ServerRpcParams());
+        InputBlockerInstace.Instance.SetActive(false);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -122,11 +124,13 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     [ClientRpc]
     private void PerformControlReleaseClientRpc(ClientRpcParams rpdParams) {
         //boardManager.PerformAttackByCard(attacker, target);
+        InputBlockerInstace.Instance.SetActive(true);
     }
 
     [ClientRpc]
     private void PerformAttackerMoveClientRpc(ClientRpcParams rpdParams) {
         boardManager.PerformAttackByCard(attacker, target);
+        InputBlockerInstace.Instance.SetActive(true);
     }
 
     [ClientRpc]
