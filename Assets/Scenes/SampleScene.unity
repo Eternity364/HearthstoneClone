@@ -413,6 +413,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boardManager: {fileID: 1195510630}
   playerHand: {fileID: 1248651921}
+  activeCardController: {fileID: 146545957}
 --- !u!1 &171315998
 GameObject:
   m_ObjectHideFlags: 0
@@ -6799,7 +6800,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 1494627624}
-  timerValue: 5
+  timerValue: 10
 --- !u!1 &1517521315
 GameObject:
   m_ObjectHideFlags: 0

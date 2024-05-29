@@ -113,6 +113,11 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    public void DisableAttack() {
+        arrowController.SetActive(false, Vector2.zero);
+        attackingCard = null;
+    }
+
     public void PlaceCard(Card card, PlayerState side, bool withAnimation = true, int forcedIndex = -1)
     {
         void OnFirstPartFinish () {
@@ -153,13 +158,15 @@ public class BoardManager : MonoBehaviour
             card.cardDisplay.SetRenderLayer("LandingOnBoard");
             placingAnimation.Do(card.cardDisplay.intermediateObjectsTransform, card.cardDisplay.mainObjectsTransform, OnFirstPartFinish, OnAnimationFinish);
             SortCards(cards);
-            OnBoardSizeChange.Invoke(cards.Count, maxBoardSize);
         }
         else
         {
             cards.Add(card);
             OnAnimationFinish();
         }
+
+        if (side == PlayerState.Player)
+            OnBoardSizeChange.Invoke(cards.Count, maxBoardSize);
     }
 
     public void ComparePositionsAndSortTemporarily(float xPosition) {

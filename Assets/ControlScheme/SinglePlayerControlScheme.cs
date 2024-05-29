@@ -24,6 +24,7 @@ public class SinglePlayerControlScheme : MonoBehaviour, ControlScheme {
 
     void ControlScheme.AttemptToPerformAttack(PlayerState state, int attackerIndex, int targetIndex) {
         boardManager.PerformAttackByIndex(state == PlayerState.Player, attackerIndex, targetIndex);
+        GameStateInstance.Instance.Attack(PlayerState.Player, attackerIndex, PlayerState.Enemy, targetIndex);
     }
 
     void ControlScheme.AttemptToPerformCardPlacement(PlayerState state, int handIndex, int boardIndex) {

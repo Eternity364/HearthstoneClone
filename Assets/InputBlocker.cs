@@ -21,8 +21,10 @@ public class InputBlocker : MonoBehaviour
 {
     [SerializeField] private BoardManager boardManager;
     [SerializeField] private Hand playerHand;
+    [SerializeField] private ActiveCardController activeCardController;
 
     private List<InputBlock> blocks = new List<InputBlock>();
+    private List<InputBlock> handBlocks = new List<InputBlock>();
 
     void Awake()
     {
@@ -33,20 +35,34 @@ public class InputBlocker : MonoBehaviour
     {
         InputBlock block = new InputBlock();
         blocks.Add(block);
-        Update();
+        UpdateValues();
+        return block;
+    }  
+
+    public InputBlock AddHandBlock()
+    {
+        InputBlock block = new InputBlock();
+        handBlocks.Add(block);
+        UpdateValues();
         return block;
     }  
 
     public void RemoveBlock(InputBlock block)
     {
         blocks.Remove(block);
-        Update();
+        handBlocks.Remove(block);
+        UpdateValues();
     }
 
-    public void Update()
+    public void UpdateValues()
     {
+        if (blocks.Count > 0) {
+            activeCardController.ReturnCardToHand();
+        }
         boardManager.SetInputActive(blocks.Count == 0);
-        playerHand.SetCardsClickable(blocks.Count == 0);
+        if (blocks.Count > 0)
+            boardManager.DisableAttack();
+        playerHand.SetCardsClickable(blocks.Count == 0 && handBlocks.Count == 0);
     }
 }
 

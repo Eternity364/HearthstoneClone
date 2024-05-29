@@ -28,6 +28,7 @@ public class Hand : MonoBehaviour
 
     private Dictionary<Card, List<Tweener>> currentAnimations;
     private Card hoveringCard;
+    private InputBlock handBlock;
     
     int lenght;
 
@@ -38,13 +39,7 @@ public class Hand : MonoBehaviour
         Sort();
 
         if (playerState == PlayerState.Player) {
-            for (int i = 0; i < lenght; i++)
-            {
-                cards[i].clickHandler.OnPick += OnCardPick;
-                cards[i].clickHandler.OnMouseEnterCallbacks += OnMouseEnterCardAnimation;
-                cards[i].clickHandler.OnMouseLeaveCallbacks += OnMouseLeaveCardAnimation;
-            }
-
+            SetCardsCallbacks(true);
             board.OnBoardSizeChange += OnBoardSizeChange;
         } 
         else
@@ -63,17 +58,36 @@ public class Hand : MonoBehaviour
     {
         yield return new WaitForSeconds(3);
 
-        PlaceCard(cards[2], 2);
+        InputBlockerInstace.Instance.AddBlock();
     }
 
     private void OnCardPick(Card card) {
         KillCardTweens(card);
         card.cardDisplay.ResetTransform();
         hoveringCard = null;
-        card.clickHandler.OnPick -= OnCardPick;
-        card.clickHandler.OnMouseEnterCallbacks -= OnMouseEnterCardAnimation;
-        card.clickHandler.OnMouseLeaveCallbacks -= OnMouseLeaveCardAnimation;
+        SetCardCallbacks(card, false);
         cardController.PickCard(card, cards.IndexOf(card));
+    }
+
+    private void SetCardsCallbacks(bool value) {
+        for (int i = 0; i < lenght; i++)
+        {
+            SetCardCallbacks(cards[i], value);
+        }
+    }
+
+    private void SetCardCallbacks(Card card, bool value) {
+        if (value) {
+            card.clickHandler.OnPick += OnCardPick;
+            card.clickHandler.OnMouseEnterCallbacks += OnMouseEnterCardAnimation;
+            card.clickHandler.OnMouseLeaveCallbacks += OnMouseLeaveCardAnimation;
+        }
+        else
+        {
+            card.clickHandler.OnPick -= OnCardPick;
+            card.clickHandler.OnMouseEnterCallbacks -= OnMouseEnterCardAnimation;
+            card.clickHandler.OnMouseLeaveCallbacks -= OnMouseLeaveCardAnimation;
+        }
     }
 
     private void KillCardTweens(Card card) {
@@ -84,6 +98,15 @@ public class Hand : MonoBehaviour
                 tween1.Kill();
             }
         }
+    }
+
+    public void ReturnCard(Card card, int index) {
+        cards[index] = card;
+        card.cardDisplay.gameObject.transform.SetParent(gameObject.transform);
+        card.cardDisplay.SetShadowActive(false);
+        SetCardCallbacks(card, true);
+        board.SortCards(board.PlayerCardsOnBoard);
+        Sort();
     }
 
     public void PlaceCard(Card card, int index) {
@@ -167,11 +190,9 @@ public class Hand : MonoBehaviour
         float fanSortingAngleShift = (endAngle - startAngle) / lenght;
         float localStartAngle = startAngle;
 
-        print("lenght = " + lenght);
         for (int i = 0; i < lenght; i++)
         {
             float angle = localStartAngle + (fanSortingAngleShift * i);
-            Quaternion originalRotation = cards[i].transform.rotation;
             Quaternion rotation = Quaternion.Euler(0, 0, angle);
             Quaternion cardRotation = Quaternion.Euler(0, 0, (startAngle + (fanSortingAngleShift * i)) * 0.5f); 
             Vector3 position = rotation * fanSortingStartPosition - fanSortingStartPosition;
@@ -193,8 +214,18 @@ public class Hand : MonoBehaviour
     }    
 
     public void OnBoardSizeChange(int currentSize, int maxSize) {
-        SetCardsClickable(!board.IsFilled);
-        InputBlockerInstace.Instance.Update();
+        if (playerState == PlayerState.Player)
+        {
+            if (board.IsFilled) {
+                if (handBlock == null)
+                    handBlock = InputBlockerInstace.Instance.AddHandBlock();
+            } else {
+                if (handBlock != null) {
+                    InputBlockerInstace.Instance.RemoveBlock(handBlock);
+                    handBlock = null;
+                }
+            }
+        }
     }
 
     Vector3 RotateTowardsUp(Vector3 start, float angle)

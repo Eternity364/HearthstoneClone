@@ -13,18 +13,29 @@ public class ActiveCardController : MonoBehaviour
 
     public UnityAction<PlayerState, int, int> OnCardDrop;
     private int handIndex;
+    private InputBlock handBlock;
     
 
     public void PickCard(Card card, int handIndex)
     {
         card.cardDisplay.gameObject.transform.SetParent(this.gameObject.transform);
         card.cardDisplay.SetShadowActive(true);
-        card.transform.rotation = Quaternion.Euler(0, 0, 0);
+        card.transform.localRotation = Quaternion.Euler(0, 0, 0);
         pickedCard = card;
         boardManager.StartTempSorting();
         card.cardDisplay.SetRenderLayer("Active");
-        hand.SetCardsClickable(false);
+        handBlock = InputBlockerInstace.Instance.AddHandBlock();
         this.handIndex = handIndex;
+    }
+
+    public void ReturnCardToHand() {
+        if (pickedCard != null) {
+            pickedCard.RotationManager.SetActive(false);
+            hand.ReturnCard(pickedCard, handIndex);
+            pickedCard = null;
+            InputBlockerInstace.Instance.RemoveBlock(handBlock);
+            handBlock = null;
+        }
     }
 
     private void DropPickedCard()
@@ -34,9 +45,8 @@ public class ActiveCardController : MonoBehaviour
         hand.Remove(pickedCard);
         hand.Sort();
         pickedCard = null;
-        if (!boardManager.IsFilled)
-            hand.SetCardsClickable(true);
-        InputBlockerInstace.Instance.Update();
+        InputBlockerInstace.Instance.RemoveBlock(handBlock);
+        handBlock = null;
 
         OnCardDrop.Invoke(PlayerState.Player, handIndex, boardManager.TempIndex);
     }
