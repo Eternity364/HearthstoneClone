@@ -57,6 +57,7 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     void ControlScheme.AttemptToPerformAttack(PlayerState attackerState, int attackerIndex, int targetIndex) {
         attacker = boardManager.PlayerCardsOnBoard[attackerIndex];
         target = boardManager.EnemyCardsOnBoard[targetIndex];
+        boardManager.PlayerCardsOnBoard[attackerIndex].cardDisplay.SetActiveStatus(false);
         GameStateInstance.Instance.Attack(PlayerState.Player, attackerIndex, PlayerState.Enemy, targetIndex);
         AttemptToPerformAttackServerRpc(attackerIndex, targetIndex, GameStateInstance.Instance.GetHash(), new ServerRpcParams());
         AddInputBlock();
@@ -64,6 +65,7 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
 
     void ControlScheme.AttemptToPerformCardPlacement(PlayerState state, int handIndex, int boardIndex) {
         GameStateInstance.Instance.PlaceCard(PlayerState.Player, handIndex, boardIndex);
+        boardManager.PlayerCardsOnBoard[boardIndex].cardDisplay.SetActiveStatus(true);
         AttemptToPerformCardPlacementServerRpc(handIndex, boardIndex, GameStateInstance.Instance.GetHash(), new ServerRpcParams());
         AddInputBlock();
     }
@@ -72,6 +74,8 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         AddInputBlock();
         EndTurnButton.gameObject.SetActive(false);
         endTurnTimer.gameObject.SetActive(false);
+        boardManager.SetCardsStatusActive(false);
+        GameStateInstance.Instance.SetCardsActive(PlayerState.Enemy);
         AttemptToStartNextTurnServerRpc(GameStateInstance.Instance.GetHash(), new ServerRpcParams());
     }
 
@@ -99,14 +103,17 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         
         ClientRpcParams currentRpcParams = CreateClientRpcParams(currentId);
         ClientRpcParams nextRpcParams = CreateClientRpcParams(nextId);
-        GameState state = instance.GameState;
         PlayerState nextTurn = PlayerState.Player;
         if (currentTurn == PlayerState.Player) {
-            state = state.GetReveresed();
             nextTurn = PlayerState.Enemy;
         }
 
         instance.SetTurn(nextTurn);
+
+        GameState state = instance.GameState;
+        if (currentTurn == PlayerState.Player) {
+            state = state.GetReveresed();
+        }
 
         SetNewTurnClientRpc(state.GetHash(), true, nextRpcParams);
         SetNewTurnClientRpc(state.GetReveresed().GetHash(), false, currentRpcParams);
@@ -118,16 +125,20 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         if (instance != null) {
             ulong opponentID = instance.Pair.GetOpponentID(rpcParams.Receive.SenderClientId);
             PlayerState state = PlayerState.Enemy;
-            GameState gameState = instance.GameState;
             if (instance.Pair.PlayerID == opponentID) {
                 state = PlayerState.Player;
-                gameState = instance.GameState.GetReveresed();
             }
             instance.SetTurn(state);
+            GameState gameState = instance.GameState;
+            if (instance.Pair.PlayerID == opponentID) {
+                gameState = instance.GameState.GetReveresed();
+            }
             
             ClientRpcParams playerRpcParams = CreateClientRpcParams(opponentID);
             string serverHash = gameState.GetStringHash();
             string clientHash = SecurityHelper.GetHexStringFromHash(stateHash);
+
+            
             if (serverHash == clientHash) { 
                 SetNewTurnClientRpc(gameState.GetReveresed().GetHash(), true, playerRpcParams);
             }
@@ -206,13 +217,23 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
 
     [ClientRpc]
     private void SetNewTurnClientRpc(byte[] stateHash, bool value, ClientRpcParams rpdParams) {
+        PlayerState turn = PlayerState.Player;
+        if (!value)
+            turn = PlayerState.Enemy;
+        GameStateInstance.Instance.SetCardsActive(turn);
+
         string serverHash = SecurityHelper.GetHexStringFromHash(stateHash);
         string clientHash = GameStateInstance.Instance.GetStringHash();
         if (serverHash == clientHash) {
-            if (value) 
+            if (value) {
                 DequeueInputBlock();
-            else
+                boardManager.OnPlayerTurnStart();
+                
+            }
+            else {
                 AddInputBlock();
+                boardManager.SetCardsStatusActive(false);
+            }
             EndTurnButton.gameObject.SetActive(value);
             endTurnTimer.gameObject.SetActive(false);
         }
@@ -224,14 +245,12 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
 
         string serverHash = SecurityHelper.GetHexStringFromHash(stateHash);
         string clientHash = GameStateInstance.Instance.GetStringHash();
-        //GameStateInstance.Instance.PrintCounts();
         if (serverHash == clientHash)
             opponentHand.PlaceCard(opponentHand.cards[handIndex], boardIndex);
     }
         
     [ClientRpc]
     private void PerformControlReleaseClientRpc(ClientRpcParams rpdParams) {
-        //boardManager.PerformAttackByCard(attacker, target);
         DequeueInputBlock();
     }
 
@@ -257,7 +276,6 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     private void TimerStartClientRpc(ClientRpcParams rpdParams) {
         endTurnTimer.Begin();
         endTurnTimer.gameObject.SetActive(true);
-        print("Timer Start");
     }
 
     private ClientRpcParams CreateClientRpcParams(ulong clientId) {

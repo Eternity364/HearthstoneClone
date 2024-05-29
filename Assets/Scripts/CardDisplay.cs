@@ -36,6 +36,8 @@ public class CardDisplay : MonoBehaviour
     public Transform intermediateObjectsTransform; 
     [SerializeField]
     Color lackHealth; 
+    [SerializeField]
+    GameObject activeStatus; 
 
     public enum DisplayStates
     {
@@ -85,6 +87,11 @@ public class CardDisplay : MonoBehaviour
     {
         cardBack.SetActive(!active);
         textCanvasGO.SetActive(active);
+    }
+
+    public void SetActiveStatus(bool active)
+    {
+        activeStatus.SetActive(active);
     }
 
     public void UpdateDisplay() {

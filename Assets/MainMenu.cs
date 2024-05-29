@@ -69,6 +69,10 @@ public class MainMenu : MonoBehaviour
         if (!isPlayer) {
             NetworkControlScheme netControl = (NetworkControlScheme)controlScheme;
             netControl.AddInputBlock();
+        } 
+        else
+        {
+            boardManager.SetCardsStatusActive(true);
         }
     }
 

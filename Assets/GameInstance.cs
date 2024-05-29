@@ -39,6 +39,7 @@ public class GameInstance
         currentTurn = turn;
         timerThresholdReached = false;
         currentTimer = 0;
+        state.SetCardsActive(turn);
     }
 
     public void Clear()

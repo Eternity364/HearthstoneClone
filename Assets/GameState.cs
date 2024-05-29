@@ -29,6 +29,7 @@ public class GameState
 
         this.OnCardDead = OnCardDead;
     }
+    
 
     private GameState(List<CardData> playerCards, List<CardData> opponentCards, List<CardData> playerCardsInHand, List<CardData> opponentCardsInHand)
     {
@@ -45,6 +46,28 @@ public class GameState
         this.OnCardDead = OnCardDeadEmpty;
     }
 
+    public void SetCardsActive(PlayerState state)
+    {
+        List<CardData> activeCardsData = GetListByState(state);
+        PlayerState inactiveState = PlayerState.Enemy;
+        if (state == PlayerState.Enemy)
+            inactiveState = PlayerState.Player;
+
+        List<CardData> inactiveCardsData = GetListByState(inactiveState);
+        Debug.Log("state = " + state);
+        Debug.Log("inactiveState = " + inactiveState);
+
+
+        for (int i = 0; i < activeCardsData.Count; i++)
+        {
+            activeCardsData[i].Active = true;
+        }        
+        for (int i = 0; i < inactiveCardsData.Count; i++)
+        {
+            inactiveCardsData[i].Active = false;
+        }
+    }
+
     public void Attack(PlayerState attackerState, int attackerIndex, PlayerState targetState, int targetIndex) {
         Assert.IsTrue(attackerState != targetState);
         List<CardData> attackerCardsData = GetListByState(attackerState);
@@ -54,6 +77,8 @@ public class GameState
         CardData targetData = targetCardsData[targetIndex];
         targetData.Health -= attackerData.Attack;
         attackerData.Health -= targetData.Attack;
+        attackerData.Active = false;
+        
         if (targetData.Health <= 0) {
             targetCardsData.RemoveAt(targetIndex);
             OnCardDead(targetState, targetIndex);
@@ -75,6 +100,7 @@ public class GameState
         CardData data = handDatas[handIndex];
         handDatas.RemoveAt(handIndex);
         boardDatas.Insert(boardIndex, data);
+        data.Active = true;
     }
 
     public void OnCardDeadEmpty(PlayerState state, int index) {
@@ -114,18 +140,22 @@ public class GameState
     private void AddDataFromCardList(List<Card> from, List<CardData> to) {
         for (int i = 0; i < from.Count; i++)
         {
-            CardData data = from[i].GetData();
-            to.Add(new CardData(data.MaxHealth, data.Attack, data.Cost));
-            to[i].Health = data.Health;
+            
+            to.Add(AddData(from[i].GetData()));
         }
     }
 
     private void AddDataFromCardDataList(List<CardData> from, List<CardData> to) {
         for (int i = 0; i < from.Count; i++)
         {
-            CardData data = from[i];
-            to.Add(new CardData(data.MaxHealth, data.Attack, data.Cost));
-            to[i].Health = data.Health;
+            to.Add(AddData(from[i]));
         }
+    }
+
+    private CardData AddData(CardData from) {
+        CardData data = new CardData(from.MaxHealth, from.Attack, from.Cost);
+        data.Health = from.Health;
+        data.Active = from.Active;
+        return data;
     }
 }

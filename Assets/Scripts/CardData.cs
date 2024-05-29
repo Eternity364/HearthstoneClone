@@ -6,6 +6,7 @@ public class CardData
 {
     [SerializeField] private int health, attack, cost;
     [SerializeField] private int maxHealth;
+    [SerializeField] private bool active = true;
     
     public int Health
     {
@@ -27,6 +28,14 @@ public class CardData
             if (value < 0)
                 value = 0;
             attack = value;
+        }
+    }
+    public bool Active
+    {
+        get { return active; }
+        set
+        {
+            active = value;
         }
     }
     public int Cost

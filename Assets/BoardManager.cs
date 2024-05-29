@@ -113,6 +113,23 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    public void OnPlayerTurnStart()
+    {
+        for (int i = 0; i < playerCardsOnBoard.Count; i++)
+        {
+            InputBlockerInstace.Instance.RemoveCardBlock(playerCardsOnBoard[i]);
+        }
+        SetCardsStatusActive(true);
+    }
+
+    public void SetCardsStatusActive(bool value)
+    {
+        for (int i = 0; i < playerCardsOnBoard.Count; i++)
+        {
+            playerCardsOnBoard[i].cardDisplay.SetActiveStatus(value);
+        }
+    }
+
     public void DisableAttack() {
         arrowController.SetActive(false, Vector2.zero);
         attackingCard = null;
@@ -240,6 +257,7 @@ public class BoardManager : MonoBehaviour
 
     public void OnCardDead(PlayerState state, int index) {
         if (state == PlayerState.Player) {
+            InputBlockerInstace.Instance.RemoveCardBlock(playerCardsOnBoard[index]);
             playerCardsOnBoard[index].clickHandler.SetClickable(false);
             playerCardsOnBoard.RemoveAt(index);
         }
@@ -294,7 +312,6 @@ public class BoardManager : MonoBehaviour
             }
         };
         void OnFinishAttack () {
-            attackingCard1.clickHandler.SetClickable(true);
             attackingCard1.cardDisplay.SetRenderLayer("Board");
             if (attackAnimationQueue.Count >= 1) 
                 attackAnimationQueue.Dequeue()();
@@ -318,12 +335,10 @@ public class BoardManager : MonoBehaviour
             }
         }
         if (attackingCard != null) {
-            attackingCard1.clickHandler.SetClickable(false);
-            attackingCard.cardDisplay.SetRenderLayer("Attacking");
+            if (playerCardsOnBoard.Contains(attackingCard))
+                InputBlockerInstace.Instance.AddCardBlock(attackingCard);
+            attackingCard1.cardDisplay.SetRenderLayer("Attacking");
             attackAnimation.DoPreparePart(attackingCard1.cardDisplay.intermediateObjectsTransform, AddToQueue);
-            if (attackingCard1.GetData().Attack >= card.GetData().Health) {
-                card.clickHandler.SetClickable(false);
-            }
             attackingCard = null;
         }
     }
