@@ -6,10 +6,13 @@ using UnityEngine.Events;
 public class GameInstance
 {
     public UnityAction<GameInstance> OnTimerRunOut;
+    public UnityAction<GameInstance> OnTimerThresholdReached;
 
     PlayerPair pair;
     GameState state;
     float turnDuration;
+    float timerThreshold;
+    bool timerThresholdReached = false;
     public float currentTimer;
     public PlayerState currentTurn;
 
@@ -22,10 +25,11 @@ public class GameInstance
         get { return state; }
     }
 
-    public GameInstance(PlayerPair pair, float turnDuration, GameState state)
+    public GameInstance(PlayerPair pair, float turnDuration, float timerThreshold, GameState state)
     {
         this.pair = pair;
         this.turnDuration = turnDuration;
+        this.timerThreshold = timerThreshold;
         this.state = state;
         currentTimer = 0;
     }
@@ -33,11 +37,14 @@ public class GameInstance
     public void SetTurn(PlayerState turn)
     {
         currentTurn = turn;
+        timerThresholdReached = false;
+        currentTimer = 0;
     }
 
     public void Clear()
     {
         OnTimerRunOut = null;
+        OnTimerThresholdReached = null;
     }
 
     public void OnUpdate(float dt)
@@ -46,6 +53,11 @@ public class GameInstance
         if (currentTimer >= turnDuration)
         {
             OnTimerRunOut.Invoke(this);
+        }
+        if (currentTimer >= timerThreshold && !timerThresholdReached)
+        {
+            OnTimerThresholdReached.Invoke(this);
+            timerThresholdReached = true;
         }
     }
 }

@@ -49,7 +49,7 @@ public class PlayerConnectionManager : NetworkBehaviour
         if (isPairCompleted) {
             ulong opponentID = playerPair.GetOpponentID(clientId);
             bool isPlayer1 = IsClientIdPlayer(opponentID);
-            GameInstance instance = gameInstanceManager.Create(playerPair, networkControl.ForceEndTurn);
+            GameInstance instance = gameInstanceManager.Create(playerPair, networkControl.ForceEndTurn, networkControl.SendTimerStartMessage);
             ulong instanceId = Convert.ToUInt64(gameInstanceManager.GetInstanceID(instance));
             SendClientInfo(IsClientIdPlayer(clientId), isPairCompleted, instanceId, clientId);
             SendClientInfo(IsClientIdPlayer(playerPair.GetOpponentID(clientId)), isPairCompleted, instanceId, playerPair.GetOpponentID(clientId));

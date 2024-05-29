@@ -11,11 +11,12 @@ public class GameInstanceManager : MonoBehaviour
 
     List<GameInstance> instances = new List<GameInstance>();
 
-    public GameInstance Create(PlayerPair pair, UnityAction<GameInstance> OnTimerRunOut)
+    public GameInstance Create(PlayerPair pair, UnityAction<GameInstance> OnTimerRunOut, UnityAction<GameInstance> OnTimerThresholdReached)
     {
         GameState gameState = new GameState(boardManager.playerCardsSet, boardManager.enemyCardsSet, playerHand.cards, opponentHand.cards, OnCardDead);
-        GameInstance newInstance = new GameInstance(pair, 5, gameState);
+        GameInstance newInstance = new GameInstance(pair, 10, 5, gameState);
         newInstance.OnTimerRunOut += OnTimerRunOut;
+        newInstance.OnTimerThresholdReached += OnTimerThresholdReached;
         instances.Add(newInstance);
         return newInstance;
     }
@@ -48,7 +49,8 @@ public class GameInstanceManager : MonoBehaviour
     {
         for (int i = 0; i < instances.Count; i++)
         {
-            instances[i].OnUpdate(Time.deltaTime);
+            if (instances[i] != null)
+                instances[i].OnUpdate(Time.deltaTime);
         }
     }
 }

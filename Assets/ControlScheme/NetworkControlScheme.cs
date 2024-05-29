@@ -17,6 +17,8 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     GameInstanceManager gameInstanceManager;
     [SerializeField]
     Button EndTurnButton;
+    [SerializeField]
+    EndTurnTimer endTurnTimer;
 
     private Card attacker, target;
     private Queue<InputBlock> blocks = new Queue<InputBlock>();
@@ -69,8 +71,21 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     void ControlScheme.AttemptToStartNextTurn() {
         AddInputBlock();
         EndTurnButton.gameObject.SetActive(false);
+        endTurnTimer.gameObject.SetActive(false);
         AttemptToStartNextTurnServerRpc(GameStateInstance.Instance.GetHash(), new ServerRpcParams());
     }
+
+    public void SendTimerStartMessage(GameInstance instance) {
+        ulong playerId = instance.Pair.PlayerID;
+        ulong opponentId = instance.Pair.EnemyID;
+        
+        ClientRpcParams playerRpcParams = CreateClientRpcParams(playerId);
+        ClientRpcParams opponentRpcParams = CreateClientRpcParams(opponentId);
+        
+        TimerStartClientRpc(playerRpcParams);
+        TimerStartClientRpc(opponentRpcParams);
+    }
+        
     
     public void ForceEndTurn(GameInstance instance) {
         PlayerState currentTurn = instance.currentTurn;
@@ -85,8 +100,13 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         ClientRpcParams currentRpcParams = CreateClientRpcParams(currentId);
         ClientRpcParams nextRpcParams = CreateClientRpcParams(nextId);
         GameState state = instance.GameState;
-        if (currentTurn == PlayerState.Player)
+        PlayerState nextTurn = PlayerState.Player;
+        if (currentTurn == PlayerState.Player) {
             state = state.GetReveresed();
+            nextTurn = PlayerState.Enemy;
+        }
+
+        instance.SetTurn(nextTurn);
 
         SetNewTurnClientRpc(state.GetHash(), true, nextRpcParams);
         SetNewTurnClientRpc(state.GetReveresed().GetHash(), false, currentRpcParams);
@@ -194,6 +214,7 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
             else
                 AddInputBlock();
             EndTurnButton.gameObject.SetActive(value);
+            endTurnTimer.gameObject.SetActive(false);
         }
     }
         
@@ -230,6 +251,13 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         string clientHash = GameStateInstance.Instance.GetStringHash();
         if (serverHash == clientHash)
             boardManager.PerformAttackByCard(attacker, target);
+    }
+
+    [ClientRpc]
+    private void TimerStartClientRpc(ClientRpcParams rpdParams) {
+        endTurnTimer.Begin();
+        endTurnTimer.gameObject.SetActive(true);
+        print("Timer Start");
     }
 
     private ClientRpcParams CreateClientRpcParams(ulong clientId) {
