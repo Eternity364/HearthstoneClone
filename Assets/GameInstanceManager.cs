@@ -14,7 +14,7 @@ public class GameInstanceManager : MonoBehaviour
     public GameInstance Create(PlayerPair pair, UnityAction<GameInstance> OnTimerRunOut, UnityAction<GameInstance> OnTimerThresholdReached)
     {
         GameState gameState = new GameState(boardManager.playerCardsSet, boardManager.enemyCardsSet, playerHand.cards, opponentHand.cards, OnCardDead);
-        GameInstance newInstance = new GameInstance(pair, 20, 10, gameState);
+        GameInstance newInstance = new GameInstance(pair, 10, 5, gameState);
         newInstance.OnTimerRunOut += OnTimerRunOut;
         newInstance.OnTimerThresholdReached += OnTimerThresholdReached;
         instances.Add(newInstance);

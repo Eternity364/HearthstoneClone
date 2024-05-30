@@ -96,7 +96,8 @@ public class GameState
             handDatas = opponentCardsInHandData;
             boardDatas = opponentCardsData;
         }
-
+        Debug.Log("handIndex = " + handIndex);
+        Debug.Log("handDatas = " + handDatas.Count);
         CardData data = handDatas[handIndex];
         handDatas.RemoveAt(handIndex);
         boardDatas.Insert(boardIndex, data);

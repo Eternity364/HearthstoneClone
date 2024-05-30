@@ -76,6 +76,9 @@ public class CardDisplay : MonoBehaviour
         mainObjectsTransform.localScale = Vector3.one;
         mainObjectsTransform.localRotation = Quaternion.Euler(Vector3.zero);
         mainObjectsTransform.localPosition = Vector3.zero;
+        intermediateObjectsTransform.localScale = Vector3.one;
+        intermediateObjectsTransform.localRotation = Quaternion.Euler(Vector3.zero);
+        intermediateObjectsTransform.localPosition = Vector3.zero;
     }
 
     public void SetRenderLayer(string layer)

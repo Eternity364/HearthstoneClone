@@ -42,7 +42,6 @@ public class InputBlocker : MonoBehaviour
     }  
 
     public InputBlock AddCardBlock(Card card) {
-        print("Card = " + card);
         cardBlocks[card] = new InputBlock();
         UpdateValues();
         return cardBlocks[card];
@@ -78,18 +77,17 @@ public class InputBlocker : MonoBehaviour
 
     public void UpdateValues()
     {
-        if (blocks.Count > 0) {
-            activeCardController.ReturnCardToHand();
-        }
         boardManager.SetInputActive(blocks.Count == 0);
         if (blocks.Count > 0)
             boardManager.DisableAttack();
-        playerHand.SetCardsClickable(blocks.Count == 0 && handBlocks.Count == 0);
+        playerHand.SetCardsActive(true);
+        playerHand.SetCardsActive(blocks.Count == 0 && handBlocks.Count == 0);
+        if (activeCardController.pickedCard)
+            playerHand.SetCardActive(activeCardController.pickedCard, blocks.Count == 0 && handBlocks.Count == 0);
         foreach(var item in cardBlocks)
         {
             Card card = item.Key;
-            card.clickHandler.SetClickable(false);
-            print("Disabled");
+            playerHand.SetCardActive(card, false);
         }
     }
 }

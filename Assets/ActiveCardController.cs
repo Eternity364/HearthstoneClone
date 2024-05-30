@@ -19,18 +19,18 @@ public class ActiveCardController : MonoBehaviour
     public Card pickedCard;
 
     private int handIndex;
-    private InputBlock handBlock;
+    private List<InputBlock> handBlocks = new List<InputBlock>();
     
 
     public void PickCard(Card card, int handIndex)
     {
+        SetInputBlock(true);
         card.cardDisplay.gameObject.transform.SetParent(this.gameObject.transform);
         card.cardDisplay.SetShadowActive(true);
         card.transform.localRotation = Quaternion.Euler(0, 0, 0);
         pickedCard = card;
         boardManager.StartTempSorting();
         card.cardDisplay.SetRenderLayer("Active");
-        handBlock = InputBlockerInstace.Instance.AddHandBlock();
         this.handIndex = handIndex;
     }
 
@@ -39,8 +39,7 @@ public class ActiveCardController : MonoBehaviour
             pickedCard.RotationManager.SetActive(false);
             hand.ReturnCard(pickedCard, handIndex);
             pickedCard = null;
-            InputBlockerInstace.Instance.RemoveBlock(handBlock);
-            handBlock = null;
+            SetInputBlock(false);
         }
     }
 
@@ -48,19 +47,33 @@ public class ActiveCardController : MonoBehaviour
     {        
         boardManager.PlaceCard(pickedCard, PlayerState.Player);
         pickedCard.RotationManager.SetActive(false);
-        hand.Remove(pickedCard);
         hand.Sort();
         pickedCard = null;
-        InputBlockerInstace.Instance.RemoveBlock(handBlock);
-        handBlock = null;
+        SetInputBlock(false);
 
         OnCardDrop.Invoke(PlayerState.Player, handIndex, boardManager.TempIndex);
+    }
+
+    private void SetInputBlock(bool value)
+    {      
+        if (value) {  
+            for (int i = 0; i < hand.cards.Count; i++)
+            {
+                handBlocks.Add(InputBlockerInstace.Instance.AddCardBlock(hand.cards[i]));
+            }
+        } else
+        {
+            for (int i = 0; i < handBlocks.Count; i++)
+            {
+                InputBlockerInstace.Instance.RemoveBlock(handBlocks[i]);
+            }
+            handBlocks = new List<InputBlock>();
+        }
     }
 
     private bool IsPosInsideDeadZone(Vector2 position) {
         return Math.Abs(position.x) < deadZone.x && position.y < deadZone.y;
     }
-
     
     void Update()
     {
@@ -78,8 +91,13 @@ public class ActiveCardController : MonoBehaviour
                 if (IsPosInsideDeadZone(position))
                     boardManager.StopTempSorting();
                 else if (position != Vector3.zero) {
-                    boardManager.StartTempSorting();
-                    boardManager.ComparePositionsAndSortTemporarily(PositionGetter.GetPosition(PositionGetter.ColliderType.Background).x);
+                    if (hand.IsCardActive(pickedCard)) {
+                        boardManager.StartTempSorting();
+                        boardManager.ComparePositionsAndSortTemporarily(PositionGetter.GetPosition(PositionGetter.ColliderType.Background).x);
+                    }
+                    else {
+                        ReturnCardToHand();
+                    }
                 }
             }
         }

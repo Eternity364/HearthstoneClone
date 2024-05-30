@@ -26,15 +26,16 @@ public class Hand : MonoBehaviour
     [SerializeField]
     PlayerState playerState;
 
-    private Dictionary<Card, List<Tweener>> currentAnimations;
+    private Dictionary<Card, List<Tweener>> currentAnimationsMain = new Dictionary<Card, List<Tweener>>();
+    private Dictionary<Card, List<Tweener>> currentAnimationsInside = new Dictionary<Card, List<Tweener>>();
+    private List<Card> inactiveCards = new List<Card>();
     private Card hoveringCard;
+    private int takenCardIndex;
     private Card returningToHandCard;
     private InputBlock handBlock;
 
     void Awake()
     {
-        currentAnimations = new Dictionary<Card, List<Tweener>>();
-
         Sort();
 
         if (playerState == PlayerState.Player) {
@@ -63,9 +64,10 @@ public class Hand : MonoBehaviour
     private void OnCardPick(Card card) {
         KillCardTweens(card);
         card.cardDisplay.ResetTransform();
-        hoveringCard = null;
         SetCardCallbacks(card, false);
-        cardController.PickCard(card, cards.IndexOf(card));
+        takenCardIndex = cards.IndexOf(card);
+        cards.Remove(card);
+        cardController.PickCard(card, takenCardIndex);
     }
 
     private void SetCardsCallbacks(bool value) {
@@ -90,9 +92,24 @@ public class Hand : MonoBehaviour
     }
 
     private void KillCardTweens(Card card) {
-        if (currentAnimations.ContainsKey(card))
+        KillCardMainTweens(card);
+        KillCardInsideTweens(card);
+    }
+
+    private void KillCardMainTweens(Card card) {
+        if (currentAnimationsMain.ContainsKey(card))
         {
-            foreach (Tweener tween1 in currentAnimations[card])
+            foreach (Tweener tween1 in currentAnimationsMain[card])
+            {
+                tween1.Kill();
+            }
+        }
+    }
+
+    private void KillCardInsideTweens(Card card) {
+        if (currentAnimationsInside.ContainsKey(card))
+        {
+            foreach (Tweener tween1 in currentAnimationsInside[card])
             {
                 tween1.Kill();
             }
@@ -100,14 +117,16 @@ public class Hand : MonoBehaviour
     }
 
     public void ReturnCard(Card card, int index) {
-        cards[index] = card;
+        cards.Insert(takenCardIndex, card);
         returningToHandCard = card;
-        Vector3 position = card.cardDisplay.gameObject.transform.position;
+        hoveringCard = null;
         card.cardDisplay.gameObject.transform.SetParent(gameObject.transform);
         card.cardDisplay.SetShadowActive(false);
+        card.cardDisplay.ResetTransform();
         SetCardCallbacks(card, true);
         board.SortCards(board.PlayerCardsOnBoard);
         Sort();
+        InputBlockerInstace.Instance.UpdateValues();
     }
 
     public void PlaceCard(Card card, int index) {
@@ -121,7 +140,7 @@ public class Hand : MonoBehaviour
         if (hoveringCard == null && !returningToHandCard == card) {
             hoveringCard = card;
             
-            KillCardTweens(card);
+            KillCardInsideTweens(card);
             
             SetCardSortingTransform(card, false);
 
@@ -135,7 +154,7 @@ public class Hand : MonoBehaviour
             Vector3 position = card.cardDisplay.mainObjectsTransform.position;
             position.y = -0.35f;
             card.cardDisplay.mainObjectsTransform.position = position;
-            currentAnimations[card] = new List<Tweener>
+            currentAnimationsInside[card] = new List<Tweener>
             {
                 card.cardDisplay.mainObjectsTransform.DOMoveY(-0.3f, duration).SetEase(Ease.OutQuad)
             };
@@ -146,9 +165,8 @@ public class Hand : MonoBehaviour
 
     private void OnMouseLeaveCardAnimation(Card card) {
         if (hoveringCard == card) {
-            print("OnLeave");
             hoveringCard = null;
-            KillCardTweens(card);
+            KillCardInsideTweens(card);
             card.cardDisplay.mainObjectsTransform.localScale = Vector3.one;
             Vector3 position = card.cardDisplay.mainObjectsTransform.localPosition;
             position.x = 0;
@@ -157,7 +175,7 @@ public class Hand : MonoBehaviour
 
             float duration = 0.45f;
 
-            currentAnimations[card] = new List<Tweener>
+            currentAnimationsInside[card] = new List<Tweener>
             {
                 card.cardDisplay.mainObjectsTransform.DOLocalMove(new Vector3(), duration).SetEase(Ease.OutQuad),
                 card.cardDisplay.mainObjectsTransform.DOLocalRotate(new Vector3(), duration).SetEase(Ease.OutQuad)
@@ -173,28 +191,28 @@ public class Hand : MonoBehaviour
         //     SortLinear();
     }
 
-    public void SortLinear()
-    {
-        Vector3 startPosition = (-cards.Count / 2 + + 0.5f) * positionShift;
-        if (cards.Count % 2 == 1)
-            startPosition -= positionShift * 0.5f;
+    // public void SortLinear()
+    // {
+    //     Vector3 startPosition = (-cards.Count / 2 + + 0.5f) * positionShift;
+    //     if (cards.Count % 2 == 1)
+    //         startPosition -= positionShift * 0.5f;
 
-        for (int i = 0; i < cards.Count; i++)
-        {
-            //cards[i].transform.localPosition = startPosition + positionShift * i;
-            cards[i].cardDisplay.SetRenderLayer("InHandCard" + (cards.Count - i).ToString());
-            // Quaternion rotation = Quaternion.Euler(0, 0, 0);
-            // cards[i].transform.rotation = rotation;
+    //     for (int i = 0; i < cards.Count; i++)
+    //     {
+    //         //cards[i].transform.localPosition = startPosition + positionShift * i;
+    //         cards[i].cardDisplay.SetRenderLayer("InHandCard" + (cards.Count - i).ToString());
+    //         // Quaternion rotation = Quaternion.Euler(0, 0, 0);
+    //         // cards[i].transform.rotation = rotation;
             
-            KillCardTweens(cards[i]);
+    //         KillCardTweens(cards[i]);
 
-            currentAnimations[cards[i]] = new List<Tweener>
-            {
-                cards[i].cardDisplay.mainObjectsTransform.DOLocalMove(startPosition + positionShift * i, 0.2f).SetEase(Ease.OutQuad),
-                cards[i].cardDisplay.mainObjectsTransform.DORotate(new Vector3(), 0.2f).SetEase(Ease.OutQuad)
-            };
-        }
-    }
+    //         currentAnimations[cards[i]] = new List<Tweener>
+    //         {
+    //             cards[i].cardDisplay.mainObjectsTransform.DOLocalMove(startPosition + positionShift * i, 0.2f).SetEase(Ease.OutQuad),
+    //             cards[i].cardDisplay.mainObjectsTransform.DORotate(new Vector3(), 0.2f).SetEase(Ease.OutQuad)
+    //         };
+    //     }
+    // }
 
     public void SortFan()
     {
@@ -202,11 +220,10 @@ public class Hand : MonoBehaviour
         {
             SetCardSortingTransform(cards[i]);
         }
-        print("Yep");
     }
 
     private void SetCardSortingTransform(Card card, bool withAnimation = true) {
-        KillCardTweens(card);
+        KillCardMainTweens(card);
         float fanSortingAngleShift = (endAngle - startAngle) / cards.Count;
         float localStartAngle = startAngle;
         int i = cards.IndexOf(card);
@@ -224,7 +241,7 @@ public class Hand : MonoBehaviour
         }
         
         if (withAnimation) {
-            currentAnimations[cards[i]] = new List<Tweener>
+            currentAnimationsMain[cards[i]] = new List<Tweener>
             {
                 card.transform.DOLocalMove(position, 0.2f).SetEase(Ease.OutQuad),
                 card.transform.DOLocalRotateQuaternion(cardRotation, 0.2f).SetEase(Ease.OutQuad).OnKill(OnAnimationComplete)
@@ -240,11 +257,29 @@ public class Hand : MonoBehaviour
         cards.Remove(card);
     }
 
+    public void SetCardActive(Card card, bool active) {
+        if (active)
+            inactiveCards.Remove(card);
+        else if (!inactiveCards.Contains(card))  
+            inactiveCards.Add(card);
+    }     
+
+    public void SetCardsActive(bool active) {
+        for (int i = 0; i < cards.Count; i++)
+        {
+            SetCardActive(cards[i], active);
+        }
+    }    
+
     public void SetCardsClickable(bool active) {
         for (int i = 0; i < cards.Count; i++)
         {
             cards[i].clickHandler.SetClickable(active);
         }
+    }     
+
+    public bool IsCardActive(Card card) {
+        return !inactiveCards.Contains(card);
     }    
 
     private void OnBoardSizeChange(int currentSize, int maxSize) {
@@ -260,17 +295,6 @@ public class Hand : MonoBehaviour
                 }
             }
         }
-    }
-
-    
-    public Sequence StartSortingAnimation(Transform transform, Vector3 target, TweenCallback OnFinish, TweenCallback OnFinishHit)
-    {
-        Sequence mySequence = DOTween.Sequence();
-        mySequence.Append(transform.DOMove(target - new Vector3(0, 0.1f, 0), 0.25f).SetEase(Ease.InCubic).OnComplete(OnFinishHit));
-        mySequence.Append(transform.DOLocalMove(Vector3.zero, 0.45f).SetEase(Ease.OutCubic).OnComplete(OnFinish));
-        mySequence.Insert(0.25f, transform.DOLocalRotate(new Vector3(-12, 12, 0), 0.1f).SetEase(Ease.InCubic));
-        mySequence.Insert(0.35f, transform.DOLocalRotate(new Vector3(), 0.35f).SetEase(Ease.InCubic));
-        return mySequence;
     }
 
     Vector3 RotateTowardsUp(Vector3 start, float angle)
