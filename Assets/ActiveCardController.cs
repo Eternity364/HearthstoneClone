@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,6 +11,8 @@ public class ActiveCardController : MonoBehaviour
     private Hand hand;
     [SerializeField]
     private BoardManager boardManager;
+    [SerializeField]
+    private Vector2 deadZone;
 
     public UnityAction<PlayerState, int, int> OnCardDrop;
     private int handIndex;
@@ -51,17 +54,31 @@ public class ActiveCardController : MonoBehaviour
         OnCardDrop.Invoke(PlayerState.Player, handIndex, boardManager.TempIndex);
     }
 
+    private bool IsPosInsideDeadZone(Vector2 position) {
+        return Math.Abs(position.x) < deadZone.x && position.y < deadZone.y;
+    }
+
     
     void Update()
     {
         if (pickedCard != null) {
-            Vector3 position = PositionGetter.GetPosition(PositionGetter.ColliderType.ActiveCardController);
-            if (position != Vector3.zero) {
-                pickedCard.transform.localPosition = position;
-                boardManager.ComparePositionsAndSortTemporarily(PositionGetter.GetPosition(PositionGetter.ColliderType.Background).x);
+            Vector3 position = PositionGetter.GetPosition(PositionGetter.ColliderType.ActiveCardController);   
+            pickedCard.transform.localPosition = position; 
+            if (Input.GetMouseButtonUp(0)) {
+                if (IsPosInsideDeadZone(position)) {
+                    ReturnCardToHand();
+                }
+                else
+                    DropPickedCard();
+            } 
+            else {
+                if (IsPosInsideDeadZone(position))
+                    boardManager.StopTempSorting();
+                else if (position != Vector3.zero) {
+                    boardManager.StartTempSorting();
+                    boardManager.ComparePositionsAndSortTemporarily(PositionGetter.GetPosition(PositionGetter.ColliderType.Background).x);
+                }
             }
-            if (Input.GetMouseButtonUp(0))
-                DropPickedCard();
         }
     }
 }

@@ -252,6 +252,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hand: {fileID: 1248651921}
   boardManager: {fileID: 1195510630}
+  deadZone: {x: 0.63, y: -0.42}
 --- !u!1 &161049065
 GameObject:
   m_ObjectHideFlags: 0

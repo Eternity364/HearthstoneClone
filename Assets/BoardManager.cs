@@ -207,15 +207,24 @@ public class BoardManager : MonoBehaviour
     }
 
     public void StartTempSorting() {
-        playerCardsOnBoardTemp = new List<Card>();
-        cardsPositions = new List<Vector3>();
-        for (int i = 0; i < playerCardsOnBoard.Count; i++)
-        {
-            playerCardsOnBoardTemp.Add(playerCardsOnBoard[i]);
-            cardsPositions.Add(playerCardsOnBoard[i].transform.localPosition);
-            
+        if (playerCardsOnBoardTemp == null) {
+            playerCardsOnBoardTemp = new List<Card>();
+            cardsPositions = new List<Vector3>();
+            for (int i = 0; i < playerCardsOnBoard.Count; i++)
+            {
+                playerCardsOnBoardTemp.Add(playerCardsOnBoard[i]);
+                cardsPositions.Add(playerCardsOnBoard[i].transform.localPosition);
+                
+            }
+            playerCardsOnBoardTemp.Add(tempCard);
         }
-        playerCardsOnBoardTemp.Add(tempCard);
+    }
+
+    public void StopTempSorting() {
+        if (playerCardsOnBoardTemp != null) {
+            playerCardsOnBoardTemp = null;
+            SortCards(playerCardsOnBoard);
+        }
     }
 
     public void SortCards(List<Card> cards) {
