@@ -1,10 +1,11 @@
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using DG.Tweening;
+using System.Collections.Generic;
 
 public class ActiveCardController : MonoBehaviour
 {
-    Card pickedCard;
 
     
     [SerializeField]
@@ -15,6 +16,8 @@ public class ActiveCardController : MonoBehaviour
     private Vector2 deadZone;
 
     public UnityAction<PlayerState, int, int> OnCardDrop;
+    public Card pickedCard;
+
     private int handIndex;
     private InputBlock handBlock;
     
