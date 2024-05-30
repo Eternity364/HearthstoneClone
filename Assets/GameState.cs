@@ -100,7 +100,7 @@ public class GameState
         CardData data = handDatas[handIndex];
         handDatas.RemoveAt(handIndex);
         boardDatas.Insert(boardIndex, data);
-        data.Active = true;
+        data.Active = false;
     }
 
     public void OnCardDeadEmpty(PlayerState state, int index) {

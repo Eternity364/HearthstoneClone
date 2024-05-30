@@ -144,8 +144,11 @@ public class BoardManager : MonoBehaviour
         void OnAnimationFinish () {
             card.cardDisplay.SetRenderLayer("Board");
             card.clickHandler.SetClickable(true);
-            if (side == PlayerState.Player) 
+            if (side == PlayerState.Player) {
                 card.clickHandler.OnPick += OnCardClick;
+                if (withAnimation)
+                    InputBlockerInstace.Instance.AddCardBlock(card);
+            }
             else {
                 card.clickHandler.OnMouseEnterCallbacks += OnEnemyCardMouseEnter;
                 card.clickHandler.OnMouseLeaveCallbacks += OnEnemyCardMouseLeave;
@@ -260,6 +263,7 @@ public class BoardManager : MonoBehaviour
             InputBlockerInstace.Instance.RemoveCardBlock(playerCardsOnBoard[index]);
             playerCardsOnBoard[index].clickHandler.SetClickable(false);
             playerCardsOnBoard.RemoveAt(index);
+            OnBoardSizeChange.Invoke(playerCardsOnBoard.Count, maxBoardSize);
         }
         if (state == PlayerState.Enemy) {
             enemyCardsOnBoard[index].clickHandler.SetClickable(false);

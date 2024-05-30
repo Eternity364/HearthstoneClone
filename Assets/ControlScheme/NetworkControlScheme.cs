@@ -65,7 +65,7 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
 
     void ControlScheme.AttemptToPerformCardPlacement(PlayerState state, int handIndex, int boardIndex) {
         GameStateInstance.Instance.PlaceCard(PlayerState.Player, handIndex, boardIndex);
-        boardManager.PlayerCardsOnBoard[boardIndex].cardDisplay.SetActiveStatus(true);
+        //boardManager.PlayerCardsOnBoard[boardIndex].cardDisplay.SetActiveStatus(true);
         AttemptToPerformCardPlacementServerRpc(handIndex, boardIndex, GameStateInstance.Instance.GetHash(), new ServerRpcParams());
         AddInputBlock();
     }
