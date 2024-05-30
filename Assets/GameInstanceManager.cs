@@ -13,7 +13,8 @@ public class GameInstanceManager : MonoBehaviour
 
     public GameInstance Create(PlayerPair pair, UnityAction<GameInstance> OnTimerRunOut, UnityAction<GameInstance> OnTimerThresholdReached)
     {
-        GameState gameState = new GameState(boardManager.playerCardsSet, boardManager.enemyCardsSet, playerHand.cards, opponentHand.cards, OnCardDead);
+        GameState gameState = new GameState(boardManager.playerCardsSet, boardManager.enemyCardsSet, playerHand.cards, opponentHand.cards, 
+            1, 0, 10, 10, OnCardDead, OnManaChangeEmpty);
         GameInstance newInstance = new GameInstance(pair, 10, 5, gameState);
         newInstance.OnTimerRunOut += OnTimerRunOut;
         newInstance.OnTimerThresholdReached += OnTimerThresholdReached;
@@ -43,6 +44,9 @@ public class GameInstanceManager : MonoBehaviour
     
 
     private void OnCardDead(PlayerState state, int index) {
+    }
+
+    private void OnManaChangeEmpty(PlayerState state, int empty, int empty2) {
     }
 
     void Update()

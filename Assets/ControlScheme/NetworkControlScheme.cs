@@ -76,6 +76,8 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         endTurnTimer.gameObject.SetActive(false);
         boardManager.SetCardsStatusActive(false);
         GameStateInstance.Instance.SetCardsActive(PlayerState.Enemy);
+        GameStateInstance.Instance.ProgressMana(PlayerState.Enemy);
+        print(GameStateInstance.Instance.GetReveresed().ToJson());
         AttemptToStartNextTurnServerRpc(GameStateInstance.Instance.GetHash(), new ServerRpcParams());
     }
 
@@ -130,6 +132,7 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
             }
             instance.SetTurn(state);
             GameState gameState = instance.GameState;
+            print(gameState.ToJson());
             if (instance.Pair.PlayerID == opponentID) {
                 gameState = instance.GameState.GetReveresed();
             }
@@ -139,6 +142,7 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
             string clientHash = SecurityHelper.GetHexStringFromHash(stateHash);
 
             
+            print(gameState.ToJson());
             if (serverHash == clientHash) { 
                 SetNewTurnClientRpc(gameState.GetReveresed().GetHash(), true, playerRpcParams);
             }
@@ -221,9 +225,11 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         if (!value)
             turn = PlayerState.Enemy;
         GameStateInstance.Instance.SetCardsActive(turn);
+        GameStateInstance.Instance.ProgressMana(turn);
 
         string serverHash = SecurityHelper.GetHexStringFromHash(stateHash);
         string clientHash = GameStateInstance.Instance.GetStringHash();
+        print(GameStateInstance.Instance.ToJson());
         if (serverHash == clientHash) {
             if (value) {
                 DequeueInputBlock();

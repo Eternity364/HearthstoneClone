@@ -40,6 +40,7 @@ public class GameInstance
         timerThresholdReached = false;
         currentTimer = 0;
         state.SetCardsActive(turn);
+        state.ProgressMana(turn);
     }
 
     public void Clear()

@@ -17,6 +17,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Hand playerHand;
     [SerializeField] private Hand opponentHand;
     [SerializeField] private Button endTurnButton;
+    [SerializeField] private ManaController manaController;
     private ControlScheme controlScheme;
     private GameState gameState;
     
@@ -62,7 +63,15 @@ public class MainMenu : MonoBehaviour
         gameObject.SetActive(false);
         boardManager.Initialize(isPlayer);
         controlScheme.Initialize();
-        gameState = new GameState(boardManager.PlayerCardsOnBoard, boardManager.EnemyCardsOnBoard, playerHand.cards, opponentHand.cards, boardManager.OnCardDead);
+        
+        int initialPlayerMana = 1;
+        int initialOpponentMana = 0;
+        if (!isPlayer) {
+            initialPlayerMana = 0;
+            initialOpponentMana = 1;
+        }
+        gameState = new GameState(boardManager.PlayerCardsOnBoard, boardManager.EnemyCardsOnBoard, playerHand.cards, opponentHand.cards, 
+            initialPlayerMana, initialOpponentMana, 10, 10, boardManager.OnCardDead, OnManaChange);
         GameStateInstance.SetInstance(gameState);
         endTurnButton.onClick.AddListener(controlScheme.AttemptToStartNextTurn);
         endTurnButton.gameObject.SetActive(isPlayer);
@@ -73,6 +82,12 @@ public class MainMenu : MonoBehaviour
         else
         {
             boardManager.SetCardsStatusActive(true);
+        }
+    }
+
+    private void OnManaChange(PlayerState state, int currentMana, int Mana) {
+        if (state == PlayerState.Player) {
+            manaController.Set(currentMana, Mana);
         }
     }
 
