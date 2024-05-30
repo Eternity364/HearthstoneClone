@@ -84,7 +84,7 @@ public class ActiveCardController : MonoBehaviour
                 if (IsPosInsideDeadZone(position)) {
                     ReturnCardToHand();
                 }
-                else
+                else if (hand.IsCardActive(pickedCard))
                     DropPickedCard();
             } 
             else {

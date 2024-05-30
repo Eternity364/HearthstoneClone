@@ -63,7 +63,7 @@ public class MainMenu : MonoBehaviour
         gameObject.SetActive(false);
         boardManager.Initialize(isPlayer);
         controlScheme.Initialize();
-        
+
         int initialPlayerMana = 1;
         int initialOpponentMana = 0;
         if (!isPlayer) {
@@ -85,9 +85,10 @@ public class MainMenu : MonoBehaviour
         }
     }
 
-    private void OnManaChange(PlayerState state, int currentMana, int Mana) {
+    private void OnManaChange(PlayerState state, int currentMana, int mana) {
         if (state == PlayerState.Player) {
-            manaController.Set(currentMana, Mana);
+            manaController.Set(currentMana, mana);
+            playerHand.OnManaChange(state, currentMana, mana);
         }
     }
 

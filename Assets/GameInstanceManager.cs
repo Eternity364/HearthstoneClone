@@ -15,7 +15,7 @@ public class GameInstanceManager : MonoBehaviour
     {
         GameState gameState = new GameState(boardManager.playerCardsSet, boardManager.enemyCardsSet, playerHand.cards, opponentHand.cards, 
             1, 0, 10, 10, OnCardDead, OnManaChangeEmpty);
-        GameInstance newInstance = new GameInstance(pair, 10, 5, gameState);
+        GameInstance newInstance = new GameInstance(pair, 20, 10, gameState);
         newInstance.OnTimerRunOut += OnTimerRunOut;
         newInstance.OnTimerThresholdReached += OnTimerThresholdReached;
         instances.Add(newInstance);

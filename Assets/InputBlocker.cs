@@ -26,7 +26,7 @@ public class InputBlocker : MonoBehaviour
 
     private List<InputBlock> blocks = new List<InputBlock>();
     private List<InputBlock> handBlocks = new List<InputBlock>();
-    private Dictionary<Card, InputBlock> cardBlocks = new Dictionary<Card, InputBlock>();
+    private Dictionary<InputBlock, Card> cardBlocks = new Dictionary<InputBlock, Card>();
 
     void Awake()
     {
@@ -42,9 +42,10 @@ public class InputBlocker : MonoBehaviour
     }  
 
     public InputBlock AddCardBlock(Card card) {
-        cardBlocks[card] = new InputBlock();
+        InputBlock block = new InputBlock();
+        cardBlocks[block] = card;
         UpdateValues();
-        return cardBlocks[card];
+        return block;
     }
 
     public InputBlock AddHandBlock()
@@ -59,20 +60,19 @@ public class InputBlocker : MonoBehaviour
     {
         blocks.Remove(block);
         handBlocks.Remove(block);
-        if (cardBlocks.ContainsValue(block)) {
-            var item = cardBlocks.First(kvp => kvp.Value == block);
-            cardBlocks.Remove(item.Key);
+        if (cardBlocks.ContainsKey(block)) {
+            cardBlocks.Remove(block);
         }
         UpdateValues();
     }
 
     public void RemoveCardBlock(Card card)
     {
-        if (cardBlocks.ContainsKey(card)) {
-            card.clickHandler.SetClickable(true);
-            cardBlocks.Remove(card);
-            UpdateValues();
+        while(cardBlocks.ContainsValue(card)) {
+            var item = cardBlocks.First(kvp => kvp.Value == card);
+            cardBlocks.Remove(item.Key);
         }
+        UpdateValues();
     }
 
     public void UpdateValues()
@@ -86,7 +86,7 @@ public class InputBlocker : MonoBehaviour
             playerHand.SetCardActive(activeCardController.pickedCard, blocks.Count == 0 && handBlocks.Count == 0);
         foreach(var item in cardBlocks)
         {
-            Card card = item.Key;
+            Card card = item.Value;
             playerHand.SetCardActive(card, false);
         }
     }

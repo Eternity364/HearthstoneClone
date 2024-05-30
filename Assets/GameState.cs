@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Events;
 
 [Serializable]
 public class GameState
@@ -14,13 +15,13 @@ public class GameState
     public int currentPlayerMana, playerMana, playerMaxMana;
     public int currentOpponentMana, opponentMana, opponentMaxMana;
     [NonSerialized]
-    public Action<PlayerState, int> OnCardDead;
-    public Action<PlayerState, int, int> OnManaChange;
+    public UnityAction<PlayerState, int> OnCardDead;
+    public UnityAction<PlayerState, int, int> OnManaChange;
 
     public GameState(List<Card> playerCards, List<Card> opponentCards, 
         List<Card> playerCardsInHand, List<Card> opponentCardsInHand, 
         int playerMana, int opponentMana, int playerMaxMana, int opponentMaxMana,
-        Action<PlayerState, int> OnCardDead, Action<PlayerState, int, int> OnManaChange)
+        UnityAction<PlayerState, int> OnCardDead, UnityAction<PlayerState, int, int> OnManaChange)
     {
         playerCardsData = new List<CardData>();
         opponentCardsData = new List<CardData>();
@@ -38,8 +39,8 @@ public class GameState
         this.opponentMaxMana = opponentMaxMana;
         this.currentPlayerMana = playerMana;
         this.currentOpponentMana = opponentMana;
-        this.OnCardDead = OnCardDead;
-        this.OnManaChange = OnManaChange;
+        this.OnCardDead += OnCardDead;
+        this.OnManaChange += OnManaChange;
         OnManaChange(PlayerState.Player, currentPlayerMana, playerMana);
         OnManaChange(PlayerState.Enemy, currentOpponentMana, opponentMana);
     }
@@ -65,8 +66,8 @@ public class GameState
         this.currentPlayerMana = currentPlayerMana;
         this.currentOpponentMana = currentOpponentMana;
 
-        this.OnCardDead = OnCardDeadEmpty;
-        this.OnManaChange = OnManaChangeEmpty;
+        this.OnCardDead += OnCardDeadEmpty;
+        this.OnManaChange += OnManaChangeEmpty;
     }
 
     public void ProgressMana(PlayerState state) {
@@ -138,6 +139,7 @@ public class GameState
         CardData data = handDatas[handIndex];
         handDatas.RemoveAt(handIndex);
         boardDatas.Insert(boardIndex, data);
+        SpendMana(side, data.Cost);
         data.Active = false;
     }
 

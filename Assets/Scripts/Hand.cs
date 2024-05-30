@@ -28,6 +28,7 @@ public class Hand : MonoBehaviour
 
     private Dictionary<Card, List<Tweener>> currentAnimationsMain = new Dictionary<Card, List<Tweener>>();
     private Dictionary<Card, List<Tweener>> currentAnimationsInside = new Dictionary<Card, List<Tweener>>();
+    private Dictionary<Card, InputBlock> costBlocks = new Dictionary<Card, InputBlock>();
     private List<Card> inactiveCards = new List<Card>();
     private Card hoveringCard;
     private int takenCardIndex;
@@ -52,6 +53,12 @@ public class Hand : MonoBehaviour
 
             //StartCoroutine(StartTestCardPlacing());
         }
+    }
+
+    
+    void Update() {
+        print("costBlocks = " + costBlocks.Count);
+        print("inactiveCards = " + inactiveCards.Count);
     }
 
     IEnumerator StartTestCardPlacing()
@@ -127,6 +134,23 @@ public class Hand : MonoBehaviour
         board.SortCards(board.PlayerCardsOnBoard);
         Sort();
         InputBlockerInstace.Instance.UpdateValues();
+    }
+
+    public void OnManaChange(PlayerState state, int currentMana, int mana) {
+        print("blocked");
+        for (int i = 0; i < cards.Count; i++)
+        {
+            if (cards[i].cardDisplay.Data.Cost > currentMana) {
+                if (!costBlocks.ContainsKey(cards[i]))
+                    costBlocks[cards[i]] = InputBlockerInstace.Instance.AddCardBlock(cards[i]);
+            } else {
+                if (costBlocks.ContainsKey(cards[i])) {
+                    InputBlockerInstace.Instance.RemoveCardBlock(cards[i]);
+                    costBlocks.Remove(cards[i]);
+                }
+            }
+        }
+        
     }
 
     public void PlaceCard(Card card, int index) {
