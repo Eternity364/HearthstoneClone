@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.Assertions;
 using UnityEngine.Networking;
+using Unity.Services.Multiplay;
 using System;
 using TMPro;
 
@@ -76,6 +77,11 @@ public class PlayerConnectionManager : NetworkBehaviour
             };
             SendClientShutDownClientRpc(clientRpcParams);
         }
+        Application.Quit();
+    }
+
+    private async void SetServerReady() {
+        await MultiplayService.Instance.ReadyServerForPlayersAsync();
     }
 
     private void SendClientInfo(bool isPlayer, bool isPairCompleted, ulong instanceId, ulong clientId) {
