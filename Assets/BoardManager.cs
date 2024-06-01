@@ -138,7 +138,6 @@ public class BoardManager : MonoBehaviour
     public void PlaceCard(Card card, PlayerState side, bool withAnimation = true, int forcedIndex = -1)
     {
         void OnFirstPartFinish () {
-            card.cardDisplay.ChangeState(CardDisplay.DisplayStates.OnField);
         }
 
         void OnAnimationFinish () {
@@ -176,6 +175,7 @@ public class BoardManager : MonoBehaviour
 
             cards.Insert(index, card);
             card.cardDisplay.SetRenderLayer("LandingOnBoard");
+            card.cardDisplay.ChangeState(CardDisplay.DisplayStates.OnField);
             placingAnimation.Do(card.cardDisplay.intermediateObjectsTransform, card.cardDisplay.mainObjectsTransform, OnFirstPartFinish, OnAnimationFinish);
             SortCards(cards);
         }

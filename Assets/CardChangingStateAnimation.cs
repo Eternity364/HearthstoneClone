@@ -38,15 +38,19 @@ public class CardChangingStateAnimation : MonoBehaviour
             fromTextGroup = OnBoardTextGroup;
         }
 
-        DOTween.To(AlphaSetter, 0, 1, 0.2f).SetEase(Ease.InQuad);
+        DOTween.To(AlphaSetter, 0, 1f, 1.3f).SetEase(Ease.OutQuad);
 
         void AlphaSetter(float alpha) {
             Color toColor = new Color(toImage.color.r, toImage.color.g, toImage.color.b, 255 * alpha);
             Color fromColor = new Color(toImage.color.r, toImage.color.g, toImage.color.b, 255 * (1 - alpha));
+            fromImage.GetComponent<SpriteRenderer>().material.SetFloat("_Fade", (1 - alpha));
+            fromBezel.GetComponent<SpriteRenderer>().material.SetFloat("_Fade", (1 - alpha));
+            if (alpha == 1) {
+                fromImage.color = fromColor;
+                fromBezel.color = fromColor;
+            }
             toImage.color = toColor;
             toBezel.color = toColor;
-            fromImage.color = fromColor;
-            fromBezel.color = fromColor;
             toTextGroup.alpha = alpha;
             fromTextGroup.alpha = 1- alpha;
         }

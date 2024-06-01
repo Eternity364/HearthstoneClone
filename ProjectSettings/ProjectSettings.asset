@@ -733,11 +733,11 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: e316f4be-c18b-4aa0-b564-82e2bcaacc3e
+  cloudProjectId: 26c657cb-1984-4ccd-815a-db498d65bbba
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: Hearthstone Clone
-  organizationId: eternity364
+  projectName: HearthstoneClone
+  organizationId: ihorkorobka36484
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
