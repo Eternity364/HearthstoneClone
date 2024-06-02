@@ -38,6 +38,8 @@ public class CardDisplay : MonoBehaviour
     Color lackHealth; 
     [SerializeField]
     GameObject activeStatus; 
+    [SerializeField]
+    GameObject pickedCardParticles; 
 
     public enum DisplayStates
     {
@@ -70,6 +72,10 @@ public class CardDisplay : MonoBehaviour
         currentState = state;
         SetShadowActive(shadowsActive);
         card.clickHandler.SetRectAreaClickable(state == DisplayStates.InHand);
+    }
+
+    public void SetPickedCardParticlesActive(bool active) {
+        pickedCardParticles.SetActive(true);
     }
 
     public void ResetTransform() {

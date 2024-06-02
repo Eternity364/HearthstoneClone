@@ -31,12 +31,14 @@ public class ActiveCardController : MonoBehaviour
         pickedCard = card;
         boardManager.StartTempSorting();
         card.cardDisplay.SetRenderLayer("Active");
+        card.cardDisplay.SetPickedCardParticlesActive(true);
         this.handIndex = handIndex;
     }
 
     public void ReturnCardToHand() {
         if (pickedCard != null) {
             pickedCard.RotationManager.SetActive(false);
+            pickedCard.cardDisplay.SetPickedCardParticlesActive(false);
             hand.ReturnCard(pickedCard, handIndex);
             pickedCard = null;
             SetInputBlock(false);
@@ -47,6 +49,7 @@ public class ActiveCardController : MonoBehaviour
     {        
         boardManager.PlaceCard(pickedCard, PlayerState.Player);
         pickedCard.RotationManager.SetActive(false);
+        pickedCard.cardDisplay.SetPickedCardParticlesActive(false);
         hand.Sort();
         pickedCard = null;
         SetInputBlock(false);

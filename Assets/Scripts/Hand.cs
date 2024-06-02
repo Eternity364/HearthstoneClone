@@ -57,8 +57,7 @@ public class Hand : MonoBehaviour
 
     
     void Update() {
-        print("costBlocks = " + costBlocks.Count);
-        print("inactiveCards = " + inactiveCards.Count);
+
     }
 
     IEnumerator StartTestCardPlacing()
