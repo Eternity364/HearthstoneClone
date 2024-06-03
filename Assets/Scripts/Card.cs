@@ -37,6 +37,7 @@ public class Card : MonoBehaviour
     
     void StartDeathAnimation()
     {
-        Destroy(this.gameObject);
+        cardDisplay.StartDeathAnimation();
+        //Destroy(this.gameObject);
     }
 }

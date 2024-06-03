@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -33,6 +35,8 @@ public class CardDisplay : MonoBehaviour
     private CardRenderOrderSetter cardRenderOrderSetter;
     public Transform mainObjectsTransform; 
     [SerializeField]
+    public GameObject grayScale; 
+    [SerializeField]
     public Transform intermediateObjectsTransform; 
     [SerializeField]
     Color lackHealth; 
@@ -41,7 +45,9 @@ public class CardDisplay : MonoBehaviour
     [SerializeField]
     GameObject pickedCardParticles; 
     [SerializeField]
-    GameObject placingCardParticles; 
+    GameObject placingCardParticles;  
+    [SerializeField]
+    GameObject deathParticles; 
     [SerializeField]
     AttackParticle attackParticle; 
 
@@ -120,6 +126,33 @@ public class CardDisplay : MonoBehaviour
     {
         attackParticle.gameObject.SetActive(false);
         attackParticle.gameObject.SetActive(true);
+    }
+
+    public void StartDeathAnimation()
+    {
+        grayScale.SetActive(true);
+        float duration = 0.7f;
+        int shakesCount = 25;
+        int divisionRate = 500;
+        Sequence mySequence = DOTween.Sequence();
+        void DeathParticles() {
+            deathParticles.SetActive(true);
+        }           
+
+        for (int i = 0; i < shakesCount; i++)
+        {
+            mySequence.Append(mainObjectsTransform.DOLocalMove(new Vector3(
+                UnityEngine.Random.Range(-10.0f, 10.0f) / divisionRate, UnityEngine.Random.Range(-10.0f, 10.0f) / divisionRate, 0), 
+                duration / shakesCount).SetEase(Ease.OutCubic));
+            
+        } 
+        mySequence.AppendCallback(DeathParticles);
+        mySequence.Append(mainObjectsTransform.DOLocalMove(new Vector3(0, 0, 0.2f), 
+                0.8f).SetEase(Ease.OutCubic)).OnComplete(DestroyCard);
+    }
+
+    public void DestroyCard() {
+        //Destroy(gameObject);
     }
 
     public void UpdateDisplay() {

@@ -291,9 +291,15 @@ public class BoardManager : MonoBehaviour
             targetSet = playerCardsOnBoard;
         }
 
-        if (deadTarget || deadAttacker) {
-            SortCards(targetSet);
-            SortCards(attackerSet);
+        
+        Sequence mySequence = DOTween.Sequence();
+        mySequence.InsertCallback(0.7f, Sort);
+
+        void Sort () {
+            if (deadTarget || deadAttacker) {
+                SortCards(targetSet);
+                SortCards(attackerSet);
+            }
         }
 
         if (deadAttacker) {
