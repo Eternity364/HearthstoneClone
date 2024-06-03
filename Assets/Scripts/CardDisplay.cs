@@ -132,6 +132,7 @@ public class CardDisplay : MonoBehaviour
     {
         grayScale.SetActive(true);
         float duration = 0.7f;
+        float goDownDuration = 0.8f;
         int shakesCount = 25;
         int divisionRate = 500;
         Sequence mySequence = DOTween.Sequence();
@@ -148,11 +149,12 @@ public class CardDisplay : MonoBehaviour
         } 
         mySequence.AppendCallback(DeathParticles);
         mySequence.Append(mainObjectsTransform.DOLocalMove(new Vector3(0, 0, 0.2f), 
-                0.8f).SetEase(Ease.OutCubic)).OnComplete(DestroyCard);
+                0.8f).SetEase(Ease.OutCubic));
+        mySequence.InsertCallback(duration + goDownDuration, DeathParticles);
     }
 
     public void DestroyCard() {
-        //Destroy(gameObject);
+        Destroy(gameObject);
     }
 
     public void UpdateDisplay() {

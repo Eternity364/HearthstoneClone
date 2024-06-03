@@ -5397,16 +5397,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1000489448915635000}
-  m_LocalRotation: {x: -0.0075190547, y: 0.0044290656, z: -0.50751936, w: -0.86159617}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.011526263, y: 0.036749467, z: -0.50744426, w: -0.8608235}
+  m_LocalPosition: {x: 0, y: 0, z: -0.00097471476}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2680920901830996479}
+  m_Father: {fileID: 3711116447626226811}
   m_LocalEulerAnglesHint: {x: 1, y: 0, z: -1019}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.09, y: -0.23}
+  m_AnchoredPosition: {x: -0.012963444, y: 0.00500001}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!198 &7889466295143901207
@@ -10229,8 +10229,8 @@ ParticleSystemRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 839134053
+  m_SortingLayer: 17
   m_SortingOrder: 5
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -10512,7 +10512,6 @@ RectTransform:
   - {fileID: 3798111050679882135}
   - {fileID: 7482936342663844388}
   - {fileID: 5187130460891016473}
-  - {fileID: 2614065257477296833}
   m_Father: {fileID: 4421477798093605700}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -10857,6 +10856,7 @@ RectTransform:
   m_Children:
   - {fileID: 2965557363054645138}
   - {fileID: 6123735314538697990}
+  - {fileID: 2614065257477296833}
   - {fileID: 2756469291153783824}
   m_Father: {fileID: 4421477798839540137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -21400,8 +21400,8 @@ ParticleSystemRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 839134053
+  m_SortingLayer: 17
   m_SortingOrder: 5
   m_RenderMode: 4
   m_MeshDistribution: 0
