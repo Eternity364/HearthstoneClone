@@ -41,7 +41,9 @@ public class CardDisplay : MonoBehaviour
     [SerializeField]
     Color lackHealth; 
     [SerializeField]
-    GameObject activeStatus; 
+    GameObject activeStatusInHand; 
+    [SerializeField]
+    GameObject activeStatusOnField; 
     [SerializeField]
     GameObject pickedCardParticles; 
     [SerializeField]
@@ -50,6 +52,8 @@ public class CardDisplay : MonoBehaviour
     GameObject deathParticles; 
     [SerializeField]
     AttackParticle attackParticle; 
+    [SerializeField]
+    DisplayStates currentState;
 
     public enum DisplayStates
     {
@@ -61,8 +65,6 @@ public class CardDisplay : MonoBehaviour
     {
         get { return data; }
     }
-
-    DisplayStates currentState = DisplayStates.InHand;
     bool shadowsActive = false;
 
     void Awake()
@@ -114,7 +116,10 @@ public class CardDisplay : MonoBehaviour
 
     public void SetActiveStatus(bool active)
     {
-        activeStatus.SetActive(active);
+        if (currentState == DisplayStates.InHand)
+            activeStatusInHand.SetActive(active);
+        else
+            activeStatusOnField.SetActive(active);
     }
 
     public void SetAttackParticleAngle(Vector2 attackerPos)

@@ -285,6 +285,8 @@ public class Hand : MonoBehaviour
             inactiveCards.Remove(card);
         else if (!inactiveCards.Contains(card))  
             inactiveCards.Add(card);
+        
+        card.cardDisplay.SetActiveStatus(active);
     }     
 
     public void SetCardsActive(bool active) {

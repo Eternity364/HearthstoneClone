@@ -47,6 +47,7 @@ public class ActiveCardController : MonoBehaviour
 
     private void DropPickedCard()
     {        
+        pickedCard.cardDisplay.SetActiveStatus(false);
         boardManager.PlaceCard(pickedCard, PlayerState.Player);
         pickedCard.RotationManager.SetActive(false);
         pickedCard.cardDisplay.SetPickedCardParticlesActive(false);
