@@ -74,6 +74,7 @@ public class Hand : MonoBehaviour
         takenCardIndex = cards.IndexOf(card);
         cards.Remove(card);
         cardController.PickCard(card, takenCardIndex);
+        hoveringCard = null;
     }
 
     private void SetCardsCallbacks(bool value) {

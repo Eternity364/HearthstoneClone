@@ -19,6 +19,10 @@ public class CardChangingStateAnimation : MonoBehaviour
     SpriteRenderer OnBoardBezel;
     [SerializeField]
     CanvasGroup OnBoardTextGroup;
+    [SerializeField]
+    GameObject InHandOutline;
+    [SerializeField]
+    GameObject OnFieldOutline;
 
 
     public void Do(CardDisplay.DisplayStates toState)
@@ -26,19 +30,25 @@ public class CardChangingStateAnimation : MonoBehaviour
         SpriteRenderer fromImage = InHandImage;
         SpriteRenderer fromBezel = InHandBezel;
         CanvasGroup fromTextGroup = InHandTextGroup;
+        GameObject fromOutline = InHandOutline;
         SpriteRenderer toImage = OnBoardImage;
         SpriteRenderer toBezel = OnBoardBezel;
         CanvasGroup toTextGroup = OnBoardTextGroup;
+        GameObject toOutline = OnFieldOutline;
         if (toState == CardDisplay.DisplayStates.InHand) {
             toImage = InHandImage;
             toBezel = InHandBezel;
             toTextGroup = InHandTextGroup;
+            toOutline = InHandOutline;
             fromImage = OnBoardImage;
             fromBezel = OnBoardBezel;
             fromTextGroup = OnBoardTextGroup;
+            fromOutline = OnFieldOutline;
         }
 
         DOTween.To(AlphaSetter, 0, 1f, 1.3f).SetEase(Ease.OutQuad);
+        fromOutline.SetActive(false);
+
 
         void AlphaSetter(float alpha) {
             Color toColor = new Color(toImage.color.r, toImage.color.g, toImage.color.b, 255 * alpha);

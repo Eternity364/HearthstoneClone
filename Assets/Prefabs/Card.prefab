@@ -16265,6 +16265,7 @@ MonoBehaviour:
   placingCardParticles: {fileID: 681563208091691294}
   deathParticles: {fileID: 6255873158036981723}
   attackParticle: {fileID: 1464177498163835125}
+  currentState: 0
 --- !u!114 &2385493366412541295
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16316,6 +16317,8 @@ MonoBehaviour:
   OnBoardImage: {fileID: 613143462165605413}
   OnBoardBezel: {fileID: 2487354980936019131}
   OnBoardTextGroup: {fileID: 722633751438689994}
+  InHandOutline: {fileID: 6380778634875484632}
+  OnFieldOutline: {fileID: 2172302191836518262}
 --- !u!1 &4864664741058133411
 GameObject:
   m_ObjectHideFlags: 0

@@ -36,6 +36,7 @@ public class BoardManager : MonoBehaviour
     private List<Vector3> cardsPositions = new List<Vector3>();
     private List<Card> playerCardsOnBoardTemp = new List<Card>();
     private Queue<TweenCallback> attackAnimationQueue = new Queue<TweenCallback>();
+    private List<Card> inactiveCards = new List<Card>();
 
     public bool IsFilled
     {
@@ -137,17 +138,17 @@ public class BoardManager : MonoBehaviour
 
     public void PlaceCard(Card card, PlayerState side, bool withAnimation = true, int forcedIndex = -1)
     {
+        InputBlock block;
+        block = InputBlockerInstace.Instance.AddCardBlock(card);
+
         void OnFirstPartFinish () {
            card.cardDisplay.SetPlacingParticlesActive(true);
         }
 
         void OnAnimationFinish () {
             card.cardDisplay.SetRenderLayer("Board");
-            card.clickHandler.SetClickable(true);
             if (side == PlayerState.Player) {
                 card.clickHandler.OnPick += OnCardClick;
-                if (withAnimation)
-                    InputBlockerInstace.Instance.AddCardBlock(card);
             }
             else {
                 card.clickHandler.OnMouseEnterCallbacks += OnEnemyCardMouseEnter;
@@ -173,7 +174,6 @@ public class BoardManager : MonoBehaviour
             int index = forcedIndex;
             if (index == -1)
                 index = playerCardsOnBoardTemp.IndexOf(tempCard);
-
             cards.Insert(index, card);
             card.cardDisplay.SetRenderLayer("LandingOnBoard");
             card.cardDisplay.ChangeState(CardDisplay.DisplayStates.OnField);
@@ -183,6 +183,7 @@ public class BoardManager : MonoBehaviour
         else
         {
             cards.Add(card);
+            InputBlockerInstace.Instance.RemoveBlock(block);
             OnAnimationFinish();
         }
 
@@ -228,6 +229,18 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    public void SetCardActive(Card card, bool active) {
+        card.clickHandler.SetClickable(active);
+        card.cardDisplay.SetActiveStatus(active);
+    }
+
+    public void SetCardsActive(bool active) {
+        for (int i = 0; i < playerCardsOnBoard.Count; i++)
+        {
+            SetCardActive(playerCardsOnBoard[i], active);
+        }
+    }    
+
     public void SortCards(List<Card> cards) {
         if (sortingTweens.ContainsKey(cards)) {
             for (int i = 0; i < sortingTweens[cards].Count; i++)
@@ -270,7 +283,6 @@ public class BoardManager : MonoBehaviour
 
     public void OnCardDead(PlayerState state, int index) {
         if (state == PlayerState.Player) {
-            InputBlockerInstace.Instance.RemoveCardBlock(playerCardsOnBoard[index]);
             playerCardsOnBoard[index].clickHandler.SetClickable(false);
             playerCardsOnBoard.RemoveAt(index);
             OnBoardSizeChange.Invoke(playerCardsOnBoard.Count, maxBoardSize);
@@ -360,8 +372,7 @@ public class BoardManager : MonoBehaviour
             }
         }
         if (attackingCard != null) {
-            if (playerCardsOnBoard.Contains(attackingCard))
-                InputBlockerInstace.Instance.AddCardBlock(attackingCard);
+            InputBlockerInstace.Instance.AddCardBlock(attackingCard1);
             attackingCard1.cardDisplay.SetRenderLayer("Attacking");
             attackAnimation.DoPreparePart(attackingCard1.cardDisplay.intermediateObjectsTransform, AddToQueue);
             attackingCard = null;

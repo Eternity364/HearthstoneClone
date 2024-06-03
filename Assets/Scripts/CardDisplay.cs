@@ -142,6 +142,7 @@ public class CardDisplay : MonoBehaviour
         int divisionRate = 500;
         Sequence mySequence = DOTween.Sequence();
         void DeathParticles() {
+            InputBlockerInstace.Instance.RemoveCardBlock(card);
             deathParticles.SetActive(true);
         }           
 
