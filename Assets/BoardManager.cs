@@ -138,6 +138,7 @@ public class BoardManager : MonoBehaviour
     public void PlaceCard(Card card, PlayerState side, bool withAnimation = true, int forcedIndex = -1)
     {
         void OnFirstPartFinish () {
+           card.cardDisplay.SetPlacingParticlesActive(true);
         }
 
         void OnAnimationFinish () {

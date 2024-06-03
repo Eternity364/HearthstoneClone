@@ -40,6 +40,8 @@ public class CardDisplay : MonoBehaviour
     GameObject activeStatus; 
     [SerializeField]
     GameObject pickedCardParticles; 
+    [SerializeField]
+    GameObject placingCardParticles; 
 
     public enum DisplayStates
     {
@@ -76,6 +78,10 @@ public class CardDisplay : MonoBehaviour
 
     public void SetPickedCardParticlesActive(bool active) {
         pickedCardParticles.SetActive(true);
+    }
+
+    public void SetPlacingParticlesActive(bool active) {
+        placingCardParticles.SetActive(true);
     }
 
     public void ResetTransform() {
