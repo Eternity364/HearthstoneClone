@@ -330,12 +330,17 @@ public class BoardManager : MonoBehaviour
             if (attackAnimationQueue.Count >= 1) 
                 attackAnimationQueue.Dequeue()();
         };
+        void ActivateAttackParticle () {
+            card.cardDisplay.SetAttackParticleActive();
+        };
         void OnFinishPrepare () {
+            card.cardDisplay.SetAttackParticleAngle(attackingCard1.transform.position);
             mySequence = attackAnimation.DoAttackPart(
                 attackingCard1.cardDisplay.intermediateObjectsTransform,
                 card.cardDisplay.intermediateObjectsTransform.position,
                 OnFinishAttack,
-                OnFinishHit);
+                OnFinishHit,
+                ActivateAttackParticle);
         };
         void Empty () {
             if (attackAnimationQueue.Count >= 1) 

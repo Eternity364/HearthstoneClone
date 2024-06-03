@@ -42,6 +42,8 @@ public class CardDisplay : MonoBehaviour
     GameObject pickedCardParticles; 
     [SerializeField]
     GameObject placingCardParticles; 
+    [SerializeField]
+    AttackParticle attackParticle; 
 
     public enum DisplayStates
     {
@@ -107,6 +109,17 @@ public class CardDisplay : MonoBehaviour
     public void SetActiveStatus(bool active)
     {
         activeStatus.SetActive(active);
+    }
+
+    public void SetAttackParticleAngle(Vector2 attackerPos)
+    {
+        attackParticle.SetAngle(attackerPos);
+    }
+
+    public void SetAttackParticleActive()
+    {
+        attackParticle.gameObject.SetActive(false);
+        attackParticle.gameObject.SetActive(true);
     }
 
     public void UpdateDisplay() {
