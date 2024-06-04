@@ -79,8 +79,8 @@ public class CardDisplay : MonoBehaviour
         UpdateDisplay();
     }
 
-    public void ChangeState(DisplayStates state) {
-        changingStateAnimation.Do(state);
+    public void ChangeState(DisplayStates state, bool withAnimation = true) {
+        changingStateAnimation.Do(state, withAnimation);
         currentState = state;
         SetShadowActive(shadowsActive);
         card.clickHandler.SetRectAreaClickable(state == DisplayStates.InHand);

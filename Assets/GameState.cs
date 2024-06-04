@@ -16,6 +16,7 @@ public class GameState
     public int currentOpponentMana, opponentMana, opponentMaxMana;
     [NonSerialized]
     public UnityAction<PlayerState, int> OnCardDead;
+    [NonSerialized]
     public UnityAction<PlayerState, int, int> OnManaChange;
 
     public GameState(List<Card> playerCards, List<Card> opponentCards, 
@@ -41,13 +42,13 @@ public class GameState
         this.currentOpponentMana = opponentMana;
         this.OnCardDead += OnCardDead;
         this.OnManaChange += OnManaChange;
-        OnManaChange(PlayerState.Player, currentPlayerMana, playerMana);
-        OnManaChange(PlayerState.Enemy, currentOpponentMana, opponentMana);
+        Update();
     }
     
 
-    private GameState(List<CardData> playerCards, List<CardData> opponentCards, List<CardData> playerCardsInHand, List<CardData> opponentCardsInHand,
-        int playerMana, int opponentMana, int currentPlayerMana, int currentOpponentMana, int playerMaxMana, int opponentMaxMana)
+    public GameState(List<CardData> playerCards, List<CardData> opponentCards, List<CardData> playerCardsInHand, List<CardData> opponentCardsInHand,
+        int playerMana, int opponentMana, int currentPlayerMana, int currentOpponentMana, int playerMaxMana, int opponentMaxMana,
+        UnityAction<PlayerState, int> OnCardDead, UnityAction<PlayerState, int, int> OnManaChange)
     {
         playerCardsData = new List<CardData>();
         opponentCardsData = new List<CardData>();
@@ -66,8 +67,9 @@ public class GameState
         this.currentPlayerMana = currentPlayerMana;
         this.currentOpponentMana = currentOpponentMana;
 
-        this.OnCardDead += OnCardDeadEmpty;
-        this.OnManaChange += OnManaChangeEmpty;
+        this.OnCardDead += OnCardDead;
+        this.OnManaChange += OnManaChange;
+        Update();
     }
 
     public void ProgressMana(PlayerState state) {
@@ -167,9 +169,15 @@ public class GameState
     private void OnManaChangeEmpty(PlayerState state, int empty, int empty2) {
     }
 
+    public void Update() {
+        OnManaChange(PlayerState.Player, currentPlayerMana, playerMana);
+        OnManaChange(PlayerState.Enemy, currentOpponentMana, opponentMana);
+    }
+
     public GameState GetReveresed() {
         return new GameState(opponentCardsData, playerCardsData, opponentCardsInHandData, playerCardsInHandData, 
-            opponentMana, playerMana, currentOpponentMana, currentPlayerMana, opponentMaxMana, playerMaxMana);
+            opponentMana, playerMana, currentOpponentMana, currentPlayerMana, opponentMaxMana, playerMaxMana,
+            OnCardDeadEmpty, OnManaChangeEmpty);
     }
 
     public List<CardData> GetListByState(PlayerState state) {
@@ -215,7 +223,7 @@ public class GameState
     }
 
     private CardData AddData(CardData from) {
-        CardData data = new CardData(from.MaxHealth, from.Attack, from.Cost);
+        CardData data = new CardData(from.MaxHealth, from.Attack, from.Cost, from.Index);
         data.Health = from.Health;
         data.Active = from.Active;
         return data;

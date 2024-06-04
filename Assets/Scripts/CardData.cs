@@ -4,6 +4,7 @@ using UnityEngine;
 [Serializable]
 public class CardData
 {
+    [SerializeField] int index;
     [SerializeField] private int health, attack, cost;
     [SerializeField] private int maxHealth;
     [SerializeField] private bool active = true;
@@ -19,6 +20,10 @@ public class CardData
     public int MaxHealth
     {
         get { return maxHealth; }
+    }
+    public int Index
+    {
+        get { return index; }
     }
     public int Attack
     {
@@ -49,11 +54,12 @@ public class CardData
         }
     }
 
-    public CardData(int health, int attack, int cost)
+    public CardData(int health, int attack, int cost, int index)
     {
         Health = health;
         Attack = attack;
         Cost = cost;
         maxHealth = health;
+        this.index = index;
     }
 }

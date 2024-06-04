@@ -20,9 +20,9 @@ public class PlayerConnectionManager : NetworkBehaviour
 
     private PlayerPair playerPair;
     private Action OnOnePlayerConnected;
-    private Action<bool> OnPairComplete;
+    private Action<bool, string> OnPairComplete;
 
-    public void Initialize(Action<bool> OnPairComplete, Action OnOnePlayerConnected)
+    public void Initialize(Action<bool, string> OnPairComplete, Action OnOnePlayerConnected)
     {
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
@@ -51,13 +51,13 @@ public class PlayerConnectionManager : NetworkBehaviour
             bool isPlayer1 = IsClientIdPlayer(opponentID);
             GameInstance instance = gameInstanceManager.Create(playerPair, networkControl.ForceEndTurn, networkControl.SendTimerStartMessage);
             ulong instanceId = Convert.ToUInt64(gameInstanceManager.GetInstanceID(instance));
-            SendClientInfo(IsClientIdPlayer(clientId), isPairCompleted, instanceId, clientId);
-            SendClientInfo(IsClientIdPlayer(playerPair.GetOpponentID(clientId)), isPairCompleted, instanceId, playerPair.GetOpponentID(clientId));
+            SendClientInfo(IsClientIdPlayer(clientId), instance.GameState.GetReveresed().ToJson(), isPairCompleted, instanceId, clientId);
+            SendClientInfo(IsClientIdPlayer(playerPair.GetOpponentID(clientId)), instance.GameState.ToJson(), isPairCompleted, instanceId, playerPair.GetOpponentID(clientId));
             playerPair = new PlayerPair(0, 0);
         }
         else
         {
-            SendClientInfo(IsClientIdPlayer(clientId), isPairCompleted, 9999, clientId);
+            SendClientInfo(IsClientIdPlayer(clientId), String.Empty, isPairCompleted, 9999, clientId);
         }
     }
 
@@ -78,7 +78,7 @@ public class PlayerConnectionManager : NetworkBehaviour
         }
     }
 
-    private void SendClientInfo(bool isPlayer, bool isPairCompleted, ulong instanceId, ulong clientId) {
+    private void SendClientInfo(bool isPlayer, string gameStateJson, bool isPairCompleted, ulong instanceId, ulong clientId) {
         ClientRpcParams clientRpcParams = new ClientRpcParams
         {
             Send = new ClientRpcSendParams
@@ -86,13 +86,13 @@ public class PlayerConnectionManager : NetworkBehaviour
                 TargetClientIds = new ulong[]{clientId}
             }
         };
-        SendInfoClientRpc(isPlayer, isPairCompleted, instanceId, clientRpcParams);
+        SendInfoClientRpc(isPlayer, gameStateJson, isPairCompleted, instanceId, clientRpcParams);
     }
 
     [ClientRpc]
-    private void SendInfoClientRpc(bool isPlayer, bool isPairCompleted, ulong instanceId, ClientRpcParams rpdParams) {
+    private void SendInfoClientRpc(bool isPlayer, string gameStateJson, bool isPairCompleted, ulong instanceId, ClientRpcParams rpdParams) {
         if (isPairCompleted)
-            OnPairComplete(isPlayer);
+            OnPairComplete(isPlayer, gameStateJson);
         else
             OnOnePlayerConnected();
         instanceIdtext.SetText(instanceId.ToString());

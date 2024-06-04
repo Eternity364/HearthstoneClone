@@ -86,6 +86,7 @@ public class InputBlocker : MonoBehaviour
         playerHand.SetCardsActive(blocks.Count == 0 && handBlocks.Count == 0);
         if (activeCardController.pickedCard)
             playerHand.SetCardActive(activeCardController.pickedCard, blocks.Count == 0 && handBlocks.Count == 0);
+        print("cardBlocks = " + cardBlocks.Count);
         foreach(var item in cardBlocks)
         {
             Card card = item.Value;

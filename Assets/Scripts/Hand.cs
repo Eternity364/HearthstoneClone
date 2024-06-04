@@ -8,6 +8,8 @@ public class Hand : MonoBehaviour
     [SerializeField]
     public List<Card> cards;
     [SerializeField]
+    public CardGenerator cardGenerator;
+    [SerializeField]
     Vector3 positionShift;
     [SerializeField]
     float zPosiionShift;
@@ -35,8 +37,19 @@ public class Hand : MonoBehaviour
     private Card returningToHandCard;
     private InputBlock handBlock;
 
-    void Awake()
+    public void Initialize(PlayerState state)
     {
+        playerState = state;
+        List<CardData> list = GameStateInstance.Instance.playerCardsInHandData;
+        if (playerState == PlayerState.Enemy)
+            list = GameStateInstance.Instance.opponentCardsInHandData;
+
+        for (int i = 0; i < list.Count; i++)
+        {
+            cards.Add(cardGenerator.Create(list[i].Index, transform));
+            cards[i].gameObject.transform.SetParent(transform);
+        }
+
         Sort();
 
         if (playerState == PlayerState.Player) {
@@ -137,7 +150,6 @@ public class Hand : MonoBehaviour
     }
 
     public void OnManaChange(PlayerState state, int currentMana, int mana) {
-        print("blocked");
         for (int i = 0; i < cards.Count; i++)
         {
             if (cards[i].cardDisplay.Data.Cost > currentMana) {

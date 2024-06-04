@@ -25,7 +25,7 @@ public class CardChangingStateAnimation : MonoBehaviour
     GameObject OnFieldOutline;
 
 
-    public void Do(CardDisplay.DisplayStates toState)
+    public void Do(CardDisplay.DisplayStates toState, bool withAnimation = true)
     {
         SpriteRenderer fromImage = InHandImage;
         SpriteRenderer fromBezel = InHandBezel;
@@ -46,7 +46,10 @@ public class CardChangingStateAnimation : MonoBehaviour
             fromOutline = OnFieldOutline;
         }
 
-        DOTween.To(AlphaSetter, 0, 1f, 1.3f).SetEase(Ease.OutQuad);
+        float duration = 1.3f;
+        if (!withAnimation)
+            duration = 0;
+        DOTween.To(AlphaSetter, 0, 1f, duration).SetEase(Ease.OutQuad);
         fromOutline.SetActive(false);
 
 

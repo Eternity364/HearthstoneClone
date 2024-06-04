@@ -8,13 +8,15 @@ public class GameInstanceManager : MonoBehaviour
     [SerializeField] private BoardManager boardManager;
     [SerializeField] private Hand playerHand;
     [SerializeField] private Hand opponentHand;
+    [SerializeField] private CardGenerator cardGenerator;
 
     List<GameInstance> instances = new List<GameInstance>();
 
     public GameInstance Create(PlayerPair pair, UnityAction<GameInstance> OnTimerRunOut, UnityAction<GameInstance> OnTimerThresholdReached)
     {
-        GameState gameState = new GameState(boardManager.playerCardsSet, boardManager.enemyCardsSet, playerHand.cards, opponentHand.cards, 
-            1, 0, 10, 10, OnCardDead, OnManaChangeEmpty);
+        GameState gameState = new GameState(cardGenerator.GetRandomDataList(3), cardGenerator.GetRandomDataList(4),
+            cardGenerator.GetRandomDataList(5), cardGenerator.GetRandomDataList(5), 
+            1, 0, 1, 0, 10, 10, OnCardDead, OnManaChangeEmpty);
         GameInstance newInstance = new GameInstance(pair, 20, 10, gameState);
         newInstance.OnTimerRunOut += OnTimerRunOut;
         newInstance.OnTimerThresholdReached += OnTimerThresholdReached;

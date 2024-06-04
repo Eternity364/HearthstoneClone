@@ -18,6 +18,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Hand opponentHand;
     [SerializeField] private Button endTurnButton;
     [SerializeField] private ManaController manaController;
+    [SerializeField] private CardGenerator cardGenerator;
     private ControlScheme controlScheme;
     private GameState gameState;
     
@@ -54,27 +55,37 @@ public class MainMenu : MonoBehaviour
     private void StartSinglePlayer()
     {
         controlScheme = singlePlayerControlScheme;
-        StartClient(true);
+        GameState gameState = new GameState(cardGenerator.GetRandomDataList(3), cardGenerator.GetRandomDataList(4),
+            cardGenerator.GetRandomDataList(5), cardGenerator.GetRandomDataList(5), 
+            1, 0, 1, 0, 10, 10, boardManager.OnCardDead, OnManaChange);
+        StartClient(true, gameState.ToJson());
     }
 
-    private void StartClient(bool isPlayer)
+    private void StartClient(bool isPlayer, string gameStateJson)
     {
-        game.SetActive(true);
-        gameObject.SetActive(false);
-        boardManager.Initialize(isPlayer);
-        controlScheme.Initialize();
 
-        int initialPlayerMana = 1;
-        int initialOpponentMana = 0;
-        if (!isPlayer) {
-            initialPlayerMana = 0;
-            initialOpponentMana = 1;
-        }
-        gameState = new GameState(boardManager.PlayerCardsOnBoard, boardManager.EnemyCardsOnBoard, playerHand.cards, opponentHand.cards, 
-            initialPlayerMana, initialOpponentMana, 10, 10, boardManager.OnCardDead, OnManaChange);
+        // int initialPlayerMana = 1;
+        // int initialOpponentMana = 0;
+        // if (!isPlayer) {
+        //     initialPlayerMana = 0;
+        //     initialOpponentMana = 1;
+        // }
+        // gameState = new GameState(boardManager.PlayerCardsOnBoard, boardManager.EnemyCardsOnBoard, playerHand.cards, opponentHand.cards, 
+        //     initialPlayerMana, initialOpponentMana, 10, 10, boardManager.OnCardDead, OnManaChange);
+        gameState = JsonUtility.FromJson<GameState>(gameStateJson);
+        gameState.OnCardDead += boardManager.OnCardDead;
+        gameState.OnManaChange += OnManaChange;
         GameStateInstance.SetInstance(gameState);
         endTurnButton.onClick.AddListener(controlScheme.AttemptToStartNextTurn);
         endTurnButton.gameObject.SetActive(isPlayer);
+
+        gameObject.SetActive(false);
+        game.SetActive(true);
+        playerHand.Initialize(PlayerState.Player);
+        opponentHand.Initialize(PlayerState.Enemy);
+        boardManager.Initialize();
+        controlScheme.Initialize();
+
         if (!isPlayer) {
             NetworkControlScheme netControl = (NetworkControlScheme)controlScheme;
             netControl.AddInputBlock();
@@ -83,6 +94,7 @@ public class MainMenu : MonoBehaviour
         {
             boardManager.SetCardsStatusActive(true);
         }
+        gameState.Update();
     }
 
     private void OnManaChange(PlayerState state, int currentMana, int mana) {

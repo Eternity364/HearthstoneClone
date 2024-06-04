@@ -6,7 +6,9 @@ using UnityEngine.Events;
 using Unity.Netcode;
 
 public class BoardManager : MonoBehaviour
-{
+{    
+    [SerializeField]
+    CardGenerator cardGenerator;
     [SerializeField]
     CardOnBoardPlacingAnimation placingAnimation;
     [SerializeField]
@@ -59,45 +61,20 @@ public class BoardManager : MonoBehaviour
     private Dictionary<List<Card>, List<Tweener>> sortingTweens;
     private Card attackingCard;
 
-    public void Initialize (bool isPlayer) {
+    public void Initialize () {
         sortingTweens = new Dictionary<List<Card>, List<Tweener>>();
 
-        void AddEnemyCards (List<Card> cardsSet) {
-            for (int i = 0; i < cardsSet.Count; i++)
-            {
-                enemyCardsOnBoard.Add(cardsSet[i]);
-                cardsSet[i].gameObject.transform.SetParent(enemyBoardTransform);
-                cardsSet[i].gameObject.transform.localPosition = Vector3.zero;
-            }
-        }
-        void AddPlayerCards (List<Card> cardsSet) {
-            for (int i = 0; i < cardsSet.Count; i++)
-            {
-                //cardsSet[i].gameObject.transform.localPosition = Vector3.zero;
-                PlaceCard(cardsSet[i], PlayerState.Player, false);
-            }
-        }
-
-        if (isPlayer) 
+        for (int i = 0; i < GameStateInstance.Instance.opponentCardsData.Count; i++)
         {
-            AddEnemyCards(enemyCardsSet);
-            AddPlayerCards(playerCardsSet);
-        } 
-        else
+            PlaceCard(cardGenerator.Create(GameStateInstance.Instance.opponentCardsData[i].Index, enemyBoardTransform), PlayerState.Enemy, false);
+        }
+        for (int i = 0; i < GameStateInstance.Instance.playerCardsData.Count; i++)
         {
-            AddEnemyCards(playerCardsSet);
-            AddPlayerCards(enemyCardsSet);
+            PlaceCard(cardGenerator.Create(GameStateInstance.Instance.playerCardsData[i].Index, playerBoardTransform), PlayerState.Player, false);
         }
 
         SortCards(playerCardsOnBoard);
         SortCards(enemyCardsOnBoard);
-
-        for (int i = 0; i < enemyCardsOnBoard.Count; i++)
-        {
-            enemyCardsOnBoard[i].clickHandler.OnMouseEnterCallbacks += OnEnemyCardMouseEnter;
-            enemyCardsOnBoard[i].clickHandler.OnMouseLeaveCallbacks += OnEnemyCardMouseLeave;
-            enemyCardsOnBoard[i].clickHandler.OnMouseUpEvents += AttemptToPerformAttack;
-        }
     }
 
     void Update() {
@@ -155,6 +132,7 @@ public class BoardManager : MonoBehaviour
                 card.clickHandler.OnMouseLeaveCallbacks += OnEnemyCardMouseLeave;
                 card.clickHandler.OnMouseUpEvents += AttemptToPerformAttack;
             }
+            InputBlockerInstace.Instance.RemoveBlock(block);
         }
 
         List<Card> cards = playerCardsOnBoard;
@@ -167,6 +145,7 @@ public class BoardManager : MonoBehaviour
         }
         Vector3 position = card.transform.position;
         card.transform.localPosition = new Vector3();
+        card.cardDisplay.ChangeState(CardDisplay.DisplayStates.OnField, withAnimation);
     
         if (withAnimation) 
         {
@@ -176,14 +155,14 @@ public class BoardManager : MonoBehaviour
                 index = playerCardsOnBoardTemp.IndexOf(tempCard);
             cards.Insert(index, card);
             card.cardDisplay.SetRenderLayer("LandingOnBoard");
-            card.cardDisplay.ChangeState(CardDisplay.DisplayStates.OnField);
             placingAnimation.Do(card.cardDisplay.intermediateObjectsTransform, card.cardDisplay.mainObjectsTransform, OnFirstPartFinish, OnAnimationFinish);
             SortCards(cards);
         }
         else
         {
+            card.gameObject.transform.localPosition = Vector3.zero;
+            card.cardDisplay.mainObjectsTransform.localScale = new Vector3(1.56f, 1.56f, 1f);
             cards.Add(card);
-            InputBlockerInstace.Instance.RemoveBlock(block);
             OnAnimationFinish();
         }
 
@@ -231,13 +210,18 @@ public class BoardManager : MonoBehaviour
 
     public void SetCardActive(Card card, bool active) {
         card.clickHandler.SetClickable(active);
-        card.cardDisplay.SetActiveStatus(active);
+        if (playerCardsOnBoard.Contains(card))
+            card.cardDisplay.SetActiveStatus(active);
     }
 
     public void SetCardsActive(bool active) {
         for (int i = 0; i < playerCardsOnBoard.Count; i++)
         {
             SetCardActive(playerCardsOnBoard[i], active);
+        }
+        for (int i = 0; i < enemyCardsOnBoard.Count; i++)
+        {
+            SetCardActive(enemyCardsOnBoard[i], active);
         }
     }    
 
@@ -250,6 +234,7 @@ public class BoardManager : MonoBehaviour
         }
         sortingTweens[cards] = new List<Tweener>();
 
+        print("cards count = " + cards.Count);
         float startPositionX = (-cards.Count / 2 + 0.5f) * positionShift;
         if (cards.Count % 2 == 1)
             startPositionX -= positionShift * 0.5f;
