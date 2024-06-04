@@ -83,6 +83,7 @@ public class ActiveCardController : MonoBehaviour
         if (pickedCard != null) {
             Vector3 position = PositionGetter.GetPosition(PositionGetter.ColliderType.ActiveCardController);   
             pickedCard.transform.localPosition = position; 
+            pickedCard.cardDisplay.SetActiveStatus(!IsPosInsideDeadZone(position));
             if (Input.GetMouseButtonUp(0)) {
                 if (IsPosInsideDeadZone(position)) {
                     ReturnCardToHand();

@@ -20,6 +20,7 @@ public class GameInstanceManager : MonoBehaviour
         GameInstance newInstance = new GameInstance(pair, 20, 10, gameState);
         newInstance.OnTimerRunOut += OnTimerRunOut;
         newInstance.OnTimerThresholdReached += OnTimerThresholdReached;
+        newInstance.GenerateNewData = cardGenerator.GetRandomData;
         instances.Add(newInstance);
         return newInstance;
     }

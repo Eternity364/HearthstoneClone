@@ -4,13 +4,16 @@ using Unity.Netcode;
 using System.Collections.Generic;
 
 public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
-    private NetworkVariable<int> networkStringTest = new NetworkVariable<int>(0);
+    [SerializeField]
+    CardGenerator cardGenerator;
     [SerializeField]
     BoardManager boardManager;
     [SerializeField]
     PlayerConnectionManager playerConnectionManager;
     [SerializeField]
     ActiveCardController activeCardController;
+    [SerializeField]
+    Hand playerHand;
     [SerializeField]
     Hand opponentHand;
     [SerializeField]
@@ -48,8 +51,8 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     }
 
     public void DequeueInputBlock() {
-        InputBlock block = blocks.Dequeue();
-        if (block != null) {
+        if (blocks.Count != 0) {
+            InputBlock block = blocks.Dequeue();
             InputBlockerInstace.Instance.RemoveBlock(block);
         }
     }
@@ -65,6 +68,7 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
 
     void ControlScheme.AttemptToPerformCardPlacement(PlayerState state, int handIndex, int boardIndex) {
         GameStateInstance.Instance.PlaceCard(PlayerState.Player, handIndex, boardIndex);
+        print(GameStateInstance.Instance.ToJson());
         //boardManager.PlayerCardsOnBoard[boardIndex].cardDisplay.SetActiveStatus(true);
         AttemptToPerformCardPlacementServerRpc(handIndex, boardIndex, GameStateInstance.Instance.GetHash(), new ServerRpcParams());
         AddInputBlock();
@@ -74,10 +78,6 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         AddInputBlock();
         EndTurnButton.gameObject.SetActive(false);
         endTurnTimer.gameObject.SetActive(false);
-        boardManager.SetCardsStatusActive(false);
-        GameStateInstance.Instance.SetCardsActive(PlayerState.Enemy);
-        GameStateInstance.Instance.ProgressMana(PlayerState.Enemy);
-        print(GameStateInstance.Instance.GetReveresed().ToJson());
         AttemptToStartNextTurnServerRpc(GameStateInstance.Instance.GetHash(), new ServerRpcParams());
     }
 
@@ -111,14 +111,16 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         }
 
         instance.SetTurn(nextTurn);
+        List<CardData> cardsInHand = instance.GameState.GetHandListByState(nextTurn);
+        int newCardIndex = cardsInHand[cardsInHand.Count - 1].Index;
 
         GameState state = instance.GameState;
         if (currentTurn == PlayerState.Player) {
             state = state.GetReveresed();
         }
 
-        SetNewTurnClientRpc(state.GetHash(), true, nextRpcParams);
-        SetNewTurnClientRpc(state.GetReveresed().GetHash(), false, currentRpcParams);
+        SetNewTurnClientRpc(state.GetHash(), true, newCardIndex, nextRpcParams);
+        SetNewTurnClientRpc(state.GetReveresed().GetHash(), false, newCardIndex, currentRpcParams);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -130,21 +132,24 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
             if (instance.Pair.PlayerID == opponentID) {
                 state = PlayerState.Player;
             }
-            instance.SetTurn(state);
             GameState gameState = instance.GameState;
-            print(gameState.ToJson());
+            if (instance.Pair.PlayerID == opponentID) {
+                gameState = instance.GameState.GetReveresed();
+            }
+            string serverHash = gameState.GetStringHash();
+            string clientHash = SecurityHelper.GetHexStringFromHash(stateHash);
+            instance.SetTurn(state);
+            List<CardData> cardsInHand = instance.GameState.GetHandListByState(state);
+            int newCardIndex = cardsInHand[cardsInHand.Count - 1].Index;
             if (instance.Pair.PlayerID == opponentID) {
                 gameState = instance.GameState.GetReveresed();
             }
             
-            ClientRpcParams playerRpcParams = CreateClientRpcParams(opponentID);
-            string serverHash = gameState.GetStringHash();
-            string clientHash = SecurityHelper.GetHexStringFromHash(stateHash);
-
-            
-            print(gameState.ToJson());
+            ClientRpcParams playerRpcParams = CreateClientRpcParams(rpcParams.Receive.SenderClientId);
+            ClientRpcParams opponentRpcParams = CreateClientRpcParams(opponentID);          
             if (serverHash == clientHash) { 
-                SetNewTurnClientRpc(gameState.GetReveresed().GetHash(), true, playerRpcParams);
+                SetNewTurnClientRpc(gameState.GetHash(), false, newCardIndex, playerRpcParams);
+                SetNewTurnClientRpc(gameState.GetReveresed().GetHash(), true, newCardIndex, opponentRpcParams);
             }
         }
     }
@@ -212,7 +217,9 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
             }
             string serverHash = gameState.GetStringHash();
             string clientHash = SecurityHelper.GetHexStringFromHash(stateHash);
-            if (serverHash == clientHash) {        
+            
+            if (serverHash == clientHash) {  
+                print("placed");   
                 PerformCardPlacementClientRpc(handIndex, boardIndex, gameState.GetReveresed().GetHash(), placementClientRpcParams);
                 PerformControlReleaseClientRpc(controlReleaseClientRpcParams);
             }
@@ -220,16 +227,24 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     }
 
     [ClientRpc]
-    private void SetNewTurnClientRpc(byte[] stateHash, bool value, ClientRpcParams rpdParams) {
+    private void SetNewTurnClientRpc(byte[] stateHash, bool value, int newCardIndex, ClientRpcParams rpdParams) {
         PlayerState turn = PlayerState.Player;
-        if (!value)
+        Hand hand = playerHand;
+        if (!value) {
             turn = PlayerState.Enemy;
+            hand = opponentHand;
+        }
+        Card card = cardGenerator.Create(newCardIndex, hand.transform);
+        CardData data = new CardData(card.GetData().Health, card.GetData().Attack, card.GetData().Cost, card.GetData().Index);
+        GameStateInstance.Instance.GetHandListByState(turn).Add(data);
         GameStateInstance.Instance.SetCardsActive(turn);
         GameStateInstance.Instance.ProgressMana(turn);
+        hand.AddCard(card);
+        hand.Sort();
 
         string serverHash = SecurityHelper.GetHexStringFromHash(stateHash);
         string clientHash = GameStateInstance.Instance.GetStringHash();
-        print(GameStateInstance.Instance.ToJson());
+
         if (serverHash == clientHash) {
             if (value) {
                 DequeueInputBlock();
@@ -237,6 +252,7 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
                 
             }
             else {
+                DequeueInputBlock();
                 AddInputBlock();
                 boardManager.SetCardsStatusActive(false);
             }

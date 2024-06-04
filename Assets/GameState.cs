@@ -187,6 +187,13 @@ public class GameState
             return opponentCardsData; 
     }
 
+    public List<CardData> GetHandListByState(PlayerState state) {
+        if (state == PlayerState.Player)
+            return playerCardsInHandData;
+        else
+            return opponentCardsInHandData; 
+    }
+
     public string ToJson() {
         return JsonUtility.ToJson(this); 
     }

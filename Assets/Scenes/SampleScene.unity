@@ -3191,9 +3191,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 542abf65073d6284999ef5c5749c8c94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cardGenerator: {fileID: 1252938489}
   boardManager: {fileID: 1195510630}
   playerConnectionManager: {fileID: 1813137498}
   activeCardController: {fileID: 146545957}
+  playerHand: {fileID: 1248651921}
   opponentHand: {fileID: 1127139880}
   gameInstanceManager: {fileID: 1357903805}
   EndTurnButton: {fileID: 1079739338}

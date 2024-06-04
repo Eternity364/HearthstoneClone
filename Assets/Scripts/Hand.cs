@@ -46,31 +46,32 @@ public class Hand : MonoBehaviour
 
         for (int i = 0; i < list.Count; i++)
         {
-            cards.Add(cardGenerator.Create(list[i].Index, transform));
-            cards[i].gameObject.transform.SetParent(transform);
+            AddCard(cardGenerator.Create(list[i].Index, transform));
         }
 
         Sort();
 
         if (playerState == PlayerState.Player) {
-            SetCardsCallbacks(true);
             board.OnBoardSizeChange += OnBoardSizeChange;
-        } 
-        else
-        {
-            for (int i = 0; i < cards.Count; i++)
-            {
-                cards[i].cardDisplay.SetCardFrontActive(false);
-                cards[i].clickHandler.SetClickable(false);
-            }
-
-            //StartCoroutine(StartTestCardPlacing());
         }
     }
 
-    
     void Update() {
+        if (playerState == PlayerState.Player)
+            print("costBlocks = " + costBlocks.Count);
+    }
 
+    
+    public void AddCard(Card card) {
+        cards.Add(card);
+        if (playerState == PlayerState.Enemy) {
+            card.cardDisplay.SetCardFrontActive(false);
+            card.clickHandler.SetClickable(false);
+        } 
+        else
+        {
+            SetCardCallbacks(card, true);  
+        }
     }
 
     IEnumerator StartTestCardPlacing()
@@ -317,7 +318,7 @@ public class Hand : MonoBehaviour
     }     
 
     public bool IsCardActive(Card card) {
-        return !inactiveCards.Contains(card);
+        return !inactiveCards.Contains(card) && !costBlocks.ContainsKey(card);
     }    
 
     private void OnBoardSizeChange(int currentSize, int maxSize) {

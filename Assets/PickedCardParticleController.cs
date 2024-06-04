@@ -22,7 +22,6 @@ public class PickedCardParticleController : MonoBehaviour
             if (differance.x > 0) {
                 angle = -angle;
             }
-            print(angle);
             transform.localRotation = Quaternion.Euler(new Vector3(0, 0, angle));
         }
         previousPos = pos;

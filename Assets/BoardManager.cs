@@ -234,7 +234,6 @@ public class BoardManager : MonoBehaviour
         }
         sortingTweens[cards] = new List<Tweener>();
 
-        print("cards count = " + cards.Count);
         float startPositionX = (-cards.Count / 2 + 0.5f) * positionShift;
         if (cards.Count % 2 == 1)
             startPositionX -= positionShift * 0.5f;

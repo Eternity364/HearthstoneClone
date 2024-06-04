@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,7 @@ public class GameInstance
 {
     public UnityAction<GameInstance> OnTimerRunOut;
     public UnityAction<GameInstance> OnTimerThresholdReached;
+    public Func<CardData> GenerateNewData;
 
     PlayerPair pair;
     GameState state;
@@ -14,7 +16,7 @@ public class GameInstance
     float timerThreshold;
     bool timerThresholdReached = false;
     public float currentTimer;
-    public PlayerState currentTurn;
+    public PlayerState currentTurn = PlayerState.Player;
 
     public PlayerPair Pair
     {
@@ -41,6 +43,7 @@ public class GameInstance
         currentTimer = 0;
         state.SetCardsActive(turn);
         state.ProgressMana(turn);
+        state.GetHandListByState(turn).Add(GenerateNewData());
     }
 
     public void Clear()
