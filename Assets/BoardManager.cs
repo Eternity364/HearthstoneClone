@@ -22,6 +22,8 @@ public class BoardManager : MonoBehaviour
     [SerializeField]
     ArrowController arrowController;
     [SerializeField]
+    Hand playerHand;
+    [SerializeField]
     public List<Card> enemyCardsSet;
     [SerializeField]
     public List<Card> playerCardsSet;
@@ -33,6 +35,7 @@ public class BoardManager : MonoBehaviour
     
     public UnityAction<int, int> OnBoardSizeChange;
     public UnityAction<PlayerState, int, int> OnCardAttack;
+    public UnityAction<PlayerState, int, int> OnCardBattlecryBuff;
     private List<Card> enemyCardsOnBoard = new List<Card>();
     private List<Card> playerCardsOnBoard = new List<Card>();
     private List<Vector3> cardsPositions = new List<Vector3>();
@@ -52,6 +55,10 @@ public class BoardManager : MonoBehaviour
     {
         get { return enemyCardsOnBoard; }
     }
+    public bool InputLocked
+    {
+        get { return castingCard != null; }
+    }
     public int TempIndex
     {
         get { return playerCardsOnBoardTemp.IndexOf(tempCard); }
@@ -60,6 +67,8 @@ public class BoardManager : MonoBehaviour
     private float positionShift = 0.4f;
     private Dictionary<List<Card>, List<Tweener>> sortingTweens;
     private Card attackingCard;
+    private Card castingCard;
+    private InputBlock handblock;
 
     public void Initialize () {
         sortingTweens = new Dictionary<List<Card>, List<Tweener>>();
@@ -128,11 +137,12 @@ public class BoardManager : MonoBehaviour
                 card.clickHandler.OnPick += OnCardClick;
             }
             else {
-                card.clickHandler.OnMouseEnterCallbacks += OnEnemyCardMouseEnter;
-                card.clickHandler.OnMouseLeaveCallbacks += OnEnemyCardMouseLeave;
+                card.clickHandler.OnMouseEnterCallbacks += OnCardMouseEnter;
+                card.clickHandler.OnMouseLeaveCallbacks += OnCardMouseLeave;
                 card.clickHandler.OnMouseUpEvents += AttemptToPerformAttack;
             }
-            InputBlockerInstace.Instance.RemoveBlock(block);
+            if (!(withAnimation && card.GetData().HasAbility(Ability.BattlecryBuff) && side == PlayerState.Player))
+                InputBlockerInstace.Instance.RemoveBlock(block);
         }
 
         List<Card> cards = playerCardsOnBoard;
@@ -157,6 +167,11 @@ public class BoardManager : MonoBehaviour
             card.cardDisplay.SetRenderLayer("LandingOnBoard");
             placingAnimation.Do(card.cardDisplay.intermediateObjectsTransform, card.cardDisplay.mainObjectsTransform, OnFirstPartFinish, OnAnimationFinish);
             SortCards(cards);
+
+            if (card.GetData().HasAbility(Ability.BattlecryBuff) && side == PlayerState.Player) {
+                InputBlockerInstace.Instance.RemoveBlock(block);
+                EnableBattlecryBuffMode(card);
+            }
         }
         else
         {
@@ -168,6 +183,73 @@ public class BoardManager : MonoBehaviour
 
         if (side == PlayerState.Player)
             OnBoardSizeChange.Invoke(cards.Count, maxBoardSize);
+    }
+
+    public void EnableBattlecryBuffMode(Card caster) {
+        arrowController.SetActive(true, GetSortedPosition(caster, playerCardsOnBoard));
+        castingCard = caster;
+         
+        playerHand.SetCardsClickable(false);      
+        for (int i = 0; i < enemyCardsOnBoard.Count; i++)
+        {
+            enemyCardsOnBoard[i].clickHandler.SetClickable(false);
+        }
+        for (int i = 0; i < playerCardsOnBoard.Count; i++)
+        {
+            if (i != playerCardsOnBoard.IndexOf(caster)) {
+                playerCardsOnBoard[i].clickHandler.OnPick -= OnCardClick;
+                playerCardsOnBoard[i].clickHandler.OnPick += AttemptToPerformBattlecryBuff;
+                playerCardsOnBoard[i].clickHandler.OnMouseEnterCallbacks += OnCardMouseEnter;
+                playerCardsOnBoard[i].clickHandler.OnMouseLeaveCallbacks += OnCardMouseLeave;
+            }
+            playerCardsOnBoard[i].cardDisplay.SetActiveStatus(i != playerCardsOnBoard.IndexOf(caster));
+            playerCardsOnBoard[i].clickHandler.SetClickable(true);
+        }
+    }
+
+    public void DisableBattlecryBuffMode() {
+        if (castingCard != null) {
+            arrowController.SetActive(false, Vector2.zero);
+            playerHand.SetCardsClickable(true);
+            for (int i = 0; i < enemyCardsOnBoard.Count; i++)
+            {
+                enemyCardsOnBoard[i].clickHandler.SetClickable(true);
+            }
+            for (int i = 0; i < playerCardsOnBoard.Count; i++)
+            {
+                if (i != playerCardsOnBoard.IndexOf(castingCard)) {
+                    playerCardsOnBoard[i].clickHandler.OnPick -= AttemptToPerformBattlecryBuff;
+                    playerCardsOnBoard[i].clickHandler.OnPick += OnCardClick;
+                    playerCardsOnBoard[i].clickHandler.OnMouseEnterCallbacks -= OnCardMouseEnter;
+                    playerCardsOnBoard[i].clickHandler.OnMouseLeaveCallbacks -= OnCardMouseLeave;
+                }
+            }
+            castingCard = null;
+            handblock = null;
+            InputBlockerInstace.Instance.UpdateValues(); 
+        }
+    }
+
+    public void AttemptToPerformBattlecryBuff(Card target) {
+        OnCardBattlecryBuff.Invoke(PlayerState.Player, playerCardsOnBoard.IndexOf(castingCard), playerCardsOnBoard.IndexOf(target));
+        DisableBattlecryBuffMode();
+    }
+
+    public void PerformBattlecryBuff(PlayerState state, int casterIndex, int targetIndex) {
+        Card caster, target;
+        List<Card> cards;
+        if (state == PlayerState.Player) {
+            cards = playerCardsOnBoard;
+        } 
+        else 
+        {
+            cards = enemyCardsOnBoard;
+        }
+        caster = cards[casterIndex];
+        target = cards[targetIndex];
+        Buff buff = caster.GetData().battlecryBuff.buff;
+        Buff copyBuff = new Buff(buff.health, buff.attack);
+        target.cardDisplay.ApplyBuff(copyBuff);
     }
 
     public void ComparePositionsAndSortTemporarily(float xPosition) {
@@ -234,15 +316,19 @@ public class BoardManager : MonoBehaviour
         }
         sortingTweens[cards] = new List<Tweener>();
 
+        for (int i = 0; i < cards.Count; i++)
+        {
+            //cards[i].transform.localPosition = new Vector3(startPositionX + positionShift * i, cards[i].transform.localPosition.y,  cards[i].transform.localPosition.z);
+            sortingTweens[cards].Add(cards[i].transform.DOMoveX(GetSortedPosition(cards[i], cards).x, 0.4f).SetEase(Ease.OutQuad));
+        }
+    }
+
+    private Vector3 GetSortedPosition(Card card, List<Card> cards) {
         float startPositionX = (-cards.Count / 2 + 0.5f) * positionShift;
         if (cards.Count % 2 == 1)
             startPositionX -= positionShift * 0.5f;
 
-        for (int i = 0; i < cards.Count; i++)
-        {
-            //cards[i].transform.localPosition = new Vector3(startPositionX + positionShift * i, cards[i].transform.localPosition.y,  cards[i].transform.localPosition.z);
-            sortingTweens[cards].Add(cards[i].transform.DOMoveX(startPositionX + positionShift * i, 0.4f).SetEase(Ease.OutQuad));
-        }
+        return new Vector3(startPositionX + positionShift * cards.IndexOf(card), card.transform.position.y, card.transform.position.z);
     }
 
     public void PerformAttackByIndex(bool attackerIsPlayer, int attackerIndex, int targetIndex) {
@@ -307,12 +393,16 @@ public class BoardManager : MonoBehaviour
 
     private void OnCardClick(Card card) {
         arrowController.SetActive(true, card.transform.position);
+        playerHand.SetCardsClickable(false);    
         attackingCard = card;
     }
 
     private void AttemptToPerformAttack(Card card) {
         if (attackingCard != null)
+        {
+            playerHand.SetCardsClickable(true);      
             OnCardAttack.Invoke(PlayerState.Player, playerCardsOnBoard.IndexOf(attackingCard), enemyCardsOnBoard.IndexOf(card));
+        }
     }
 
     private void PerformAttack(Card card) {
@@ -364,18 +454,21 @@ public class BoardManager : MonoBehaviour
     }
 
     private void OnMouseButtonDrop() {
-        if (!pointer.gameObject.activeSelf)
-            attackingCard = null;
-        arrowController.SetActive(false, Vector2.zero);
-        pointer.gameObject.SetActive(false);
+        if (castingCard == null) {
+            if (!pointer.gameObject.activeSelf)
+                attackingCard = null;
+            arrowController.SetActive(false, Vector2.zero);
+            pointer.gameObject.SetActive(false);
+            playerHand.SetCardsClickable(true);   
+        }
     }
     
-    private void OnEnemyCardMouseEnter(Card card) {
+    private void OnCardMouseEnter(Card card) {
         if (arrowController.Active)
             pointer.gameObject.SetActive(true);
     }
 
-    private void OnEnemyCardMouseLeave(Card card) {
+    private void OnCardMouseLeave(Card card) {
         pointer.gameObject.SetActive(false);
     }
 }

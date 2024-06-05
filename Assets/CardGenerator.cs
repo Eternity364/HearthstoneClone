@@ -28,6 +28,6 @@ public class CardGenerator : MonoBehaviour
     public CardData GetRandomData()
     {
         CardData data = cardsSet[Random.Range(0, cardsSet.Count - 1)].GetData();
-        return new CardData(data.Health, data.Attack, data.Cost, data.Index);
+        return new CardData(data.Health, data.Attack, data.Cost, data.Index, data.abilities, data.buffs, data.battlecryBuff);
     }
 }

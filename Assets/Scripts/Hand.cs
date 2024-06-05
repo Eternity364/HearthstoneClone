@@ -55,12 +55,6 @@ public class Hand : MonoBehaviour
             board.OnBoardSizeChange += OnBoardSizeChange;
         }
     }
-
-    void Update() {
-        if (playerState == PlayerState.Player)
-            print("costBlocks = " + costBlocks.Count);
-    }
-
     
     public void AddCard(Card card) {
         cards.Add(card);
@@ -74,11 +68,48 @@ public class Hand : MonoBehaviour
         }
     }
 
-    IEnumerator StartTestCardPlacing()
-    {
-        yield return new WaitForSeconds(3);
+    public void DrawCard(Card card) {
+        card.cardDisplay.SetRenderLayer("Active");
+        float position2duration = 0.5f;
+        float position3duration = 1f;
+        float angle2time = position2duration;
+        float angle2duration = position3duration;
+        float scale1time = position2duration;
+        float scale1duration = position3duration;
+        Vector3 position1 = new Vector3(1.66f, -0.25f, 1.17f);
+        Vector3 position2 = new Vector3(1.66f, -0.25f, 0.68f);
+        if (playerState == PlayerState.Enemy) {
+            position1.y = 0.5f;
+            position2.y = 0.5f;
+            angle2duration = 0.2f;
+            card.cardDisplay.SetCardFrontActive(false);
+        }
+        Vector3 position3 = new Vector3(0.605f, -0.179f, 0.53f);
+        Quaternion angle1 = Quaternion.Euler(4.288f, 105.292f, -87.655f);
+        Vector3 angle2 = Vector3.zero;
+        Vector2 scale1 = new Vector2(2, 2);
+        Transform trans = card.transform;
+        trans.position = position1;
+        trans.rotation = angle1;
+        Sequence mySequence = DOTween.Sequence();
+        mySequence.Append(trans.DOMove(position2, position2duration).SetEase(Ease.OutCubic));
+        if (playerState == PlayerState.Player) {
+            mySequence.Append(trans.DOMove(position3, position3duration).SetEase(Ease.OutCubic));
+            mySequence.Insert(scale1time, card.cardDisplay.mainObjectsTransform.DOScale(scale1, scale1duration)).SetEase(Ease.OutCubic);
+        }
+        mySequence.Insert(angle2time, trans.DOLocalRotate(angle2, angle2duration)).SetEase(Ease.OutCubic);
+        mySequence.OnComplete(OnComplete);
 
-        InputBlockerInstace.Instance.AddBlock();
+        void OnComplete() {
+            AddCard(card);
+            Sort();
+            if (cardController.pickedCard)
+                cardController.SetInputBlock(true);
+            InputBlockerInstace.Instance.UpdateValues();
+        }
+        // mySequence.Insert(0.25f, trans.DOLocalRotate(new Vector3(-12, 12, 0), 0.1f).SetEase(Ease.InCubic));
+        // mySequence.Insert(0.35f, trans.DOLocalRotate(new Vector3(), 0.35f).SetEase(Ease.InCubic));
+        // mySequence.InsertCallback(duration - 0.07f, AttackParticle);
     }
 
     private void OnCardPick(Card card) {
@@ -89,13 +120,6 @@ public class Hand : MonoBehaviour
         cards.Remove(card);
         cardController.PickCard(card, takenCardIndex);
         hoveringCard = null;
-    }
-
-    private void SetCardsCallbacks(bool value) {
-        for (int i = 0; i < cards.Count; i++)
-        {
-            SetCardCallbacks(cards[i], value);
-        }
     }
 
     private void SetCardCallbacks(Card card, bool value) {
@@ -281,11 +305,13 @@ public class Hand : MonoBehaviour
             currentAnimationsMain[cards[i]] = new List<Tweener>
             {
                 card.transform.DOLocalMove(position, 0.2f).SetEase(Ease.OutQuad),
-                card.transform.DOLocalRotateQuaternion(cardRotation, 0.2f).SetEase(Ease.OutQuad).OnKill(OnAnimationComplete)
+                card.transform.DOLocalRotateQuaternion(cardRotation, 0.2f).SetEase(Ease.OutQuad).OnKill(OnAnimationComplete),
+                card.cardDisplay.mainObjectsTransform.DOScale(Vector3.one, 0.2f).SetEase(Ease.OutQuad).OnKill(OnAnimationComplete)
             };
         } else {
             card.transform.localPosition = position;
             card.transform.localRotation = cardRotation;
+            card.cardDisplay.mainObjectsTransform.localScale = Vector3.one;
         }
     }
     

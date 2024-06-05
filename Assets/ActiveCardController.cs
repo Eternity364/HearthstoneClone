@@ -47,19 +47,20 @@ public class ActiveCardController : MonoBehaviour
 
     private void DropPickedCard()
     {        
-        boardManager.PlaceCard(pickedCard, PlayerState.Player);
+        SetInputBlock(false);
         pickedCard.RotationManager.SetActive(false);
+        boardManager.PlaceCard(pickedCard, PlayerState.Player);
         pickedCard.cardDisplay.SetPickedCardParticlesActive(false);
         pickedCard = null;
-        SetInputBlock(false);
         hand.Sort();
 
         OnCardDrop.Invoke(PlayerState.Player, handIndex, boardManager.TempIndex);
     }
 
-    private void SetInputBlock(bool value)
+    public void SetInputBlock(bool value)
     {      
         if (value) {  
+            SetInputBlock(false);
             for (int i = 0; i < hand.cards.Count; i++)
             {
                 handBlocks.Add(InputBlockerInstace.Instance.AddCardBlock(hand.cards[i]));

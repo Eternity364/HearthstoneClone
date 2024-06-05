@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.UI;
+using System.Collections;
 
 public class MainMenu : MonoBehaviour
 {
@@ -56,28 +57,29 @@ public class MainMenu : MonoBehaviour
     {
         controlScheme = singlePlayerControlScheme;
         GameState gameState = new GameState(cardGenerator.GetRandomDataList(3), cardGenerator.GetRandomDataList(4),
-            cardGenerator.GetRandomDataList(5), cardGenerator.GetRandomDataList(5), 
+            cardGenerator.GetRandomDataList(10), cardGenerator.GetRandomDataList(5), 
             1, 0, 1, 0, 10, 10, boardManager.OnCardDead, OnManaChange);
         StartClient(true, gameState.ToJson());
+        //opponentHand.StartCoroutine(StartTestCardPlacing());
+    }
+
+    IEnumerator StartTestCardPlacing()
+    {
+        yield return new WaitForSeconds(3);
+
+        opponentHand.DrawCard(cardGenerator.Create(1, opponentHand.transform));
     }
 
     private void StartClient(bool isPlayer, string gameStateJson)
     {
-
-        // int initialPlayerMana = 1;
-        // int initialOpponentMana = 0;
-        // if (!isPlayer) {
-        //     initialPlayerMana = 0;
-        //     initialOpponentMana = 1;
-        // }
-        // gameState = new GameState(boardManager.PlayerCardsOnBoard, boardManager.EnemyCardsOnBoard, playerHand.cards, opponentHand.cards, 
-        //     initialPlayerMana, initialOpponentMana, 10, 10, boardManager.OnCardDead, OnManaChange);
         gameState = JsonUtility.FromJson<GameState>(gameStateJson);
         gameState.OnCardDead = boardManager.OnCardDead;
         gameState.OnManaChange = OnManaChange;
         GameStateInstance.SetInstance(gameState);
         endTurnButton.onClick.AddListener(controlScheme.AttemptToStartNextTurn);
         endTurnButton.gameObject.SetActive(isPlayer);
+        
+        gameState.PrintCounts();
 
         gameObject.SetActive(false);
         game.SetActive(true);
@@ -98,7 +100,6 @@ public class MainMenu : MonoBehaviour
     }
 
     private void OnManaChange(PlayerState state, int currentMana, int mana) {
-        print("state = " + state);
         if (state == PlayerState.Player) {
             manaController.Set(currentMana, mana);
             playerHand.OnManaChange(state, currentMana, mana);

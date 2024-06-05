@@ -27,7 +27,13 @@ public class SinglePlayerControlScheme : MonoBehaviour, ControlScheme {
         GameStateInstance.Instance.Attack(PlayerState.Player, attackerIndex, PlayerState.Enemy, targetIndex);
     }
 
+    void ControlScheme.AttemptToPerformBattlecryBuff(PlayerState state, int casterIndex, int targetIndex) {
+        boardManager.PerformBattlecryBuff(PlayerState.Player, casterIndex, targetIndex);
+        GameStateInstance.Instance.ApplyBuff(PlayerState.Player, casterIndex, targetIndex);
+    }
+
     void ControlScheme.AttemptToPerformCardPlacement(PlayerState state, int handIndex, int boardIndex) {
+        GameStateInstance.Instance.PlaceCard(PlayerState.Player, handIndex, boardIndex);
     }
 
     void ControlScheme.AttemptToStartNextTurn() {

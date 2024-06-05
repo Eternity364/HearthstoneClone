@@ -41,6 +41,8 @@ public class CardDisplay : MonoBehaviour
     [SerializeField]
     Color lackHealth; 
     [SerializeField]
+    Color buffed; 
+    [SerializeField]
     GameObject activeStatusInHand; 
     [SerializeField]
     GameObject activeStatusOnField; 
@@ -120,6 +122,12 @@ public class CardDisplay : MonoBehaviour
             activeStatusInHand.SetActive(active);
         else
             activeStatusOnField.SetActive(active);
+    }    
+    
+    public void ApplyBuff(Buff buff)
+    {
+        data.AddBuff(buff);
+        UpdateDisplay();
     }
 
     public void SetAttackParticleAngle(Vector2 attackerPos)
@@ -170,6 +178,10 @@ public class CardDisplay : MonoBehaviour
             inHandCost.text = data.Cost.ToString();
             onFieldAttack.text = data.Attack.ToString();
             onFieldHealth.text = data.Health.ToString();
+            if (data.IsAttackBuffed())
+                onFieldAttack.color = buffed;
+            if (data.IsHealthBuffed())
+                onFieldHealth.color = buffed;
             if (data.Health < data.MaxHealth)
                 onFieldHealth.color = lackHealth;
         }

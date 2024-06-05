@@ -66,12 +66,20 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         AddInputBlock();
     }
 
+    void ControlScheme.AttemptToPerformBattlecryBuff(PlayerState state, int casterIndex, int targetIndex) {
+        GameStateInstance.Instance.ApplyBuff(PlayerState.Player, casterIndex, targetIndex);
+        print(GameStateInstance.Instance.ToJson());
+        AttemptToPerformBattlecryBuffServerRpc(casterIndex, targetIndex, GameStateInstance.Instance.GetHash(), new ServerRpcParams());
+        AddInputBlock();
+    }
+
     void ControlScheme.AttemptToPerformCardPlacement(PlayerState state, int handIndex, int boardIndex) {
         GameStateInstance.Instance.PlaceCard(PlayerState.Player, handIndex, boardIndex);
-        print(GameStateInstance.Instance.ToJson());
         //boardManager.PlayerCardsOnBoard[boardIndex].cardDisplay.SetActiveStatus(true);
         AttemptToPerformCardPlacementServerRpc(handIndex, boardIndex, GameStateInstance.Instance.GetHash(), new ServerRpcParams());
-        AddInputBlock();
+        Card card = boardManager.PlayerCardsOnBoard[boardIndex];
+        if (!card.GetData().abilities.Contains(Ability.BattlecryBuff))
+            AddInputBlock();
     }
 
     void ControlScheme.AttemptToStartNextTurn() {
@@ -112,7 +120,7 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
 
         instance.SetTurn(nextTurn);
         List<CardData> cardsInHand = instance.GameState.GetHandListByState(nextTurn);
-        int newCardIndex = cardsInHand[cardsInHand.Count - 1].Index;
+        int newCardIndex = instance.cardIndexGeneratedThisTurn;
 
         GameState state = instance.GameState;
         if (currentTurn == PlayerState.Player) {
@@ -139,8 +147,7 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
             string serverHash = gameState.GetStringHash();
             string clientHash = SecurityHelper.GetHexStringFromHash(stateHash);
             instance.SetTurn(state);
-            List<CardData> cardsInHand = instance.GameState.GetHandListByState(state);
-            int newCardIndex = cardsInHand[cardsInHand.Count - 1].Index;
+            int newCardIndex = instance.cardIndexGeneratedThisTurn;;
             if (instance.Pair.PlayerID == opponentID) {
                 gameState = instance.GameState.GetReveresed();
             }
@@ -150,6 +157,39 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
             if (serverHash == clientHash) { 
                 SetNewTurnClientRpc(gameState.GetHash(), false, newCardIndex, playerRpcParams);
                 SetNewTurnClientRpc(gameState.GetReveresed().GetHash(), true, newCardIndex, opponentRpcParams);
+            }
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void AttemptToPerformBattlecryBuffServerRpc(int casterIndex, int targetIndex, byte[] stateHash, ServerRpcParams rpcParams) {
+        GameInstance instance = gameInstanceManager.GetInstanceByPlayerID(rpcParams.Receive.SenderClientId);
+        if (instance != null) {
+            ClientRpcParams playerRpcParams = CreateClientRpcParams(instance.Pair.PlayerID);
+            ClientRpcParams enemyRpcParams = CreateClientRpcParams(instance.Pair.EnemyID);
+
+            bool casterIsPlayer = true;
+            PlayerState casterState = PlayerState.Player;
+            if (!instance.Pair.IsClientIdPlayer(rpcParams.Receive.SenderClientId)) {
+                casterIsPlayer = false;
+                casterState = PlayerState.Enemy;
+            }
+            
+            instance.GameState.ApplyBuff(casterState, casterIndex, targetIndex);
+            
+            print(instance.GameState.ToJson());
+            GameState state = instance.GameState;
+            if (!casterIsPlayer) {
+                state = instance.GameState.GetReveresed();
+                ClientRpcParams tempParams = playerRpcParams;
+                playerRpcParams = enemyRpcParams;
+                enemyRpcParams = tempParams;
+            }
+            string serverHash = state.GetStringHash();
+            string clientHash = SecurityHelper.GetHexStringFromHash(stateHash);
+            if (serverHash == clientHash) {        
+                PerformBattlecryBuffClientRpc(casterIsPlayer, casterIndex, targetIndex, state.GetHash(), playerRpcParams);
+                PerformBattlecryBuffClientRpc(!casterIsPlayer, casterIndex, targetIndex, state.GetReveresed().GetHash(), enemyRpcParams);
             }
         }
     }
@@ -219,7 +259,6 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
             string clientHash = SecurityHelper.GetHexStringFromHash(stateHash);
             
             if (serverHash == clientHash) {  
-                print("placed");   
                 PerformCardPlacementClientRpc(handIndex, boardIndex, gameState.GetReveresed().GetHash(), placementClientRpcParams);
                 PerformControlReleaseClientRpc(controlReleaseClientRpcParams);
             }
@@ -227,20 +266,22 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     }
 
     [ClientRpc]
-    private void SetNewTurnClientRpc(byte[] stateHash, bool value, int newCardIndex, ClientRpcParams rpdParams) {
+    private void SetNewTurnClientRpc(byte[] stateHash, bool value, int newCardIndex, ClientRpcParams rpcParams) {
         PlayerState turn = PlayerState.Player;
         Hand hand = playerHand;
         if (!value) {
             turn = PlayerState.Enemy;
             hand = opponentHand;
         }
-        Card card = cardGenerator.Create(newCardIndex, hand.transform);
-        CardData data = new CardData(card.GetData().Health, card.GetData().Attack, card.GetData().Cost, card.GetData().Index);
-        GameStateInstance.Instance.GetHandListByState(turn).Add(data);
         GameStateInstance.Instance.SetCardsActive(turn);
         GameStateInstance.Instance.ProgressMana(turn);
-        hand.AddCard(card);
-        hand.Sort();
+        if (newCardIndex != -1) {
+            Card card = cardGenerator.Create(newCardIndex, hand.transform);
+            CardData cardData = card.GetData();
+            CardData data = new CardData(cardData.Health, cardData.Attack, cardData.Cost, cardData.Index, cardData.abilities, cardData.buffs, cardData.battlecryBuff);
+            GameStateInstance.Instance.GetHandListByState(turn).Add(data);
+            hand.DrawCard(card);
+        }
 
         string serverHash = SecurityHelper.GetHexStringFromHash(stateHash);
         string clientHash = GameStateInstance.Instance.GetStringHash();
@@ -262,7 +303,7 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     }
         
     [ClientRpc]
-    private void PerformCardPlacementClientRpc(int handIndex, int boardIndex, byte[] stateHash, ClientRpcParams rpdParams) {
+    private void PerformCardPlacementClientRpc(int handIndex, int boardIndex, byte[] stateHash, ClientRpcParams rpcParams) {
         GameStateInstance.Instance.PlaceCard(PlayerState.Enemy, handIndex, boardIndex);
 
         string serverHash = SecurityHelper.GetHexStringFromHash(stateHash);
@@ -272,18 +313,18 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     }
         
     [ClientRpc]
-    private void PerformControlReleaseClientRpc(ClientRpcParams rpdParams) {
+    private void PerformControlReleaseClientRpc(ClientRpcParams rpcParams) {
         DequeueInputBlock();
     }
 
     [ClientRpc]
-    private void PerformAttackerMoveClientRpc(ClientRpcParams rpdParams) {
+    private void PerformAttackerMoveClientRpc(ClientRpcParams rpcParams) {
         boardManager.PerformAttackByCard(attacker, target);
         DequeueInputBlock();
     }
 
     [ClientRpc]
-    private void PerformTargetMoveClientRpc(int attackerIndex, int targetIndex, byte[] stateHash, ClientRpcParams rpdParams) {
+    private void PerformTargetMoveClientRpc(int attackerIndex, int targetIndex, byte[] stateHash, ClientRpcParams rpcParams) {
         attacker = boardManager.EnemyCardsOnBoard[attackerIndex];
         target = boardManager.PlayerCardsOnBoard[targetIndex];
         GameStateInstance.Instance.Attack(PlayerState.Enemy, attackerIndex, PlayerState.Player, targetIndex);
@@ -292,10 +333,26 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         string clientHash = GameStateInstance.Instance.GetStringHash();
         if (serverHash == clientHash)
             boardManager.PerformAttackByCard(attacker, target);
+    }    
+
+    [ClientRpc]
+    private void PerformBattlecryBuffClientRpc(bool isPlayer, int casterIndex, int targetIndex, byte[] stateHash, ClientRpcParams rpcParams) {
+        PlayerState state = PlayerState.Player;
+        if (!isPlayer) {
+            state = PlayerState.Enemy;
+            GameStateInstance.Instance.ApplyBuff(state, casterIndex, targetIndex);
+        }
+
+        string serverHash = SecurityHelper.GetHexStringFromHash(stateHash);
+        string clientHash = GameStateInstance.Instance.GetStringHash();
+        if (serverHash == clientHash) {
+            boardManager.PerformBattlecryBuff(state, casterIndex, targetIndex);    
+            DequeueInputBlock();
+        }    
     }
 
     [ClientRpc]
-    private void TimerStartClientRpc(ClientRpcParams rpdParams) {
+    private void TimerStartClientRpc(ClientRpcParams rpcParams) {
         endTurnTimer.Begin();
         endTurnTimer.gameObject.SetActive(true);
     }

@@ -77,22 +77,25 @@ public class InputBlocker : MonoBehaviour
 
     public void UpdateValues()
     {
-        //boardManager.SetInputActive(blocks.Count == 0);
-        if (blocks.Count > 0)
+        if (blocks.Count > 0) {
             boardManager.DisableAttack();
-        boardManager.SetCardsActive(true);
-        playerHand.SetCardsActive(true);
-        boardManager.SetCardsActive(blocks.Count == 0);
-        playerHand.SetCardsActive(blocks.Count == 0 && handBlocks.Count == 0);
-        if (activeCardController.pickedCard)
-            playerHand.SetCardActive(activeCardController.pickedCard, blocks.Count == 0 && handBlocks.Count == 0);
-        foreach(var item in cardBlocks)
-        {
-            Card card = item.Value;
-            if (playerHand.cards.Contains(card))
-                playerHand.SetCardActive(card, false);
-            if (boardManager.PlayerCardsOnBoard.Contains(card))
-                boardManager.SetCardActive(card, false);
+            boardManager.DisableBattlecryBuffMode();
+        }
+        if (!boardManager.InputLocked) {
+            boardManager.SetCardsActive(true);
+            playerHand.SetCardsActive(true);
+            boardManager.SetCardsActive(blocks.Count == 0);
+            playerHand.SetCardsActive(blocks.Count == 0 && handBlocks.Count == 0);
+            if (activeCardController.pickedCard)
+                playerHand.SetCardActive(activeCardController.pickedCard, blocks.Count == 0 && handBlocks.Count == 0);
+            foreach(var item in cardBlocks)
+            {
+                Card card = item.Value;
+                if (playerHand.cards.Contains(card))
+                    playerHand.SetCardActive(card, false);
+                if (boardManager.PlayerCardsOnBoard.Contains(card)|| boardManager.EnemyCardsOnBoard.Contains(card))
+                    boardManager.SetCardActive(card, false);
+            }
         }
     }
 }

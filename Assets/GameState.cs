@@ -131,6 +131,17 @@ public class GameState
         }
     }
 
+    
+    public void ApplyBuff(PlayerState state, int casterIndex, int targetIndex) {
+        List<CardData> list = GetListByState(state);
+
+        CardData casterData = list[casterIndex];
+        CardData targetData = list[targetIndex];
+        Buff buff = casterData.battlecryBuff.buff;
+        Buff buffCopy = new Buff(buff.health, buff.attack);
+        targetData.AddBuff(buffCopy);
+    }
+
     public void PlaceCard(PlayerState side, int handIndex, int boardIndex) {
         List<CardData> handDatas = playerCardsInHandData;
         List<CardData> boardDatas = playerCardsData;
@@ -230,7 +241,7 @@ public class GameState
     }
 
     private CardData AddData(CardData from) {
-        CardData data = new CardData(from.MaxHealth, from.Attack, from.Cost, from.Index);
+        CardData data = new CardData(from.MaxHealth, from.Attack, from.Cost, from.Index, from.abilities, from.buffs, from.battlecryBuff);
         data.Health = from.Health;
         data.Active = from.Active;
         return data;

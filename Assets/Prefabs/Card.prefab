@@ -16246,11 +16246,18 @@ MonoBehaviour:
   onFieldHealth: {fileID: 6295518068391107721}
   cardBack: {fileID: 3921818944011617283}
   data:
+    index: 0
     health: 0
     attack: 0
     cost: 0
     maxHealth: 0
     active: 0
+    buffs: []
+    abilities: 
+    battlecryBuff:
+      buff:
+        health: 0
+        attack: 0
   shadowInHand: {fileID: 753502664150500155}
   shadowOnBoard: {fileID: 7154596091550685053}
   changingStateAnimation: {fileID: 4301073251957281487}
@@ -16259,6 +16266,7 @@ MonoBehaviour:
   grayScale: {fileID: 427893604890163950}
   intermediateObjectsTransform: {fileID: 3711116447626226811}
   lackHealth: {r: 1, g: 0, b: 0.23529412, a: 1}
+  buffed: {r: 0.13919543, g: 0.8018868, b: 0.27173373, a: 1}
   activeStatusInHand: {fileID: 6380778634875484632}
   activeStatusOnField: {fileID: 2172302191836518262}
   pickedCardParticles: {fileID: 3588639063092641409}

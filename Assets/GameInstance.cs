@@ -16,6 +16,8 @@ public class GameInstance
     float timerThreshold;
     bool timerThresholdReached = false;
     public float currentTimer;
+    public int maxCardsInHand;
+    public int cardIndexGeneratedThisTurn;
     public PlayerState currentTurn = PlayerState.Player;
 
     public PlayerPair Pair
@@ -27,12 +29,13 @@ public class GameInstance
         get { return state; }
     }
 
-    public GameInstance(PlayerPair pair, float turnDuration, float timerThreshold, GameState state)
+    public GameInstance(PlayerPair pair, float turnDuration, float timerThreshold, int maxCardsInHand, GameState state)
     {
         this.pair = pair;
         this.turnDuration = turnDuration;
         this.timerThreshold = timerThreshold;
         this.state = state;
+        this.maxCardsInHand = maxCardsInHand;
         currentTimer = 0;
     }
 
@@ -43,7 +46,13 @@ public class GameInstance
         currentTimer = 0;
         state.SetCardsActive(turn);
         state.ProgressMana(turn);
-        state.GetHandListByState(turn).Add(GenerateNewData());
+        List<CardData> list = state.GetHandListByState(turn);
+        if (list.Count < maxCardsInHand) {
+            list.Add(GenerateNewData());
+            cardIndexGeneratedThisTurn = list[list.Count - 1].Index;
+        } 
+        else
+            cardIndexGeneratedThisTurn = -1;
     }
 
     public void Clear()
