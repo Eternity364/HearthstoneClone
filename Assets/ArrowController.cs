@@ -55,7 +55,7 @@ public class ArrowController : MonoBehaviour
     public void SetActive(bool active, Vector2 fromPosition) { 
         startPosition = fromPosition;
         this.active = active;
-        if (!active) {
+        if (!active && cubeValues.Count > 0) {
             foreach (Cube cube in cubeValues.Keys)
             {
                 Destroy(cube.gameObject);

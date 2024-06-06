@@ -8,7 +8,7 @@ public class CardData
     [SerializeField] int index;
     [SerializeField] private int health, attack, cost;
     [SerializeField] public int maxHealth;
-    [SerializeField] private bool active = true;
+    [SerializeField] private bool active = false;
     [SerializeField] public List<Buff> buffs = new List<Buff>();
     [SerializeField] public List<Ability> abilities = new List<Ability>();
     [SerializeField] public BattlecryBuff battlecryBuff;
@@ -139,7 +139,8 @@ public class Buff {
 public enum Ability
 {
     BattlecryBuff,
-    DivineShield
+    DivineShield,
+    Charge
 }
 
 [Serializable]

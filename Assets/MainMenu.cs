@@ -58,7 +58,7 @@ public class MainMenu : MonoBehaviour
         controlScheme = singlePlayerControlScheme;
         GameState gameState = new GameState(cardGenerator.GetRandomDataList(3), cardGenerator.GetRandomDataList(4),
             cardGenerator.GetRandomDataList(10), cardGenerator.GetRandomDataList(5), 
-            1, 0, 1, 0, 10, 10, boardManager.OnCardDead, OnManaChange);
+            10, 0, 10, 0, 10, 10, boardManager.OnCardDead, OnManaChange);
         StartClient(true, gameState.ToJson());
         //opponentHand.StartCoroutine(StartTestCardPlacing());
     }

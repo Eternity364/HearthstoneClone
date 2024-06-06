@@ -51,7 +51,8 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     }
 
     public void DequeueInputBlock() {
-        if (blocks.Count != 0) {
+        print("blocks.Count = " + blocks.Count);
+        if (blocks.Count > 0) {
             InputBlock block = blocks.Dequeue();
             InputBlockerInstace.Instance.RemoveBlock(block);
         }
@@ -340,7 +341,6 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
             state = PlayerState.Enemy;
             GameStateInstance.Instance.ApplyBuff(state, casterIndex, targetIndex);
         }
-        print(GameStateInstance.Instance.ToJson());
         string serverHash = SecurityHelper.GetHexStringFromHash(stateHash);
         string clientHash = GameStateInstance.Instance.GetStringHash();
         if (serverHash == clientHash) {

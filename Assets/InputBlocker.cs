@@ -93,7 +93,7 @@ public class InputBlocker : MonoBehaviour
                 Card card = item.Value;
                 if (playerHand.cards.Contains(card))
                     playerHand.SetCardActive(card, false);
-                if (boardManager.PlayerCardsOnBoard.Contains(card)|| boardManager.EnemyCardsOnBoard.Contains(card))
+                if (boardManager.PlayerCardsOnBoard.Contains(card) || boardManager.EnemyCardsOnBoard.Contains(card))
                     boardManager.SetCardActive(card, false);
             }
         }

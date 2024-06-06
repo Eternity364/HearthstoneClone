@@ -4,6 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 using UnityEngine.Events;
 using Unity.Netcode;
+using QFSW.QC.Actions;
 
 public class BoardManager : MonoBehaviour
 {    
@@ -84,12 +85,21 @@ public class BoardManager : MonoBehaviour
 
         SortCards(playerCardsOnBoard);
         SortCards(enemyCardsOnBoard);
+
+        StartCoroutine(UpdateInputBlocker());
     }
 
     void Update() {
         if (Input.GetMouseButtonUp(0))
             OnMouseButtonDrop();
         pointer.localPosition = PositionGetter.GetPosition(PositionGetter.ColliderType.Background);
+    }
+
+    IEnumerator UpdateInputBlocker()
+    {
+        yield return new WaitFrame();
+
+        InputBlockerInstace.Instance.UpdateValues();
     }
 
     public void SetInputActive(bool value)
@@ -118,15 +128,15 @@ public class BoardManager : MonoBehaviour
     }
 
     public void DisableAttack() {
-        arrowController.SetActive(false, Vector2.zero);
-        attackingCard = null;
+        if (attackingCard != null) {
+            arrowController.SetActive(false, Vector2.zero);
+            attackingCard = null;
+        }
     }
-
+    
     public void PlaceCard(Card card, PlayerState side, bool withAnimation = true, int forcedIndex = -1)
     {
-        InputBlock block;
-        block = InputBlockerInstace.Instance.AddCardBlock(card);
-
+        InputBlock block = null;
 
         void OnFirstPartFinish () {
            card.cardDisplay.SetPlacingParticlesActive(true);
@@ -136,14 +146,17 @@ public class BoardManager : MonoBehaviour
             card.cardDisplay.OnPlace();
             if (side == PlayerState.Player) {
                 card.clickHandler.OnPick += OnCardClick;
+                if (block != null) {
+                    card.TryAndApplyCharge(block);
+                }
             }
             else {
                 card.clickHandler.OnMouseEnterCallbacks += OnCardMouseEnter;
                 card.clickHandler.OnMouseLeaveCallbacks += OnCardMouseLeave;
                 card.clickHandler.OnMouseUpEvents += AttemptToPerformAttack;
+                if (block != null)
+                    InputBlockerInstace.Instance.RemoveBlock(block);
             }
-            if (block != null)
-                InputBlockerInstace.Instance.RemoveBlock(block);
         }
 
         List<Card> cards = playerCardsOnBoard;
@@ -168,6 +181,7 @@ public class BoardManager : MonoBehaviour
             card.cardDisplay.SetRenderLayer("LandingOnBoard");
             placingAnimation.Do(card.cardDisplay.intermediateObjectsTransform, card.cardDisplay.mainObjectsTransform, OnFirstPartFinish, OnAnimationFinish);
             SortCards(cards);
+            block = InputBlockerInstace.Instance.AddCardBlock(card);
 
             if (card.GetData().HasAbility(Ability.BattlecryBuff) && side == PlayerState.Player && playerCardsOnBoard.Count > 1) {
                 InputBlockerInstace.Instance.RemoveBlock(block);
@@ -180,6 +194,7 @@ public class BoardManager : MonoBehaviour
             card.gameObject.transform.localPosition = Vector3.zero;
             card.cardDisplay.mainObjectsTransform.localScale = new Vector3(1.56f, 1.56f, 1f);
             cards.Add(card);
+            block = InputBlockerInstace.Instance.AddCardBlock(card);
             OnAnimationFinish();
         }
 
@@ -211,6 +226,9 @@ public class BoardManager : MonoBehaviour
 
     public void DisableBattlecryBuffMode() {
         if (castingCard != null) {
+            Card card = castingCard;
+            castingCard = null;
+            handblock = null;
             arrowController.SetActive(false, Vector2.zero);
             pointer.gameObject.SetActive(false);
             playerHand.SetCardsClickable(true);
@@ -227,9 +245,9 @@ public class BoardManager : MonoBehaviour
                     playerCardsOnBoard[i].clickHandler.OnMouseLeaveCallbacks -= OnCardMouseLeave;
                 }
             }
-            castingCard = null;
-            handblock = null;
-            InputBlockerInstace.Instance.UpdateValues(); 
+            
+            InputBlock block = InputBlockerInstace.Instance.AddCardBlock(card);
+            card.TryAndApplyCharge(block);
         }
     }
 
@@ -296,7 +314,10 @@ public class BoardManager : MonoBehaviour
     public void SetCardActive(Card card, bool active) {
         card.clickHandler.SetClickable(active);
         if (playerCardsOnBoard.Contains(card))
+        {
             card.cardDisplay.SetActiveStatus(active);
+            print("acvite = " + active);
+        }
     }
 
     public void SetCardsActive(bool active) {

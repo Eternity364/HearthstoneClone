@@ -18,8 +18,13 @@ public class Card : MonoBehaviour
         get => rotationManager;
     }
 
-    void Start()
-    {
+    public bool TryAndApplyCharge (InputBlock block) {
+        if (cardDisplay.Data.abilities.Contains(Ability.Charge)) {
+            cardDisplay.Data.abilities.Remove(Ability.Charge);
+            InputBlockerInstace.Instance.RemoveBlock(block);
+            return true;
+        }
+        return false;
     }
     
     public bool DealDamage(int damage)

@@ -161,7 +161,10 @@ public class GameState
         handDatas.RemoveAt(handIndex);
         boardDatas.Insert(boardIndex, data);
         SpendMana(side, data.Cost);
-        data.Active = false;
+        if (data.abilities.Contains(Ability.Charge)) {
+            data.abilities.Remove(Ability.Charge);
+            data.Active = true;
+        }
     }
 
     public bool IsEnoughMana(PlayerState state, int manaSpent) {
