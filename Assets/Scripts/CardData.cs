@@ -138,7 +138,8 @@ public class Buff {
 [Serializable]
 public enum Ability
 {
-    BattlecryBuff
+    BattlecryBuff,
+    DivineShield
 }
 
 [Serializable]

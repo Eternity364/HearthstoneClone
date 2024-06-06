@@ -117,8 +117,16 @@ public class GameState
 
         CardData attackerData = attackerCardsData[attackerIndex];
         CardData targetData = targetCardsData[targetIndex];
-        targetData.Health -= attackerData.Attack;
-        attackerData.Health -= targetData.Attack;
+
+        if (targetData.abilities.Contains(Ability.DivineShield)) 
+            targetData.abilities.Remove(Ability.DivineShield);
+        else
+            targetData.Health -= attackerData.Attack;
+        if (attackerData.abilities.Contains(Ability.DivineShield)) 
+            attackerData.abilities.Remove(Ability.DivineShield);
+        else
+            attackerData.Health -= targetData.Attack;
+
         attackerData.Active = false;
         
         if (targetData.Health <= 0) {

@@ -133,7 +133,7 @@ public class BoardManager : MonoBehaviour
         }
 
         void OnAnimationFinish () {
-            card.cardDisplay.SetRenderLayer("Board");
+            card.cardDisplay.OnPlace();
             if (side == PlayerState.Player) {
                 card.clickHandler.OnPick += OnCardClick;
             }
@@ -375,7 +375,6 @@ public class BoardManager : MonoBehaviour
             attackerSet = enemyCardsOnBoard;
             targetSet = playerCardsOnBoard;
         }
-
         
         Sequence mySequence = DOTween.Sequence();
         mySequence.InsertCallback(0.7f, Sort);

@@ -21,6 +21,8 @@ public class CardRenderOrderSetter : MonoBehaviour
     SpriteRenderer onFieldImage;
     [SerializeField]
     SpriteRenderer onFieldFront;
+    [SerializeField]
+    SpriteRenderer divineShield;
 
     public void Set(string layer) {
         mainCanvas.sortingLayerName = layer;
@@ -31,5 +33,6 @@ public class CardRenderOrderSetter : MonoBehaviour
         inHandBack.sortingLayerName = layer;
         onFieldImage.sortingLayerName = layer;
         onFieldFront.sortingLayerName = layer;
+        divineShield.sortingLayerName = layer;
     }
 }

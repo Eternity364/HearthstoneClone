@@ -12,6 +12,8 @@ public class CardDisplay : MonoBehaviour
     [SerializeField]
     private GameObject textCanvasGO;
     [SerializeField]
+    private DivineShield divineShield;
+    [SerializeField]
     private Text inHandAttack;
     [SerializeField]
     private Text inHandHealth;
@@ -76,6 +78,13 @@ public class CardDisplay : MonoBehaviour
         UpdateDisplay();
     }
 
+    public void OnPlace() {
+        SetRenderLayer("Board");
+        if (data.abilities.Contains(Ability.DivineShield)) {
+            divineShield.Appear();
+        }
+    }
+
     public void SetData(CardData data)
     {
         //if (this.data == null)
@@ -96,6 +105,11 @@ public class CardDisplay : MonoBehaviour
 
     public void SetPlacingParticlesActive(bool active) {
         placingCardParticles.SetActive(true);
+    }
+
+    public void RemoveDivineShield() {
+        data.abilities.Remove(Ability.DivineShield);
+        divineShield.Disappear();
     }
 
     public void ResetTransform() {

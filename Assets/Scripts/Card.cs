@@ -24,7 +24,14 @@ public class Card : MonoBehaviour
     
     public bool DealDamage(int damage)
     {
-        cardDisplay.Data.Health -= damage;
+        if (cardDisplay.Data.abilities.Contains(Ability.DivineShield)) {
+            cardDisplay.RemoveDivineShield();
+        }
+        else
+        {
+            cardDisplay.Data.Health -= damage;
+        }
+
         cardDisplay.UpdateDisplay();
         bool dead = cardDisplay.Data.Health <= 0;
         if (dead) StartDeathAnimation();
