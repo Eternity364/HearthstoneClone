@@ -51,6 +51,8 @@ public class CardDisplay : MonoBehaviour
     [SerializeField]
     GameObject placingCardParticles;  
     [SerializeField]
+    GameObject buffParticles;  
+    [SerializeField]
     GameObject deathParticles; 
     [SerializeField]
     AttackParticle attackParticle; 
@@ -127,6 +129,8 @@ public class CardDisplay : MonoBehaviour
     public void ApplyBuff(Buff buff)
     {
         data.AddBuff(buff);
+        buffParticles.SetActive(false);
+        buffParticles.SetActive(true);
         UpdateDisplay();
     }
 

@@ -210,6 +210,7 @@ public class BoardManager : MonoBehaviour
     public void DisableBattlecryBuffMode() {
         if (castingCard != null) {
             arrowController.SetActive(false, Vector2.zero);
+            pointer.gameObject.SetActive(false);
             playerHand.SetCardsClickable(true);
             for (int i = 0; i < enemyCardsOnBoard.Count; i++)
             {
