@@ -127,6 +127,7 @@ public class BoardManager : MonoBehaviour
         InputBlock block;
         block = InputBlockerInstace.Instance.AddCardBlock(card);
 
+
         void OnFirstPartFinish () {
            card.cardDisplay.SetPlacingParticlesActive(true);
         }
@@ -141,7 +142,7 @@ public class BoardManager : MonoBehaviour
                 card.clickHandler.OnMouseLeaveCallbacks += OnCardMouseLeave;
                 card.clickHandler.OnMouseUpEvents += AttemptToPerformAttack;
             }
-            if (!(withAnimation && card.GetData().HasAbility(Ability.BattlecryBuff) && side == PlayerState.Player))
+            if (block != null)
                 InputBlockerInstace.Instance.RemoveBlock(block);
         }
 
@@ -168,8 +169,9 @@ public class BoardManager : MonoBehaviour
             placingAnimation.Do(card.cardDisplay.intermediateObjectsTransform, card.cardDisplay.mainObjectsTransform, OnFirstPartFinish, OnAnimationFinish);
             SortCards(cards);
 
-            if (card.GetData().HasAbility(Ability.BattlecryBuff) && side == PlayerState.Player) {
+            if (card.GetData().HasAbility(Ability.BattlecryBuff) && side == PlayerState.Player && playerCardsOnBoard.Count > 1) {
                 InputBlockerInstace.Instance.RemoveBlock(block);
+                block = null;
                 EnableBattlecryBuffMode(card);
             }
         }
