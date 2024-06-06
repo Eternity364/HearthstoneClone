@@ -7,7 +7,7 @@ public class CardData
 {
     [SerializeField] int index;
     [SerializeField] private int health, attack, cost;
-    [SerializeField] private int maxHealth;
+    [SerializeField] public int maxHealth;
     [SerializeField] private bool active = true;
     [SerializeField] public List<Buff> buffs = new List<Buff>();
     [SerializeField] public List<Ability> abilities = new List<Ability>();
@@ -65,12 +65,12 @@ public class CardData
         }
     }
 
-    public CardData(int health, int attack, int cost, int index, List<Ability> abilities, List<Buff> buffs, BattlecryBuff battlecryBuff)
+    public CardData(int health, int maxHealth, int attack, int cost, int index, List<Ability> abilities, List<Buff> buffs, BattlecryBuff battlecryBuff)
     {
         Health = health;
         Attack = attack;
         Cost = cost;
-        maxHealth = health;
+        this.maxHealth = maxHealth;
         this.index = index;
 
         this.abilities = new List<Ability>();

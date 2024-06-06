@@ -168,18 +168,15 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
             ClientRpcParams playerRpcParams = CreateClientRpcParams(instance.Pair.PlayerID);
             ClientRpcParams enemyRpcParams = CreateClientRpcParams(instance.Pair.EnemyID);
 
-            bool casterIsPlayer = true;
             PlayerState casterState = PlayerState.Player;
             if (!instance.Pair.IsClientIdPlayer(rpcParams.Receive.SenderClientId)) {
-                casterIsPlayer = false;
                 casterState = PlayerState.Enemy;
             }
             
             instance.GameState.ApplyBuff(casterState, casterIndex, targetIndex);
             
-            print(instance.GameState.ToJson());
             GameState state = instance.GameState;
-            if (!casterIsPlayer) {
+            if (casterState == PlayerState.Enemy) {
                 state = instance.GameState.GetReveresed();
                 ClientRpcParams tempParams = playerRpcParams;
                 playerRpcParams = enemyRpcParams;
@@ -188,8 +185,9 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
             string serverHash = state.GetStringHash();
             string clientHash = SecurityHelper.GetHexStringFromHash(stateHash);
             if (serverHash == clientHash) {        
-                PerformBattlecryBuffClientRpc(casterIsPlayer, casterIndex, targetIndex, state.GetHash(), playerRpcParams);
-                PerformBattlecryBuffClientRpc(!casterIsPlayer, casterIndex, targetIndex, state.GetReveresed().GetHash(), enemyRpcParams);
+                print(state.GetReveresed().ToJson());
+                PerformBattlecryBuffClientRpc(true, casterIndex, targetIndex, state.GetHash(), playerRpcParams);
+                PerformBattlecryBuffClientRpc(false, casterIndex, targetIndex, state.GetReveresed().GetHash(), enemyRpcParams);
             }
         }
     }
@@ -278,7 +276,7 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         if (newCardIndex != -1) {
             Card card = cardGenerator.Create(newCardIndex, hand.transform);
             CardData cardData = card.GetData();
-            CardData data = new CardData(cardData.Health, cardData.Attack, cardData.Cost, cardData.Index, cardData.abilities, cardData.buffs, cardData.battlecryBuff);
+            CardData data = new CardData(cardData.Health, cardData.maxHealth, cardData.Attack, cardData.Cost, cardData.Index, cardData.abilities, cardData.buffs, cardData.battlecryBuff);
             GameStateInstance.Instance.GetHandListByState(turn).Add(data);
             hand.DrawCard(card);
         }
@@ -342,12 +340,13 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
             state = PlayerState.Enemy;
             GameStateInstance.Instance.ApplyBuff(state, casterIndex, targetIndex);
         }
-
+        print(GameStateInstance.Instance.ToJson());
         string serverHash = SecurityHelper.GetHexStringFromHash(stateHash);
         string clientHash = GameStateInstance.Instance.GetStringHash();
         if (serverHash == clientHash) {
-            boardManager.PerformBattlecryBuff(state, casterIndex, targetIndex);    
-            DequeueInputBlock();
+            boardManager.PerformBattlecryBuff(state, casterIndex, targetIndex); 
+            if (isPlayer) 
+                DequeueInputBlock();
         }    
     }
 

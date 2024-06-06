@@ -241,7 +241,7 @@ public class GameState
     }
 
     private CardData AddData(CardData from) {
-        CardData data = new CardData(from.MaxHealth, from.Attack, from.Cost, from.Index, from.abilities, from.buffs, from.battlecryBuff);
+        CardData data = new CardData(from.Health, from.maxHealth, from.Attack, from.Cost, from.Index, from.abilities, from.buffs, from.battlecryBuff);
         data.Health = from.Health;
         data.Active = from.Active;
         return data;

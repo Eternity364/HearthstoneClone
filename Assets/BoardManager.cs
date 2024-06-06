@@ -446,7 +446,8 @@ public class BoardManager : MonoBehaviour
             }
         }
         if (attackingCard != null) {
-            InputBlockerInstace.Instance.AddCardBlock(attackingCard1);
+            if (playerCardsOnBoard.Contains(attackingCard1))
+                InputBlockerInstace.Instance.AddCardBlock(attackingCard1);
             attackingCard1.cardDisplay.SetRenderLayer("Attacking");
             attackAnimation.DoPreparePart(attackingCard1.cardDisplay.intermediateObjectsTransform, AddToQueue);
             attackingCard = null;
