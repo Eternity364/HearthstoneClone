@@ -18,7 +18,8 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Hand playerHand;
     [SerializeField] private Hand opponentHand;
     [SerializeField] private Button endTurnButton;
-    [SerializeField] private ManaController manaController;
+    [SerializeField] private ManaController playerManaController;
+    [SerializeField] private ManaController enemyManaController;
     [SerializeField] private CardGenerator cardGenerator;
     private ControlScheme controlScheme;
     private GameState gameState;
@@ -62,14 +63,14 @@ public class MainMenu : MonoBehaviour
             30, 30, 30, 30,
             boardManager.OnCardDead, OnManaChange, OnHeroDead);
         StartClient(true, gameState.ToJson());
-        //opponentHand.StartCoroutine(StartTestCardPlacing());
+        //manaController.StartCoroutine(StartTestCardPlacing());
     }
 
     IEnumerator StartTestCardPlacing()
     {
         yield return new WaitForSeconds(3);
 
-        opponentHand.DrawCard(cardGenerator.Create(1, opponentHand.transform));
+        playerManaController.StartAppearAnimation();
     }
 
     private void StartClient(bool isPlayer, string gameStateJson)
@@ -104,8 +105,12 @@ public class MainMenu : MonoBehaviour
 
     private void OnManaChange(PlayerState state, int currentMana, int mana) {
         if (state == PlayerState.Player) {
-            manaController.Set(currentMana, mana);
+            playerManaController.Set(currentMana, mana);
             playerHand.OnManaChange(state, currentMana, mana);
+        } 
+        else
+        {
+            enemyManaController.Set(currentMana, mana);
         }
     }
 

@@ -36,6 +36,8 @@ public class BoardManager : MonoBehaviour
     [SerializeField]
     Transform pointer;
     [SerializeField]
+    ManaController manaController;
+    [SerializeField]
     int maxBoardSize = 7;
 
     
@@ -142,6 +144,7 @@ public class BoardManager : MonoBehaviour
         }
         cardsPlacedThisTurn = new List<Card>();
         SetCardsStatusActive(true);
+        manaController.StartAppearAnimation();
     }
 
     public void SetCardsStatusActive(bool value)
