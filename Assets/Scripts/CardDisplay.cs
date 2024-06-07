@@ -60,6 +60,8 @@ public class CardDisplay : MonoBehaviour
     AttackParticle attackParticle; 
     [SerializeField]
     DisplayStates currentState;
+    [SerializeField]
+    SleepMode sleepMode;
 
     public enum DisplayStates
     {
@@ -131,6 +133,14 @@ public class CardDisplay : MonoBehaviour
         cardBack.SetActive(!active);
         textCanvasGO.SetActive(active);
     }
+
+    public void SetSleepModeActive(bool active)
+    {
+        sleepMode.gameObject.SetActive(active);
+        if (active)
+            sleepMode.Activate();
+    }
+
 
     public void SetActiveStatus(bool active)
     {

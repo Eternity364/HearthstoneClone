@@ -41,6 +41,7 @@ public class BoardManager : MonoBehaviour
     private List<Card> playerCardsOnBoard = new List<Card>();
     private List<Vector3> cardsPositions = new List<Vector3>();
     private List<Card> playerCardsOnBoardTemp = new List<Card>();
+    private List<Card> cardsPlacedThisTurn = new List<Card>();
     private Queue<TweenCallback> attackAnimationQueue = new Queue<TweenCallback>();
     private List<Card> inactiveCards = new List<Card>();
 
@@ -116,6 +117,11 @@ public class BoardManager : MonoBehaviour
         {
             InputBlockerInstace.Instance.RemoveCardBlock(playerCardsOnBoard[i]);
         }
+        for (int i = 0; i < cardsPlacedThisTurn.Count; i++)
+        {
+            cardsPlacedThisTurn[i].cardDisplay.SetSleepModeActive(false);
+        }
+        cardsPlacedThisTurn = new List<Card>();
         SetCardsStatusActive(true);
     }
 
@@ -146,8 +152,13 @@ public class BoardManager : MonoBehaviour
             card.cardDisplay.OnPlace();
             if (side == PlayerState.Player) {
                 card.clickHandler.OnPick += OnCardClick;
+                bool charged = false;
                 if (block != null) {
-                    card.TryAndApplyCharge(block);
+                    charged = card.TryAndApplyCharge(block);
+                }
+                if (!charged) {
+                    cardsPlacedThisTurn.Add(card);
+                    card.cardDisplay.SetSleepModeActive(true);
                 }
             }
             else {

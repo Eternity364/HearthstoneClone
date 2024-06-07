@@ -51,7 +51,6 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     }
 
     public void DequeueInputBlock() {
-        print("blocks.Count = " + blocks.Count);
         if (blocks.Count > 0) {
             InputBlock block = blocks.Dequeue();
             InputBlockerInstace.Instance.RemoveBlock(block);
