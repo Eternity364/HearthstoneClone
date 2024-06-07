@@ -5,6 +5,7 @@ using DG.Tweening;
 using UnityEngine.Events;
 using Unity.Netcode;
 using QFSW.QC.Actions;
+using System;
 
 public class BoardManager : MonoBehaviour
 {    
@@ -29,14 +30,19 @@ public class BoardManager : MonoBehaviour
     [SerializeField]
     public List<Card> playerCardsSet;
     [SerializeField]
+    public Hero playerHero;
+    [SerializeField]
+    public Hero enemyHero;
+    [SerializeField]
     Transform pointer;
     [SerializeField]
     int maxBoardSize = 7;
 
     
     public UnityAction<int, int> OnBoardSizeChange;
-    public UnityAction<PlayerState, int, int> OnCardAttack;
-    public UnityAction<PlayerState, int, int> OnCardBattlecryBuff;
+    public UnityAction<int, int> OnCardAttack;
+    public UnityAction<int> OnHeroAttack;
+    public UnityAction<int, int> OnCardBattlecryBuff;
     private List<Card> enemyCardsOnBoard = new List<Card>();
     private List<Card> playerCardsOnBoard = new List<Card>();
     private List<Vector3> cardsPositions = new List<Vector3>();
@@ -72,7 +78,7 @@ public class BoardManager : MonoBehaviour
     private Card castingCard;
     private InputBlock handblock;
 
-    public void Initialize () {
+    public void Initialize (bool isPlayer) {
         sortingTweens = new Dictionary<List<Card>, List<Tweener>>();
 
         for (int i = 0; i < GameStateInstance.Instance.opponentCardsData.Count; i++)
@@ -86,6 +92,19 @@ public class BoardManager : MonoBehaviour
 
         SortCards(playerCardsOnBoard);
         SortCards(enemyCardsOnBoard);
+
+        PlayerState playerState = PlayerState.Player;
+        PlayerState enemyState = PlayerState.Enemy;
+        if (!isPlayer) {
+            playerState = PlayerState.Enemy;
+            enemyState = PlayerState.Player;
+        }
+            playerHero.SetState(playerState);
+            enemyHero.SetState(enemyState);
+
+        enemyHero.OnMouseEnterCallbacks += OnCardMouseEnter;
+        enemyHero.OnMouseLeaveCallbacks += OnCardMouseLeave;
+        enemyHero.OnMouseUpEvents += AttemptToPerformHeroAttack;
 
         StartCoroutine(UpdateInputBlocker());
     }
@@ -217,7 +236,8 @@ public class BoardManager : MonoBehaviour
         arrowController.SetActive(true, GetSortedPosition(caster, playerCardsOnBoard));
         castingCard = caster;
          
-        playerHand.SetCardsClickable(false);      
+        playerHand.SetCardsClickable(false); 
+        enemyHero.SetClickable(false);     
         for (int i = 0; i < enemyCardsOnBoard.Count; i++)
         {
             enemyCardsOnBoard[i].clickHandler.SetClickable(false);
@@ -243,6 +263,7 @@ public class BoardManager : MonoBehaviour
             arrowController.SetActive(false, Vector2.zero);
             pointer.gameObject.SetActive(false);
             playerHand.SetCardsClickable(true);
+            enemyHero.SetClickable(true);     
             for (int i = 0; i < enemyCardsOnBoard.Count; i++)
             {
                 enemyCardsOnBoard[i].clickHandler.SetClickable(true);
@@ -263,7 +284,7 @@ public class BoardManager : MonoBehaviour
     }
 
     public void AttemptToPerformBattlecryBuff(Card target) {
-        OnCardBattlecryBuff.Invoke(PlayerState.Player, playerCardsOnBoard.IndexOf(castingCard), playerCardsOnBoard.IndexOf(target));
+        OnCardBattlecryBuff.Invoke(playerCardsOnBoard.IndexOf(castingCard), playerCardsOnBoard.IndexOf(target));
         DisableBattlecryBuffMode();
     }
 
@@ -378,12 +399,12 @@ public class BoardManager : MonoBehaviour
             target = playerCardsOnBoard[targetIndex];
         }
         attackingCard = attacker;
-        PerformAttack(target);
+        PerformCardAttack(target);
     }
 
     public void PerformAttackByCard(Card attacker, Card target) {
         attackingCard = attacker;
-        PerformAttack(target);
+        PerformCardAttack(target);
     }
 
     public void OnCardDead(PlayerState state, int index) {
@@ -435,35 +456,92 @@ public class BoardManager : MonoBehaviour
         if (attackingCard != null)
         {
             playerHand.SetCardsClickable(true);      
-            OnCardAttack.Invoke(PlayerState.Player, playerCardsOnBoard.IndexOf(attackingCard), enemyCardsOnBoard.IndexOf(card));
+            OnCardAttack.Invoke(playerCardsOnBoard.IndexOf(attackingCard), enemyCardsOnBoard.IndexOf(card));
         }
     }
 
-    private void PerformAttack(Card card) {
+    private void AttemptToPerformHeroAttack() {
+        if (attackingCard != null)
+        {
+            playerHand.SetCardsClickable(true);      
+            OnHeroAttack.Invoke(playerCardsOnBoard.IndexOf(attackingCard));
+        }
+    }
+
+    public void PerformHeroAttack(PlayerState side, int index) {
+        Hero hero = enemyHero;
+        attackingCard = playerCardsOnBoard[index];
+        if (side == PlayerState.Enemy) {
+            hero = playerHero;
+            attackingCard = enemyCardsOnBoard[index];
+        }
         Card attackingCard1 = attackingCard;
         Sequence mySequence = null;
-        
         void OnFinishHit () {
-            bool dead = FinishAttack(attackingCard1, card);
-            if (dead) {
+            bool dead = hero.DealDamage(attackingCard1.GetData().Attack);
+            if (dead && mySequence != null) {
                 mySequence.Kill();
                 if (attackAnimationQueue.Count >= 1) 
                     attackAnimationQueue.Dequeue()();
             }
         };
+        void ActivateAttackParticle () {
+            //card.cardDisplay.SetAttackParticleActive();
+        };
+        void SetAttackParticle () {
+            //card.cardDisplay.SetAttackParticleAngle(attackingCard1.transform.position);
+        };
+        mySequence = PerformAttack(
+            hero.transform.position,
+            OnFinishHit,
+            ActivateAttackParticle,
+            SetAttackParticle);
+    }
+
+    private void PerformCardAttack(Card card) {
+        Card attackingCard1 = attackingCard;
+        Sequence mySequence = null;
+        void OnFinishHit () {
+            bool dead = FinishAttack(attackingCard1, card);
+            if (dead && mySequence != null) {
+                mySequence.Kill();
+                if (attackAnimationQueue.Count >= 1) 
+                    attackAnimationQueue.Dequeue()();
+            }
+        };
+        void ActivateAttackParticle () {
+            card.cardDisplay.SetAttackParticleActive();
+        };
+        void SetAttackParticle () {
+            card.cardDisplay.SetAttackParticleAngle(attackingCard1.transform.position);
+        };
+        mySequence = PerformAttack(
+            card.cardDisplay.intermediateObjectsTransform.position,
+            OnFinishHit,
+            ActivateAttackParticle,
+            SetAttackParticle);
+    }
+    
+
+    private Sequence PerformAttack(
+        Vector3 targetPosition,
+        TweenCallback OnFinishHit,
+        TweenCallback ActivateAttackParticle,
+        TweenCallback SetAttackParticle) {
+
+        Card attackingCard1 = attackingCard;
+        Sequence mySequence = null;
+
         void OnFinishAttack () {
             attackingCard1.cardDisplay.SetRenderLayer("Board");
             if (attackAnimationQueue.Count >= 1) 
                 attackAnimationQueue.Dequeue()();
         };
-        void ActivateAttackParticle () {
-            card.cardDisplay.SetAttackParticleActive();
-        };
         void OnFinishPrepare () {
-            card.cardDisplay.SetAttackParticleAngle(attackingCard1.transform.position);
+            SetAttackParticle();
             mySequence = attackAnimation.DoAttackPart(
                 attackingCard1.cardDisplay.intermediateObjectsTransform,
-                card.cardDisplay.intermediateObjectsTransform.position,
+                targetPosition,
                 OnFinishAttack,
                 OnFinishHit,
                 ActivateAttackParticle);
@@ -486,6 +564,8 @@ public class BoardManager : MonoBehaviour
             attackAnimation.DoPreparePart(attackingCard1.cardDisplay.intermediateObjectsTransform, AddToQueue);
             attackingCard = null;
         }
+
+        return mySequence;
     }
 
     private void OnMouseButtonDrop() {
@@ -499,8 +579,9 @@ public class BoardManager : MonoBehaviour
     }
     
     private void OnCardMouseEnter(Card card) {
-        if (arrowController.Active)
+        if (arrowController.Active) {
             pointer.gameObject.SetActive(true);
+        }
     }
 
     private void OnCardMouseLeave(Card card) {

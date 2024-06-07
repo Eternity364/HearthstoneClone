@@ -58,7 +58,9 @@ public class MainMenu : MonoBehaviour
         controlScheme = singlePlayerControlScheme;
         GameState gameState = new GameState(cardGenerator.GetRandomDataList(3), cardGenerator.GetRandomDataList(4),
             cardGenerator.GetRandomDataList(10), cardGenerator.GetRandomDataList(5), 
-            10, 0, 10, 0, 10, 10, boardManager.OnCardDead, OnManaChange);
+            10, 0, 10, 0, 10, 10,
+            30, 30, 30, 30,
+            boardManager.OnCardDead, OnManaChange, OnHeroDead);
         StartClient(true, gameState.ToJson());
         //opponentHand.StartCoroutine(StartTestCardPlacing());
     }
@@ -75,6 +77,7 @@ public class MainMenu : MonoBehaviour
         gameState = JsonUtility.FromJson<GameState>(gameStateJson);
         gameState.OnCardDead = boardManager.OnCardDead;
         gameState.OnManaChange = OnManaChange;
+        gameState.OnHeroDead = OnHeroDead;
         GameStateInstance.SetInstance(gameState);
         endTurnButton.onClick.AddListener(controlScheme.AttemptToStartNextTurn);
         endTurnButton.gameObject.SetActive(isPlayer);
@@ -85,7 +88,7 @@ public class MainMenu : MonoBehaviour
         game.SetActive(true);
         playerHand.Initialize(PlayerState.Player);
         opponentHand.Initialize(PlayerState.Enemy);
-        boardManager.Initialize();
+        boardManager.Initialize(isPlayer);
         controlScheme.Initialize();
 
         if (!isPlayer) {
@@ -104,6 +107,10 @@ public class MainMenu : MonoBehaviour
             manaController.Set(currentMana, mana);
             playerHand.OnManaChange(state, currentMana, mana);
         }
+    }
+
+    private void OnHeroDead(PlayerState state) {
+
     }
 
     private void ShowWaitingForOpponentText()

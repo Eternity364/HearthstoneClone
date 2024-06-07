@@ -16,7 +16,9 @@ public class GameInstanceManager : MonoBehaviour
     {
         GameState gameState = new GameState(cardGenerator.GetRandomDataList(3), cardGenerator.GetRandomDataList(4),
             cardGenerator.GetRandomDataList(9), cardGenerator.GetRandomDataList(9), 
-            1, 0, 1, 0, 10, 10, OnCardDead, OnManaChangeEmpty);
+            1, 0, 1, 0, 10, 10,
+            30, 30, 30, 30,
+            OnCardDead, OnManaChangeEmpty, OnHeroDead);
         GameInstance newInstance = new GameInstance(pair, 30, 10, 10, gameState);
         newInstance.OnTimerRunOut += OnTimerRunOut;
         newInstance.OnTimerThresholdReached += OnTimerThresholdReached;
@@ -46,8 +48,10 @@ public class GameInstanceManager : MonoBehaviour
         instances[instances.IndexOf(instance)] = null;
     }
     
-
     private void OnCardDead(PlayerState state, int index) {
+    }
+
+    private void OnHeroDead(PlayerState state) {
     }
 
     private void OnManaChangeEmpty(PlayerState state, int empty, int empty2) {

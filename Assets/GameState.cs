@@ -8,6 +8,8 @@ using UnityEngine.Events;
 [Serializable]
 public class GameState
 {
+    public HeroData playerHero = new HeroData();
+    public HeroData opponentHero = new HeroData();
     public List<CardData> playerCardsData;
     public List<CardData> opponentCardsData;
     public List<CardData> playerCardsInHandData;
@@ -18,11 +20,15 @@ public class GameState
     public UnityAction<PlayerState, int> OnCardDead;
     [NonSerialized]
     public UnityAction<PlayerState, int, int> OnManaChange;
+    [NonSerialized]
+    public UnityAction<PlayerState> OnHeroDead;
 
     public GameState(List<Card> playerCards, List<Card> opponentCards, 
         List<Card> playerCardsInHand, List<Card> opponentCardsInHand, 
         int playerMana, int opponentMana, int playerMaxMana, int opponentMaxMana,
-        UnityAction<PlayerState, int> OnCardDead, UnityAction<PlayerState, int, int> OnManaChange)
+        int playerHeroHealth, int playerHeroMaxHealth, int opponentHeroHealth, int opponentHeroMaxHealth, 
+        UnityAction<PlayerState, int> OnCardDead, UnityAction<PlayerState, int, int> OnManaChange, 
+        UnityAction<PlayerState> OnHeroDead)
     {
         playerCardsData = new List<CardData>();
         opponentCardsData = new List<CardData>();
@@ -42,13 +48,21 @@ public class GameState
         this.currentOpponentMana = opponentMana;
         this.OnCardDead += OnCardDead;
         this.OnManaChange += OnManaChange;
+        this.OnHeroDead += OnHeroDead;
+
+        playerHero.Health = playerHeroHealth;
+        playerHero.maxHealth =  playerHeroMaxHealth;
+        opponentHero.Health = opponentHeroHealth;
+        opponentHero.maxHealth =  opponentHeroMaxHealth;
+
         Update();
     }
     
 
     public GameState(List<CardData> playerCards, List<CardData> opponentCards, List<CardData> playerCardsInHand, List<CardData> opponentCardsInHand,
-        int playerMana, int opponentMana, int currentPlayerMana, int currentOpponentMana, int playerMaxMana, int opponentMaxMana,
-        UnityAction<PlayerState, int> OnCardDead, UnityAction<PlayerState, int, int> OnManaChange)
+        int playerMana, int opponentMana, int currentPlayerMana, int currentOpponentMana, int playerMaxMana, int opponentMaxMana, 
+        int playerHeroHealth, int playerHeroMaxHealth, int opponentHeroHealth, int opponentHeroMaxHealth, 
+        UnityAction<PlayerState, int> OnCardDead, UnityAction<PlayerState, int, int> OnManaChange, UnityAction<PlayerState> OnHeroDead)
     {
         playerCardsData = new List<CardData>();
         opponentCardsData = new List<CardData>();
@@ -67,8 +81,14 @@ public class GameState
         this.currentPlayerMana = currentPlayerMana;
         this.currentOpponentMana = currentOpponentMana;
 
+        playerHero.Health = playerHeroHealth;
+        playerHero.maxHealth =  playerHeroMaxHealth;
+        opponentHero.Health = opponentHeroHealth;
+        opponentHero.maxHealth =  opponentHeroMaxHealth;
+
         this.OnCardDead += OnCardDead;
         this.OnManaChange += OnManaChange;
+        this.OnHeroDead += OnHeroDead;
         Update();
     }
 
@@ -139,7 +159,17 @@ public class GameState
         }
     }
 
-    
+    public void AttackHero(PlayerState state, int damage) {
+        HeroData hero = playerHero;
+        if (state == PlayerState.Enemy)
+            hero = opponentHero;
+
+        hero.Health -= damage;
+        if (hero.Health < 0) {
+            OnHeroDead.Invoke(state);
+        }
+    }
+
     public void ApplyBuff(PlayerState state, int casterIndex, int targetIndex) {
         List<CardData> list = GetListByState(state);
 
@@ -191,6 +221,9 @@ public class GameState
     private void OnManaChangeEmpty(PlayerState state, int empty, int empty2) {
     }
 
+    private void OnHeroDeadEmpty(PlayerState state) {
+    }
+
     public void Update() {
         OnManaChange(PlayerState.Player, currentPlayerMana, playerMana);
         OnManaChange(PlayerState.Enemy, currentOpponentMana, opponentMana);
@@ -199,7 +232,8 @@ public class GameState
     public GameState GetReveresed() {
         return new GameState(opponentCardsData, playerCardsData, opponentCardsInHandData, playerCardsInHandData, 
             opponentMana, playerMana, currentOpponentMana, currentPlayerMana, opponentMaxMana, playerMaxMana,
-            OnCardDeadEmpty, OnManaChangeEmpty);
+            opponentHero.Health, opponentHero.maxHealth, playerHero.Health, playerHero.maxHealth,
+            OnCardDeadEmpty, OnManaChangeEmpty, OnHeroDeadEmpty);
     }
 
     public List<CardData> GetListByState(PlayerState state) {

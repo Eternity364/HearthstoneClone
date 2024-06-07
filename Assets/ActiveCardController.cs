@@ -15,7 +15,7 @@ public class ActiveCardController : MonoBehaviour
     [SerializeField]
     private Vector2 deadZone;
 
-    public UnityAction<PlayerState, int, int> OnCardDrop;
+    public UnityAction<int, int> OnCardDrop;
     public Card pickedCard;
 
     private int handIndex;
@@ -54,7 +54,7 @@ public class ActiveCardController : MonoBehaviour
         pickedCard = null;
         hand.Sort();
 
-        OnCardDrop.Invoke(PlayerState.Player, handIndex, boardManager.TempIndex);
+        OnCardDrop.Invoke(handIndex, boardManager.TempIndex);
     }
 
     public void SetInputBlock(bool value)
