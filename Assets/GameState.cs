@@ -165,7 +165,7 @@ public class GameState
             hero = opponentHero;
 
         hero.Health -= damage;
-        if (hero.Health < 0) {
+        if (hero.Health <= 0) {
             OnHeroDead.Invoke(state);
         }
     }

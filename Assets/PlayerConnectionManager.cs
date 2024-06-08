@@ -49,7 +49,7 @@ public class PlayerConnectionManager : NetworkBehaviour
         if (isPairCompleted) {
             ulong opponentID = playerPair.GetOpponentID(clientId);
             bool isPlayer1 = IsClientIdPlayer(opponentID);
-            GameInstance instance = gameInstanceManager.Create(playerPair, networkControl.ForceEndTurn, networkControl.SendTimerStartMessage);
+            GameInstance instance = gameInstanceManager.Create(playerPair, networkControl.ForceEndTurn, networkControl.SendTimerStartMessage, OnGameEnd);
             ulong instanceId = Convert.ToUInt64(gameInstanceManager.GetInstanceID(instance));
             SendClientInfo(IsClientIdPlayer(clientId), instance.GameState.GetReveresed().ToJson(), isPairCompleted, instanceId, clientId);
             SendClientInfo(IsClientIdPlayer(playerPair.GetOpponentID(clientId)), instance.GameState.ToJson(), isPairCompleted, instanceId, playerPair.GetOpponentID(clientId));
@@ -59,6 +59,10 @@ public class PlayerConnectionManager : NetworkBehaviour
         {
             SendClientInfo(IsClientIdPlayer(clientId), String.Empty, isPairCompleted, 9999, clientId);
         }
+    }
+
+    private void OnGameEnd() {
+        Application.Quit();
     }
 
     private void OnClientDisconnected(ulong clientId) {
@@ -76,6 +80,7 @@ public class PlayerConnectionManager : NetworkBehaviour
             };
             SendClientShutDownClientRpc(clientRpcParams);
         }
+        Application.Quit();
     }
 
     private void SendClientInfo(bool isPlayer, string gameStateJson, bool isPairCompleted, ulong instanceId, ulong clientId) {

@@ -92,3 +92,9 @@ TagManager:
   - name: Active
     uniqueID: 839134053
     locked: 0
+  - name: UI
+    uniqueID: 1176032987
+    locked: 0
+  - name: SplashScreen
+    uniqueID: 556935957
+    locked: 0

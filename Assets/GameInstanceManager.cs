@@ -11,8 +11,10 @@ public class GameInstanceManager : MonoBehaviour
     [SerializeField] private CardGenerator cardGenerator;
 
     List<GameInstance> instances = new List<GameInstance>();
+    UnityAction OnGameEnd;
 
-    public GameInstance Create(PlayerPair pair, UnityAction<GameInstance> OnTimerRunOut, UnityAction<GameInstance> OnTimerThresholdReached)
+    public GameInstance Create(PlayerPair pair, UnityAction<GameInstance> OnTimerRunOut, UnityAction<GameInstance> OnTimerThresholdReached, 
+        UnityAction OnGameEnd)
     {
         GameState gameState = new GameState(cardGenerator.GetRandomDataList(3), cardGenerator.GetRandomDataList(4),
             cardGenerator.GetRandomDataList(9), cardGenerator.GetRandomDataList(9), 
@@ -25,6 +27,7 @@ public class GameInstanceManager : MonoBehaviour
         newInstance.GenerateNewData = cardGenerator.GetRandomData;
         newInstance.GameState.PrintCounts();
         instances.Add(newInstance);
+        this.OnGameEnd = OnGameEnd;
         return newInstance;
     }
 
@@ -52,6 +55,7 @@ public class GameInstanceManager : MonoBehaviour
     }
 
     private void OnHeroDead(PlayerState state) {
+        OnGameEnd();
     }
 
     private void OnManaChangeEmpty(PlayerState state, int empty, int empty2) {

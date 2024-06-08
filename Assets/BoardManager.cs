@@ -39,6 +39,8 @@ public class BoardManager : MonoBehaviour
     ManaController manaController;
     [SerializeField]
     int maxBoardSize = 7;
+    [SerializeField]
+    SplashScreen splashScreen;
 
     
     public UnityAction<int, int> OnBoardSizeChange;
@@ -79,9 +81,11 @@ public class BoardManager : MonoBehaviour
     private Card attackingCard;
     private Card castingCard;
     private InputBlock handblock;
+    private TweenCallback OnPreGameEnd;
 
-    public void Initialize (bool isPlayer) {
+    public void Initialize (bool isPlayer, TweenCallback OnPreGameEnd, TweenCallback OnGameEnd) {
         sortingTweens = new Dictionary<List<Card>, List<Tweener>>();
+        this.OnPreGameEnd = OnPreGameEnd;
 
         for (int i = 0; i < GameStateInstance.Instance.opponentCardsData.Count; i++)
         {
@@ -104,9 +108,18 @@ public class BoardManager : MonoBehaviour
             playerHero.SetState(playerState);
             enemyHero.SetState(enemyState);
 
+        void OnVictory() {
+            splashScreen.ShowVictoryMessage(OnGameEnd, playerState);
+        }
+        void OnDefeat() {
+            splashScreen.ShowDefeatMessage(OnGameEnd, playerState);
+        }
+
         enemyHero.OnMouseEnterCallbacks += OnCardMouseEnter;
         enemyHero.OnMouseLeaveCallbacks += OnCardMouseLeave;
         enemyHero.OnMouseUpEvents += AttemptToPerformHeroAttack;
+        enemyHero.OnDeath = OnVictory;;
+        playerHero.OnDeath = OnDefeat;
 
         StartCoroutine(UpdateInputBlocker());
     }
@@ -115,6 +128,13 @@ public class BoardManager : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
             OnMouseButtonDrop();
         pointer.localPosition = PositionGetter.GetPosition(PositionGetter.ColliderType.Background);
+    }
+
+    IEnumerator Test()
+    {
+        yield return new WaitForSeconds(3);
+
+        splashScreen.ShowNewTurnMessage();
     }
 
     IEnumerator UpdateInputBlocker()
@@ -145,6 +165,7 @@ public class BoardManager : MonoBehaviour
         cardsPlacedThisTurn = new List<Card>();
         SetCardsStatusActive(true);
         manaController.StartAppearAnimation();
+        splashScreen.ShowNewTurnMessage();
     }
 
     public void SetCardsStatusActive(bool value)
@@ -482,6 +503,7 @@ public class BoardManager : MonoBehaviour
         }
         Card attackingCard1 = attackingCard;
         Sequence mySequence = null;
+
         void OnFinishHit () {
             bool dead = hero.DealDamage(attackingCard1.GetData().Attack);
             if (dead && mySequence != null) {
@@ -503,6 +525,11 @@ public class BoardManager : MonoBehaviour
             SetAttackParticle);
         
         attackingCard = null;
+        
+        if (hero.data.Health <= attackingCard1.GetData().Attack) {
+            OnPreGameEnd();
+            InputBlockerInstace.Instance.AddBlock();
+        }
     }
 
     private void PerformCardAttack(Card card) {

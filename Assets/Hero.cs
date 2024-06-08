@@ -10,7 +10,7 @@ public class Hero : MonoBehaviour
     [SerializeField]
     PolygonCollider2D area;
     [SerializeField]
-    HeroData data;
+    public HeroData data;
     [SerializeField]
     TextMeshProUGUI healthText;
     [SerializeField]
@@ -25,6 +25,7 @@ public class Hero : MonoBehaviour
     GameObject deathParticles;
     [SerializeField]
     Material grayScale;
+    public TweenCallback OnDeath;
     public UnityAction OnMouseUpEvents;
     public UnityAction<Card> OnMouseEnterCallbacks;
     public UnityAction<Card> OnMouseLeaveCallbacks;
@@ -70,6 +71,7 @@ public class Hero : MonoBehaviour
 
     public void StartDeathAnimation()
     {
+        InputBlockerInstace.Instance.AddBlock();
         picture.GetComponent<SpriteRenderer>().material = grayScale;
         float duration = 0.7f;
         float goDownDuration = 0.8f;
@@ -91,6 +93,8 @@ public class Hero : MonoBehaviour
         mySequence.Append(intermediate.DOLocalMove(new Vector3(0, 0, 0.2f), 
                 0.8f).SetEase(Ease.OutCubic));
         mySequence.InsertCallback(duration + goDownDuration, DeathParticles);
+        mySequence.AppendInterval(1f);
+        mySequence.OnComplete(OnDeath);
     }
 
     void OnMouseEnter()
