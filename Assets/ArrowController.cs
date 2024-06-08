@@ -52,16 +52,18 @@ public class ArrowController : MonoBehaviour
         get { return active; }
     }
 
-    public void SetActive(bool active, Vector2 fromPosition) { 
+    public void SetActive(bool active, Vector2 fromPosition) {
         startPosition = fromPosition;
+        print("startPosition = " + startPosition);
         this.active = active;
-        if (!active && cubeValues.Count > 0) {
+        if (!active) {
             foreach (Cube cube in cubeValues.Keys)
             {
                 Destroy(cube.gameObject);
             }
             cubeValues = new Dictionary<Cube, float>();
         }
+        print("Active = " + active);
         arrow.gameObject.SetActive(active);
     }
 
@@ -201,7 +203,7 @@ public class ArrowController : MonoBehaviour
                 arrow.transform.localPosition = newPosition;
             }
         }
-        else
+        else if (cubeValues.Count != 1)
         {
             cubeValues.Remove(cube);
             cube.gameObject.SetActive(false);

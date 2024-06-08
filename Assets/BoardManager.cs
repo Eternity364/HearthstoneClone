@@ -351,7 +351,6 @@ public class BoardManager : MonoBehaviour
         if (playerCardsOnBoard.Contains(card))
         {
             card.cardDisplay.SetActiveStatus(active);
-            print("acvite = " + active);
         }
     }
 
@@ -472,9 +471,12 @@ public class BoardManager : MonoBehaviour
     }
 
     public void PerformHeroAttack(PlayerState side, int index) {
-        Hero hero = enemyHero;
-        attackingCard = playerCardsOnBoard[index];
-        if (side == PlayerState.Enemy) {
+        Hero hero = null;
+        if (side == PlayerState.Player) {
+            attackingCard = playerCardsOnBoard[index];
+            hero = enemyHero;
+        }
+        else if (side == PlayerState.Enemy) {
             hero = playerHero;
             attackingCard = enemyCardsOnBoard[index];
         }
@@ -499,6 +501,8 @@ public class BoardManager : MonoBehaviour
             OnFinishHit,
             ActivateAttackParticle,
             SetAttackParticle);
+        
+        attackingCard = null;
     }
 
     private void PerformCardAttack(Card card) {

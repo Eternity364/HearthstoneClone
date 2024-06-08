@@ -51,6 +51,7 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     }
 
     public void DequeueInputBlock() {
+        print("blocks.Count = "+ blocks.Count);
         if (blocks.Count > 0) {
             InputBlock block = blocks.Dequeue();
             InputBlockerInstace.Instance.RemoveBlock(block);
@@ -75,7 +76,6 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
 
     void ControlScheme.AttemptToPerformBattlecryBuff(int casterIndex, int targetIndex) {
         GameStateInstance.Instance.ApplyBuff(PlayerState.Player, casterIndex, targetIndex);
-        print(GameStateInstance.Instance.ToJson());
         AttemptToPerformBattlecryBuffServerRpc(casterIndex, targetIndex, GameStateInstance.Instance.GetHash(), new ServerRpcParams());
         AddInputBlock();
     }
@@ -84,7 +84,7 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         GameStateInstance.Instance.PlaceCard(PlayerState.Player, handIndex, boardIndex);
         //boardManager.PlayerCardsOnBoard[boardIndex].cardDisplay.SetActiveStatus(true);
         AttemptToPerformCardPlacementServerRpc(handIndex, boardIndex, GameStateInstance.Instance.GetHash(), new ServerRpcParams());
-        Card card = boardManager.PlayerCardsOnBoard[boardIndex];
+        Card card = activeCardController.pickedCard;
         if (!card.GetData().abilities.Contains(Ability.BattlecryBuff))
             AddInputBlock();
     }

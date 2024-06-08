@@ -49,12 +49,12 @@ public class ActiveCardController : MonoBehaviour
     {        
         SetInputBlock(false);
         pickedCard.RotationManager.SetActive(false);
+        pickedCard.cardDisplay.SetPickedCardParticlesActive(false);
+        OnCardDrop.Invoke(handIndex, boardManager.TempIndex);
         boardManager.PlaceCard(pickedCard, PlayerState.Player);
+        hand.Sort();
         pickedCard.cardDisplay.SetPickedCardParticlesActive(false);
         pickedCard = null;
-        hand.Sort();
-
-        OnCardDrop.Invoke(handIndex, boardManager.TempIndex);
     }
 
     public void SetInputBlock(bool value)
