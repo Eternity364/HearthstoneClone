@@ -56,6 +56,9 @@ TagManager:
   - name: LandingOnBoard
     uniqueID: 3144962145
     locked: 0
+  - name: InHandCard0
+    uniqueID: 1171756905
+    locked: 0
   - name: InHandCard1
     uniqueID: 3554225345
     locked: 0
@@ -85,9 +88,6 @@ TagManager:
     locked: 0
   - name: InHandCard9
     uniqueID: 3874387917
-    locked: 0
-  - name: InHandCard10
-    uniqueID: 2641629863
     locked: 0
   - name: Active
     uniqueID: 839134053

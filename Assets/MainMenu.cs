@@ -58,8 +58,8 @@ public class MainMenu : MonoBehaviour
     private void StartSinglePlayer()
     {
         controlScheme = singlePlayerControlScheme;
-        GameState gameState = new GameState(cardGenerator.GetRandomDataList(3), cardGenerator.GetRandomDataList(4),
-            cardGenerator.GetRandomDataList(10), cardGenerator.GetRandomDataList(5), 
+        GameState gameState = new GameState(cardGenerator.GetRandomDataList(0), cardGenerator.GetRandomDataList(4),
+            cardGenerator.GetRandomDataList(10), cardGenerator.GetRandomDataList(10), 
             10, 0, 10, 0, 10, 10,
             30, 30, 30, 30,
             boardManager.OnCardDead, OnManaChange, OnHeroDead);

@@ -195,6 +195,11 @@ RectTransform:
   m_AnchoredPosition: {x: 0.12399999, y: -0.394}
   m_SizeDelta: {x: 0.319992, y: 0.11776}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!224 &93402961 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 477461212700189504, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+  m_PrefabInstance: {fileID: 2120617545}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &100974081
 GameObject:
   m_ObjectHideFlags: 0
@@ -499,11 +504,6 @@ MonoBehaviour:
   boardManager: {fileID: 1195510630}
   deadZone: {x: 0.63, y: -0.42}
   pickedCard: {fileID: 0}
---- !u!224 &148126132 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3435905418527669289, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-  m_PrefabInstance: {fileID: 2120617545}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &161049065
 GameObject:
   m_ObjectHideFlags: 0
@@ -6657,7 +6657,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1604045955}
-  m_Father: {fileID: 148126132}
+  m_Father: {fileID: 93402961}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -20351,7 +20351,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 442.9, y: 33.7}
-  m_SizeDelta: {x: 222.20001, y: 99.5}
+  m_SizeDelta: {x: 178.38, y: 94.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1079739338
 MonoBehaviour:
@@ -21199,7 +21199,7 @@ Transform:
   m_GameObject: {fileID: 1127139878}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: 0, y: 0.71, z: 0}
+  m_LocalPosition: {x: 0, y: 0.77, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -21223,8 +21223,8 @@ MonoBehaviour:
   zPosiionShift: 0.001
   sortingTypeThreshold: 4
   fanSortingStartPosition: {x: 0, y: 0.18, z: 0}
-  startAngle: -55
-  endAngle: 65
+  startAngle: -65
+  endAngle: 55
   cardController: {fileID: 146545957}
   board: {fileID: 1195510630}
   playerState: 1
@@ -21563,8 +21563,8 @@ MonoBehaviour:
   zPosiionShift: 0.001
   sortingTypeThreshold: 4
   fanSortingStartPosition: {x: 0, y: 0.18, z: 0}
-  startAngle: -55
-  endAngle: 65
+  startAngle: -65
+  endAngle: 55
   cardController: {fileID: 146545957}
   board: {fileID: 1195510630}
   playerState: 0
@@ -30977,8 +30977,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 40
-  m_fontSizeBase: 40
+  m_fontSize: 31.9
+  m_fontSizeBase: 31.9
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -31510,7 +31510,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: data.maxHealth
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4421477798839540139, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
       propertyPath: data.abilities.Array.size
@@ -31575,8 +31575,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 3435905418527669289, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
-      insertIndex: 1
+    - targetCorrespondingSourceObject: {fileID: 477461212700189504, guid: af2a47af879d41941beb454e1f5834e3, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 420200268}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af2a47af879d41941beb454e1f5834e3, type: 3}

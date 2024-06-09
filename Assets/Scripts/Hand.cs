@@ -241,7 +241,7 @@ public class Hand : MonoBehaviour
                 card.cardDisplay.mainObjectsTransform.DOLocalMove(new Vector3(), duration).SetEase(Ease.OutQuad),
                 card.cardDisplay.mainObjectsTransform.DOLocalRotate(new Vector3(), duration).SetEase(Ease.OutQuad)
             };
-            card.cardDisplay.SetRenderLayer("InHandCard" + (cards.Count - cards.IndexOf(card)));
+            card.cardDisplay.SetRenderLayer("InHandCard" + (cards.IndexOf(card)));
         }
     }
 
@@ -287,14 +287,17 @@ public class Hand : MonoBehaviour
         KillCardMainTweens(card);
         float fanSortingAngleShift = (endAngle - startAngle) / cards.Count;
         float localStartAngle = startAngle;
-        int i = cards.IndexOf(card);
+        int index = cards.IndexOf(card);
+        int i = cards.Count - index - 1;
         
-        float angle = localStartAngle + (fanSortingAngleShift * i);
+
+        float shiftMultiplier = i + 0.5f;
+        float angle = localStartAngle + (fanSortingAngleShift * shiftMultiplier);
         Quaternion rotation = Quaternion.Euler(0, 0, angle);
-        card.cardDisplay.SetRenderLayer("InHandCard" + (cards.Count - i).ToString());
+        card.cardDisplay.SetRenderLayer("InHandCard" + (index).ToString());
         Vector3 position = rotation * fanSortingStartPosition - fanSortingStartPosition;
         position.z = 0.001f * i;
-        Quaternion cardRotation = Quaternion.Euler(0, 0, (startAngle + (fanSortingAngleShift * i)) * 0.5f);
+        Quaternion cardRotation = Quaternion.Euler(0, 0, (startAngle + (fanSortingAngleShift * shiftMultiplier)) * 0.5f);
 
         void OnAnimationComplete() {
             if (card == returningToHandCard)
@@ -302,7 +305,7 @@ public class Hand : MonoBehaviour
         }
         
         if (withAnimation) {
-            currentAnimationsMain[cards[i]] = new List<Tweener>
+            currentAnimationsMain[cards[index]] = new List<Tweener>
             {
                 card.transform.DOLocalMove(position, 0.2f).SetEase(Ease.OutQuad),
                 card.transform.DOLocalRotateQuaternion(cardRotation, 0.2f).SetEase(Ease.OutQuad).OnKill(OnAnimationComplete),
