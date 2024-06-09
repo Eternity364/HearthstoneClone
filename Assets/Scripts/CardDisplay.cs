@@ -62,6 +62,8 @@ public class CardDisplay : MonoBehaviour
     DisplayStates currentState;
     [SerializeField]
     SleepMode sleepMode;
+    [SerializeField]
+    DamageSplash damageSplash;
 
     public enum DisplayStates
     {
@@ -107,6 +109,10 @@ public class CardDisplay : MonoBehaviour
 
     public void SetPlacingParticlesActive(bool active) {
         placingCardParticles.SetActive(true);
+    }
+
+    public void ShowDamage(int damage) {
+        damageSplash.Show(damage);
     }
 
     public void RemoveDivineShield() {

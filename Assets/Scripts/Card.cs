@@ -35,6 +35,7 @@ public class Card : MonoBehaviour
         else
         {
             cardDisplay.Data.Health -= damage;
+            cardDisplay.ShowDamage(damage);
         }
 
         cardDisplay.UpdateDisplay();
