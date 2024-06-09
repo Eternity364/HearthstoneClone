@@ -55,6 +55,7 @@ public class GameInstanceManager : MonoBehaviour
     }
 
     private void OnHeroDead(PlayerState state) {
+        print("On Hero Dead");
         OnGameEnd();
     }
 

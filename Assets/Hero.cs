@@ -31,6 +31,7 @@ public class Hero : MonoBehaviour
     public UnityAction<Card> OnMouseLeaveCallbacks;
 
     bool mouseEntered = false;
+    bool dead = false;
     GameObject picture;
 
     void Start()
@@ -71,30 +72,33 @@ public class Hero : MonoBehaviour
 
     public void StartDeathAnimation()
     {
-        InputBlockerInstace.Instance.AddBlock();
-        picture.GetComponent<SpriteRenderer>().material = grayScale;
-        float duration = 0.7f;
-        float goDownDuration = 0.8f;
-        int shakesCount = 25;
-        int divisionRate = 500;
-        Sequence mySequence = DOTween.Sequence();
-        void DeathParticles() {
-            deathParticles.SetActive(true);
-        }           
+        if (!dead) {
+            dead = true;
+            InputBlockerInstace.Instance.AddBlock();
+            picture.GetComponent<SpriteRenderer>().material = grayScale;
+            float duration = 0.7f;
+            float goDownDuration = 0.8f;
+            int shakesCount = 25;
+            int divisionRate = 500;
+            Sequence mySequence = DOTween.Sequence();
+            void DeathParticles() {
+                deathParticles.SetActive(true);
+            }           
 
-        for (int i = 0; i < shakesCount; i++)
-        {
-            mySequence.Append(intermediate.DOLocalMove(new Vector3(
-                UnityEngine.Random.Range(-10.0f, 10.0f) / divisionRate, UnityEngine.Random.Range(-10.0f, 10.0f) / divisionRate, 0), 
-                duration / shakesCount).SetEase(Ease.OutCubic));
-            
-        } 
-        mySequence.AppendCallback(DeathParticles);
-        mySequence.Append(intermediate.DOLocalMove(new Vector3(0, 0, 0.2f), 
-                0.8f).SetEase(Ease.OutCubic));
-        mySequence.InsertCallback(duration + goDownDuration, DeathParticles);
-        mySequence.AppendInterval(1f);
-        mySequence.OnComplete(OnDeath);
+            for (int i = 0; i < shakesCount; i++)
+            {
+                mySequence.Append(intermediate.DOLocalMove(new Vector3(
+                    UnityEngine.Random.Range(-10.0f, 10.0f) / divisionRate, UnityEngine.Random.Range(-10.0f, 10.0f) / divisionRate, 0), 
+                    duration / shakesCount).SetEase(Ease.OutCubic));
+                
+            } 
+            mySequence.AppendCallback(DeathParticles);
+            mySequence.Append(intermediate.DOLocalMove(new Vector3(0, 0, 0.2f), 
+                    0.8f).SetEase(Ease.OutCubic));
+            mySequence.InsertCallback(duration + goDownDuration, DeathParticles);
+            mySequence.AppendInterval(1f);
+            mySequence.OnComplete(OnDeath);
+        }
     }
 
     void OnMouseEnter()

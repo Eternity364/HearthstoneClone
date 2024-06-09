@@ -30170,6 +30170,7 @@ MonoBehaviour:
   game: {fileID: 162728236}
   instanceIdtext: {fileID: 171316000}
   networkControl: {fileID: 730986753}
+  boardManager: {fileID: 1195510630}
 --- !u!1 &1825170960
 GameObject:
   m_ObjectHideFlags: 0

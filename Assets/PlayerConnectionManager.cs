@@ -17,6 +17,8 @@ public class PlayerConnectionManager : NetworkBehaviour
     TextMeshProUGUI instanceIdtext;
     [SerializeField]
     NetworkControlScheme networkControl;
+    [SerializeField]
+    BoardManager boardManager;
 
     private PlayerPair playerPair;
     private Action OnOnePlayerConnected;
@@ -62,7 +64,7 @@ public class PlayerConnectionManager : NetworkBehaviour
     }
 
     private void OnGameEnd() {
-        Application.Quit();
+        StartCoroutine(ShutDown());
     }
 
     private void OnClientDisconnected(ulong clientId) {
@@ -78,8 +80,16 @@ public class PlayerConnectionManager : NetworkBehaviour
                     TargetClientIds = new ulong[]{opponentID}
                 }
             };
-            SendClientShutDownClientRpc(clientRpcParams);
+            SendClientShutDownClientRpc(true, clientRpcParams);
         }
+        StartCoroutine(ShutDown());
+    }
+
+    
+    public IEnumerator ShutDown()
+    {
+        yield return new WaitForSeconds(10);
+
         Application.Quit();
     }
 
@@ -104,9 +114,15 @@ public class PlayerConnectionManager : NetworkBehaviour
     }
     
     [ClientRpc]
-    private void SendClientShutDownClientRpc(ClientRpcParams rpdParams) {
-        game.SetActive(false);
-        Application.Quit();
+    public void SendClientShutDownClientRpc(bool isVictory, ClientRpcParams rpdParams) {
+        boardManager.OnPreGameEnd();
+        if (isVictory)
+            boardManager.enemyHero.DealDamage(30);
+        else 
+            boardManager.playerHero.DealDamage(30);
+
+
+        print("Shutdown from client RPC");
     }
 }
 

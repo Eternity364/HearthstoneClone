@@ -81,7 +81,7 @@ public class BoardManager : MonoBehaviour
     private Card attackingCard;
     private Card castingCard;
     private InputBlock handblock;
-    private TweenCallback OnPreGameEnd;
+    public TweenCallback OnPreGameEnd;
 
     public void Initialize (bool isPlayer, TweenCallback OnPreGameEnd, TweenCallback OnGameEnd) {
         sortingTweens = new Dictionary<List<Card>, List<Tweener>>();
@@ -128,13 +128,6 @@ public class BoardManager : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
             OnMouseButtonDrop();
         pointer.localPosition = PositionGetter.GetPosition(PositionGetter.ColliderType.Background);
-    }
-
-    IEnumerator Test()
-    {
-        yield return new WaitForSeconds(3);
-
-        splashScreen.ShowNewTurnMessage();
     }
 
     IEnumerator UpdateInputBlocker()

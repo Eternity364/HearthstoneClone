@@ -135,49 +135,59 @@ public class GameState
         List<CardData> attackerCardsData = GetListByState(attackerState);
         List<CardData> targetCardsData = GetListByState(targetState);;
 
-        CardData attackerData = attackerCardsData[attackerIndex];
-        CardData targetData = targetCardsData[targetIndex];
+        if (attackerIndex < attackerCardsData.Count && targetIndex < targetCardsData.Count) {
+            CardData attackerData = attackerCardsData[attackerIndex];
+            CardData targetData = targetCardsData[targetIndex];
 
-        if (targetData.abilities.Contains(Ability.DivineShield)) 
-            targetData.abilities.Remove(Ability.DivineShield);
-        else
-            targetData.Health -= attackerData.Attack;
-        if (attackerData.abilities.Contains(Ability.DivineShield)) 
-            attackerData.abilities.Remove(Ability.DivineShield);
-        else
-            attackerData.Health -= targetData.Attack;
+            if (targetData.abilities.Contains(Ability.DivineShield)) 
+                targetData.abilities.Remove(Ability.DivineShield);
+            else
+                targetData.Health -= attackerData.Attack;
+            if (attackerData.abilities.Contains(Ability.DivineShield)) 
+                attackerData.abilities.Remove(Ability.DivineShield);
+            else
+                attackerData.Health -= targetData.Attack;
 
-        attackerData.Active = false;
-        
-        if (targetData.Health <= 0) {
-            targetCardsData.RemoveAt(targetIndex);
-            OnCardDead(targetState, targetIndex);
-        }
-        if (attackerData.Health <= 0) {
-            attackerCardsData.RemoveAt(attackerIndex);
-            OnCardDead(attackerState, attackerIndex);
+            attackerData.Active = false;
+            
+            if (targetData.Health <= 0) {
+                targetCardsData.RemoveAt(targetIndex);
+                OnCardDead(targetState, targetIndex);
+            }
+            if (attackerData.Health <= 0) {
+                attackerCardsData.RemoveAt(attackerIndex);
+                OnCardDead(attackerState, attackerIndex);
+            }
         }
     }
 
-    public void AttackHero(PlayerState state, int damage) {
+    public void AttackHero(PlayerState state, int attackerIndex) {
         HeroData hero = playerHero;
-        if (state == PlayerState.Enemy)
+        PlayerState attackerState = PlayerState.Enemy;
+        if (state == PlayerState.Enemy) {
             hero = opponentHero;
+            attackerState = PlayerState.Player;
+        }
+        List<CardData> list = GetListByState(attackerState);
 
-        hero.Health -= damage;
-        if (hero.Health <= 0) {
-            OnHeroDead.Invoke(state);
+        if (attackerIndex < list.Count) {
+            hero.Health -= list[attackerIndex].Attack;
+            if (hero.Health <= 0) {
+                OnHeroDead.Invoke(state);
+            }
         }
     }
 
     public void ApplyBuff(PlayerState state, int casterIndex, int targetIndex) {
         List<CardData> list = GetListByState(state);
 
-        CardData casterData = list[casterIndex];
-        CardData targetData = list[targetIndex];
-        Buff buff = casterData.battlecryBuff.buff;
-        Buff buffCopy = new Buff(buff.health, buff.attack);
-        targetData.AddBuff(buffCopy);
+        if (casterIndex < list.Count && targetIndex < list.Count) {
+            CardData casterData = list[casterIndex];
+            CardData targetData = list[targetIndex];
+            Buff buff = casterData.battlecryBuff.buff;
+            Buff buffCopy = new Buff(buff.health, buff.attack);
+            targetData.AddBuff(buffCopy);
+        }
     }
 
     public void PlaceCard(PlayerState side, int handIndex, int boardIndex) {
@@ -187,13 +197,15 @@ public class GameState
             handDatas = opponentCardsInHandData;
             boardDatas = opponentCardsData;
         }
-        CardData data = handDatas[handIndex];
-        handDatas.RemoveAt(handIndex);
-        boardDatas.Insert(boardIndex, data);
-        SpendMana(side, data.Cost);
-        if (data.abilities.Contains(Ability.Charge)) {
-            data.abilities.Remove(Ability.Charge);
-            data.Active = true;
+        if (handIndex < handDatas.Count) {
+            CardData data = handDatas[handIndex];
+            handDatas.RemoveAt(handIndex);
+            boardDatas.Insert(boardIndex, data);
+            SpendMana(side, data.Cost);
+            if (data.abilities.Contains(Ability.Charge)) {
+                data.abilities.Remove(Ability.Charge);
+                data.Active = true;
+            }
         }
     }
 
