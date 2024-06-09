@@ -109,6 +109,7 @@ public class MainMenu : MonoBehaviour
     private void OnGameEnd() {
         game.SetActive(false);
         gameObject.SetActive(true);
+        NetworkManager.Singleton.Shutdown();
     }
 
     private void OnManaChange(PlayerState state, int currentMana, int mana) {
