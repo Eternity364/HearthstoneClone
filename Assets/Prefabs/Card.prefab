@@ -84,7 +84,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 533380719
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 3
   m_Sprite: {fileID: 21300000, guid: 3977f73fb2d541143ab0781d3def2214, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -10230,7 +10230,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 839134053
-  m_SortingLayer: 17
+  m_SortingLayer: 18
   m_SortingOrder: 5
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -16664,7 +16664,7 @@ MonoBehaviour:
   mainObjectsTransform: {fileID: 2756469291153783824}
   grayScale: {fileID: 427893604890163950}
   intermediateObjectsTransform: {fileID: 3711116447626226811}
-  lackHealth: {r: 1, g: 0, b: 0.23529412, a: 1}
+  lackHealth: {r: 0, g: 0, b: 0, a: 1}
   buffed: {r: 0.13919543, g: 0.8018868, b: 0.27173373, a: 1}
   activeStatusInHand: {fileID: 6380778634875484632}
   activeStatusOnField: {fileID: 2172302191836518262}
@@ -21826,7 +21826,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 839134053
-  m_SortingLayer: 17
+  m_SortingLayer: 18
   m_SortingOrder: 5
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -26801,7 +26801,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 839134053
-  m_SortingLayer: 17
+  m_SortingLayer: 18
   m_SortingOrder: 5
   m_RenderMode: 4
   m_MeshDistribution: 0
@@ -26894,7 +26894,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 556935957
+  m_SortingLayerID: 286408747
   m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &3813710706847950580
@@ -27846,8 +27846,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 839134053
-  m_SortingLayer: 17
+  m_SortingLayerID: 286408747
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 6cd4c3776d35273429577bfcc5bb5cb5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

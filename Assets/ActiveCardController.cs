@@ -24,6 +24,7 @@ public class ActiveCardController : MonoBehaviour
 
     public void PickCard(Card card, int handIndex)
     {
+        card.RotationManager.SetActive(true);
         card.cardDisplay.gameObject.transform.SetParent(this.gameObject.transform);
         card.cardDisplay.SetShadowActive(true);
         card.transform.localRotation = Quaternion.Euler(0, 0, 0);

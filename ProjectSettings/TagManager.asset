@@ -44,6 +44,9 @@ TagManager:
   - name: Board
     uniqueID: 919621911
     locked: 0
+  - name: DamageSplash
+    uniqueID: 286408747
+    locked: 0
   - name: Attacking
     uniqueID: 533380719
     locked: 0

@@ -42,4 +42,9 @@ public class SinglePlayerControlScheme : MonoBehaviour, ControlScheme {
 
     void ControlScheme.AttemptToStartNextTurn() {
     }
+
+    void ControlScheme.Concede() {
+        boardManager.OnPreGameEnd();
+        boardManager.playerHero.DealDamage(30);
+    }
 }

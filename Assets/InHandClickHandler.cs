@@ -32,7 +32,6 @@ public class InHandClickHandler : MonoBehaviour
 
     void OnMouseDown()
     {
-        rotationManager.SetActive(true);
         if (OnPick != null)
             OnPick.Invoke(card);
     }

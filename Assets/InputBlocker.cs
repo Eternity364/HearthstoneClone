@@ -28,10 +28,12 @@ public class InputBlocker : MonoBehaviour
     private List<InputBlock> handBlocks = new List<InputBlock>();
     private Dictionary<InputBlock, Card> cardBlocks = new Dictionary<InputBlock, Card>();
 
-    void Awake()
-    {
-        InputBlockerInstace.SetInstance(this);
+    public void Clear() {
+        blocks = new List<InputBlock>();
+        handBlocks = new List<InputBlock>();
+        cardBlocks = new Dictionary<InputBlock, Card>();
     }
+    
 
     public InputBlock AddBlock()
     {

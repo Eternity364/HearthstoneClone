@@ -26,6 +26,14 @@ public class SplashScreen : MonoBehaviour
     Transform currentScreen;
     TweenCallback Action;
 
+    public void Clear()
+    {
+        areaRect.enabled = false;
+        victoryScreen.gameObject.SetActive(false);
+        defeatScreen.gameObject.SetActive(false);
+        newTurnScreen.gameObject.SetActive(false);
+    }  
+
     public void ShowNewTurnMessage()
     {
         Vector2 startScale = new Vector2(0.025f, 0.025f);

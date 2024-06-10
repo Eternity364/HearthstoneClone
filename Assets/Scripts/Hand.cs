@@ -31,7 +31,7 @@ public class Hand : MonoBehaviour
     private Dictionary<Card, List<Tweener>> currentAnimationsMain = new Dictionary<Card, List<Tweener>>();
     private Dictionary<Card, List<Tweener>> currentAnimationsInside = new Dictionary<Card, List<Tweener>>();
     private Dictionary<Card, InputBlock> costBlocks = new Dictionary<Card, InputBlock>();
-    private List<Card> inactiveCards = new List<Card>();
+    private List<Card> inactiveCards;
     private Card hoveringCard;
     private int takenCardIndex;
     private Card returningToHandCard;
@@ -50,10 +50,21 @@ public class Hand : MonoBehaviour
         }
 
         Sort();
-
+        
         if (playerState == PlayerState.Player) {
             board.OnBoardSizeChange += OnBoardSizeChange;
         }
+    }
+
+    public void Clear() {
+        inactiveCards = new List<Card>();
+        hoveringCard = null;
+        handBlock = null;
+        for (int i = 0; i < cards.Count; i++)
+        {
+            Destroy(cards[i].gameObject);
+        }
+        cards = new List<Card>();
     }
     
     public void AddCard(Card card) {
@@ -65,6 +76,7 @@ public class Hand : MonoBehaviour
         else
         {
             SetCardCallbacks(card, true);  
+            card.clickHandler.SetClickable(true);
         }
     }
 
@@ -103,13 +115,11 @@ public class Hand : MonoBehaviour
         void OnComplete() {
             AddCard(card);
             Sort();
+            GameStateInstance.Instance.Update();
             if (cardController.pickedCard)
                 cardController.SetInputBlock(true);
             InputBlockerInstace.Instance.UpdateValues();
         }
-        // mySequence.Insert(0.25f, trans.DOLocalRotate(new Vector3(-12, 12, 0), 0.1f).SetEase(Ease.InCubic));
-        // mySequence.Insert(0.35f, trans.DOLocalRotate(new Vector3(), 0.35f).SetEase(Ease.InCubic));
-        // mySequence.InsertCallback(duration - 0.07f, AttackParticle);
     }
 
     private void OnCardPick(Card card) {
@@ -177,6 +187,7 @@ public class Hand : MonoBehaviour
     public void OnManaChange(PlayerState state, int currentMana, int mana) {
         for (int i = 0; i < cards.Count; i++)
         {
+            print("cost = " + cards[i].cardDisplay.Data.Cost);
             if (cards[i].cardDisplay.Data.Cost > currentMana) {
                 if (!costBlocks.ContainsKey(cards[i]))
                     costBlocks[cards[i]] = InputBlockerInstace.Instance.AddCardBlock(cards[i]);

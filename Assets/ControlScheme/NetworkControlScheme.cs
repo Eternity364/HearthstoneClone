@@ -60,7 +60,6 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
             return true;
         else
         {
-            print("failed");
             ClientRpcParams clientRpcParams = CreateClientRpcParams(clientID);
             ClientRpcParams opponentRpcParams = CreateClientRpcParams(instance.Pair.GetOpponentID(clientID));
             playerConnectionManager.SendClientShutDownClientRpc(false, clientRpcParams);
@@ -69,6 +68,16 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
             StartCoroutine(playerConnectionManager.ShutDown());
             return false;
         }
+    }
+
+    void ControlScheme.Clear() {
+        boardManager.OnCardAttack = null;
+        boardManager.OnHeroAttack = null;
+        boardManager.OnCardBattlecryBuff = null;
+        activeCardController.OnCardDrop = null;
+        blocks = new Queue<InputBlock>();
+        attacker = null;
+        target = null;
     }
 
     void ControlScheme.AttemptToPerformAttack(int attackerIndex, int targetIndex) {
@@ -96,8 +105,6 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
 
     void ControlScheme.AttemptToPerformCardPlacement(int handIndex, int boardIndex) {
         GameStateInstance.Instance.PlaceCard(PlayerState.Player, handIndex, boardIndex);
-        print(GameStateInstance.Instance.ToJson());
-        //boardManager.PlayerCardsOnBoard[boardIndex].cardDisplay.SetActiveStatus(true);
         AttemptToPerformCardPlacementServerRpc(handIndex, boardIndex, GameStateInstance.Instance.GetHash(), new ServerRpcParams());
         Card card = activeCardController.pickedCard;
         if (!card.GetData().abilities.Contains(Ability.BattlecryBuff))
@@ -111,6 +118,12 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         AttemptToStartNextTurnServerRpc(GameStateInstance.Instance.GetHash(), new ServerRpcParams());
     }
 
+    void ControlScheme.Concede() {
+        boardManager.OnPreGameEnd();
+        boardManager.playerHero.DealDamage(30);
+        ConcedeServerRpc(new ServerRpcParams());
+    }
+
     public void SendTimerStartMessage(GameInstance instance) {
         ulong playerId = instance.Pair.PlayerID;
         ulong opponentId = instance.Pair.EnemyID;
@@ -121,7 +134,6 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         TimerStartClientRpc(playerRpcParams);
         TimerStartClientRpc(opponentRpcParams);
     }
-        
     
     public void ForceEndTurn(GameInstance instance) {
         PlayerState currentTurn = instance.currentTurn;
@@ -151,6 +163,18 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
 
         SetNewTurnClientRpc(state.GetHash(), true, newCardIndex, nextRpcParams);
         SetNewTurnClientRpc(state.GetReveresed().GetHash(), false, newCardIndex, currentRpcParams);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ConcedeServerRpc(ServerRpcParams rpcParams) {
+        GameInstance instance = gameInstanceManager.GetInstanceByPlayerID(rpcParams.Receive.SenderClientId);
+        if (instance != null) {
+            ulong opponentID = instance.Pair.GetOpponentID(rpcParams.Receive.SenderClientId);
+            ClientRpcParams opponentRpcParams = CreateClientRpcParams(opponentID);
+            playerConnectionManager.SendClientShutDownClientRpc(true, opponentRpcParams);
+            gameInstanceManager.Remove(instance);
+        }
+        StartCoroutine(playerConnectionManager.ShutDown());
     }
 
     [ServerRpc(RequireOwnership = false)]

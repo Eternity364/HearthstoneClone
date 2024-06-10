@@ -25,6 +25,10 @@ public class Hero : MonoBehaviour
     GameObject deathParticles;
     [SerializeField]
     Material grayScale;
+    [SerializeField]
+    Material normal;
+    [SerializeField]
+    DamageSplash damageSplash;
     public TweenCallback OnDeath;
     public UnityAction OnMouseUpEvents;
     public UnityAction<Card> OnMouseEnterCallbacks;
@@ -39,6 +43,23 @@ public class Hero : MonoBehaviour
         UpdateDisplay();
     }
 
+    public void Reset()
+    {
+        data.Health = 30;
+        area.enabled = true;
+        
+        playerPicture.GetComponent<SpriteRenderer>().material = normal;
+        enemyPicture.GetComponent<SpriteRenderer>().material = normal;
+        intermediate.transform.localPosition = Vector3.zero;
+        deathParticles.SetActive(false);        
+        OnMouseEnterCallbacks = null;
+        OnMouseLeaveCallbacks = null;
+        OnMouseUpEvents = null;
+        OnDeath = null;;
+        dead = false;
+        UpdateDisplay();
+    }
+
     public void SetClickable(bool active)
     {
         area.enabled = active;
@@ -48,6 +69,7 @@ public class Hero : MonoBehaviour
     {
         data.Health -= damage;
         UpdateDisplay();
+        damageSplash.Show(damage);
         bool dead = data.Health <= 0;
         if (dead) StartDeathAnimation();
         return dead;

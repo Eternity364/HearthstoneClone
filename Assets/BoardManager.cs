@@ -53,7 +53,6 @@ public class BoardManager : MonoBehaviour
     private List<Card> playerCardsOnBoardTemp = new List<Card>();
     private List<Card> cardsPlacedThisTurn = new List<Card>();
     private Queue<TweenCallback> attackAnimationQueue = new Queue<TweenCallback>();
-    private List<Card> inactiveCards = new List<Card>();
 
     public bool IsFilled
     {
@@ -80,7 +79,6 @@ public class BoardManager : MonoBehaviour
     private Dictionary<List<Card>, List<Tweener>> sortingTweens;
     private Card attackingCard;
     private Card castingCard;
-    private InputBlock handblock;
     public TweenCallback OnPreGameEnd;
 
     public void Initialize (bool isPlayer, TweenCallback OnPreGameEnd, TweenCallback OnGameEnd) {
@@ -115,6 +113,7 @@ public class BoardManager : MonoBehaviour
             splashScreen.ShowDefeatMessage(OnGameEnd, playerState);
         }
 
+
         enemyHero.OnMouseEnterCallbacks += OnCardMouseEnter;
         enemyHero.OnMouseLeaveCallbacks += OnCardMouseLeave;
         enemyHero.OnMouseUpEvents += AttemptToPerformHeroAttack;
@@ -122,6 +121,34 @@ public class BoardManager : MonoBehaviour
         playerHero.OnDeath = OnDefeat;
 
         StartCoroutine(UpdateInputBlocker());
+    }
+
+    public void Clear() {
+        for (int i = 0; i < playerCardsOnBoard.Count; i++)
+        {
+            Destroy(playerCardsOnBoard[i].gameObject);
+        }
+        for (int i = 0; i < enemyCardsOnBoard.Count; i++)
+        {
+            Destroy(enemyCardsOnBoard[i].gameObject);
+        }
+        playerCardsOnBoard = new List<Card>();
+        enemyCardsOnBoard = new List<Card>();
+        sortingTweens = new Dictionary<List<Card>, List<Tweener>>();
+        attackingCard = null;
+        castingCard = null;
+        OnBoardSizeChange = null;
+        OnCardAttack = null;
+        OnHeroAttack = null;
+        OnCardBattlecryBuff = null;
+        cardsPositions = new List<Vector3>();
+        playerCardsOnBoardTemp = new List<Card>();
+        cardsPlacedThisTurn = new List<Card>();
+        attackAnimationQueue = new Queue<TweenCallback>();
+        enemyHero.Reset();
+        playerHero.Reset();
+        arrowController.SetActive(false, Vector2.zero);
+        pointer.gameObject.SetActive(false);
     }
 
     void Update() {
@@ -276,7 +303,6 @@ public class BoardManager : MonoBehaviour
         if (castingCard != null) {
             Card card = castingCard;
             castingCard = null;
-            handblock = null;
             arrowController.SetActive(false, Vector2.zero);
             pointer.gameObject.SetActive(false);
             playerHand.SetCardsClickable(true);
@@ -425,7 +451,10 @@ public class BoardManager : MonoBehaviour
 
     public void OnCardDead(PlayerState state, int index) {
         if (state == PlayerState.Player) {
-            playerCardsOnBoard[index].clickHandler.SetClickable(false);
+            Card card = playerCardsOnBoard[index];
+            card.clickHandler.SetClickable(false);
+            if (cardsPlacedThisTurn.Contains(card))
+                cardsPlacedThisTurn.Remove(card);
             playerCardsOnBoard.RemoveAt(index);
             OnBoardSizeChange.Invoke(playerCardsOnBoard.Count, maxBoardSize);
         }
@@ -520,8 +549,7 @@ public class BoardManager : MonoBehaviour
         attackingCard = null;
         
         if (hero.data.Health <= attackingCard1.GetData().Attack) {
-            OnPreGameEnd();
-            InputBlockerInstace.Instance.AddBlock();
+            OnPreGameEnd();;
         }
     }
 

@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.Rendering;
 
 public class MainMenu : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button startClient;
     [SerializeField] private Button startServer;
     [SerializeField] private Button startSinglePlayer;
+    [SerializeField] private Button exitButton;
     [SerializeField] private GameObject serverStartedText;
     [SerializeField] private GameObject waitingForOpponentText;
     [SerializeField] private PlayerConnectionManager playerConnectionManager;
@@ -18,10 +20,13 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Hand playerHand;
     [SerializeField] private Hand opponentHand;
     [SerializeField] private Button endTurnButton;
+    [SerializeField] private Button concedeButton;
     [SerializeField] private ManaController playerManaController;
     [SerializeField] private ManaController enemyManaController;
     [SerializeField] private CardGenerator cardGenerator;
     [SerializeField] private GameObject gameCanvas;
+    [SerializeField] private InputBlocker inputBlocker;
+    [SerializeField] private SplashScreen splashScreen;
     private ControlScheme controlScheme;
     private GameState gameState;
     
@@ -42,8 +47,12 @@ public class MainMenu : MonoBehaviour
 
     private void StartNetworkClient()
     {
-        NetworkManager.Singleton.StartClient();
         controlScheme = networkControlScheme;
+        NetworkManager.Singleton.StartClient();
+        startClient.gameObject.SetActive(false);
+        startServer.gameObject.SetActive(false);
+        startSinglePlayer.gameObject.SetActive(false);
+        waitingForOpponentText.SetActive(true);
     }
 
     private void StartServer()
@@ -80,9 +89,19 @@ public class MainMenu : MonoBehaviour
         gameState.OnCardDead = boardManager.OnCardDead;
         gameState.OnManaChange = OnManaChange;
         gameState.OnHeroDead = OnHeroDead;
-        GameStateInstance.SetInstance(gameState);
-        endTurnButton.onClick.AddListener(controlScheme.AttemptToStartNextTurn);
-        endTurnButton.gameObject.SetActive(isPlayer);
+        GameStateInstance.SetInstance(gameState);;
+
+        
+        InputBlockerInstace.SetInstance(inputBlocker);
+        InputBlockerInstace.Instance.Clear();
+        boardManager.Clear();
+        playerHand.Clear();
+        opponentHand.Clear();
+        controlScheme.Clear();
+        splashScreen.Clear();
+        endTurnButton.gameObject.SetActive(false);
+        endTurnButton.onClick.RemoveAllListeners();
+        concedeButton.onClick.RemoveAllListeners();
 
         gameObject.SetActive(false);
         game.SetActive(true);
@@ -90,6 +109,10 @@ public class MainMenu : MonoBehaviour
         opponentHand.Initialize(PlayerState.Enemy);
         boardManager.Initialize(isPlayer, OnPreGameEnd, OnGameEnd);
         controlScheme.Initialize();
+        endTurnButton.gameObject.SetActive(isPlayer);
+        endTurnButton.onClick.AddListener(controlScheme.AttemptToStartNextTurn);
+        concedeButton.onClick.AddListener(controlScheme.Concede);
+        gameCanvas.SetActive(true);
 
         if (!isPlayer) {
             NetworkControlScheme netControl = (NetworkControlScheme)controlScheme;
@@ -104,12 +127,17 @@ public class MainMenu : MonoBehaviour
 
     private void OnPreGameEnd() {
         gameCanvas.SetActive(false);
+        InputBlockerInstace.Instance.AddBlock();
     }
 
     private void OnGameEnd() {
         game.SetActive(false);
         gameObject.SetActive(true);
         NetworkManager.Singleton.Shutdown();
+        waitingForOpponentText.SetActive(false);
+        startClient.gameObject.SetActive(true);
+        startServer.gameObject.SetActive(true);
+        startSinglePlayer.gameObject.SetActive(true);
     }
 
     private void OnManaChange(PlayerState state, int currentMana, int mana) {
@@ -130,9 +158,6 @@ public class MainMenu : MonoBehaviour
     private void ShowWaitingForOpponentText()
     {
         waitingForOpponentText.SetActive(true);
-        startClient.gameObject.SetActive(false);
-        startServer.gameObject.SetActive(false);
-        startSinglePlayer.gameObject.SetActive(false);
     }
 }
 
@@ -147,8 +172,7 @@ public static class GameStateInstance
  
     public static void SetInstance(GameState instance)
     {
-        if (GameStateInstance.instance == null)
-           GameStateInstance.instance =  instance;
+        GameStateInstance.instance =  instance;
     }
 }
 

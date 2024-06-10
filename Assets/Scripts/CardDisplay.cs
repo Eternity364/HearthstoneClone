@@ -199,6 +199,8 @@ public class CardDisplay : MonoBehaviour
         mySequence.Append(mainObjectsTransform.DOLocalMove(new Vector3(0, 0, 0.2f), 
                 0.8f).SetEase(Ease.OutCubic));
         mySequence.InsertCallback(duration + goDownDuration, DeathParticles);
+        mySequence.AppendInterval(2f);
+        mySequence.AppendCallback(DestroyCard);
     }
 
     public void DestroyCard() {
