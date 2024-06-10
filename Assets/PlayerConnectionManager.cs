@@ -49,7 +49,9 @@ public class PlayerConnectionManager : NetworkBehaviour
         bool isPairCompleted = playerPair.IsPairCompleted();
         bool isPlayer = IsClientIdPlayer(clientId);
         if (isPairCompleted) {
+            print("clientId = " + clientId);
             ulong opponentID = playerPair.GetOpponentID(clientId);
+            print("opponentID = " + opponentID);
             bool isPlayer1 = IsClientIdPlayer(opponentID);
             GameInstance instance = gameInstanceManager.Create(playerPair, networkControl.ForceEndTurn, networkControl.SendTimerStartMessage, OnGameEnd);
             ulong instanceId = Convert.ToUInt64(gameInstanceManager.GetInstanceID(instance));

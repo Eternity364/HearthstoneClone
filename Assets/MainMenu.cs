@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.Rendering;
 
-public class MainMenu : MonoBehaviour
+public class MainMenuLocal : MonoBehaviour
 {
     [SerializeField] private GameObject game;
     [SerializeField] private Button startClient;
