@@ -193,7 +193,6 @@ public class MainMenuNetwork : MonoBehaviour
         boardManager.Initialize(isPlayer, OnPreGameEnd, OnGameEnd);
         controlScheme.Initialize();
         endTurnButton.interactable = isPlayer;
-
         if (isPlayer)
             endTurnButton.GetComponentInChildren<TextMeshProUGUI>().text = "End turn";
         else

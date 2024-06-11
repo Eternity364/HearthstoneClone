@@ -519,13 +519,16 @@ public class BoardManager : MonoBehaviour
 
     public void PerformHeroAttack(PlayerState side, int index) {
         Hero hero = null;
+        HeroData data = null;
         if (side == PlayerState.Player) {
             attackingCard = playerCardsOnBoard[index];
+            data = GameStateInstance.Instance.opponentHero;
             hero = enemyHero;
         }
         else if (side == PlayerState.Enemy) {
             hero = playerHero;
             attackingCard = enemyCardsOnBoard[index];
+            data = GameStateInstance.Instance.playerHero;
         }
         Card attackingCard1 = attackingCard;
         Sequence mySequence = null;
@@ -552,8 +555,8 @@ public class BoardManager : MonoBehaviour
         
         attackingCard = null;
         
-        if (hero.data.Health <= attackingCard1.GetData().Attack) {
-            OnPreGameEnd();;
+        if (data.Health <= attackingCard1.GetData().Attack) {
+            OnPreGameEnd();
         }
     }
 

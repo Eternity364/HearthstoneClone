@@ -367,15 +367,15 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
             if (value) {
                 DequeueInputBlock();
                 boardManager.OnPlayerTurnStart();
-                
+                EndTurnButton.GetComponentInChildren<TextMeshProUGUI>().text = "End turn";
             }
             else {
                 DequeueInputBlock();
                 AddInputBlock();
                 boardManager.SetCardsStatusActive(false);
+                EndTurnButton.GetComponentInChildren<TextMeshProUGUI>().text = "EnemyTurn";
             }
-            EndTurnButton.interactable = true;
-            EndTurnButton.GetComponentInChildren<TextMeshProUGUI>().text = "End turn";
+            EndTurnButton.interactable = value;
             endTurnTimer.gameObject.SetActive(false);
         }
     }

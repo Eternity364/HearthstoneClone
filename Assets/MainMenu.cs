@@ -3,6 +3,7 @@ using Unity.Netcode;
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.Rendering;
+using TMPro;
 
 public class MainMenuLocal : MonoBehaviour
 {
@@ -91,7 +92,6 @@ public class MainMenuLocal : MonoBehaviour
         opponentHand.Clear();
         controlScheme.Clear();
         splashScreen.Clear();
-        endTurnButton.gameObject.SetActive(false);
         endTurnButton.onClick.RemoveAllListeners();
         concedeButton.onClick.RemoveAllListeners();
 
@@ -101,7 +101,12 @@ public class MainMenuLocal : MonoBehaviour
         opponentHand.Initialize(PlayerState.Enemy);
         boardManager.Initialize(isPlayer, OnPreGameEnd, OnGameEnd);
         controlScheme.Initialize();
-        endTurnButton.gameObject.SetActive(isPlayer);
+        endTurnButton.interactable = isPlayer;
+        if (isPlayer)
+            endTurnButton.GetComponentInChildren<TextMeshProUGUI>().text = "End turn";
+        else
+            endTurnButton.GetComponentInChildren<TextMeshProUGUI>().text = "Enemy turn";
+        endTurnButton.gameObject.SetActive(true);
         endTurnButton.onClick.AddListener(controlScheme.AttemptToStartNextTurn);
         concedeButton.onClick.AddListener(controlScheme.Concede);
         gameCanvas.SetActive(true);
