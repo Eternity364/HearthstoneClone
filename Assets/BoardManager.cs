@@ -58,6 +58,10 @@ public class BoardManager : MonoBehaviour
     {
         get { return playerCardsOnBoard.Count == maxBoardSize; }
     }
+    public bool IsOpponentFilled
+    {
+        get { return enemyCardsOnBoard.Count == maxBoardSize; }
+    }
     public List<Card> PlayerCardsOnBoard
     {
         get { return playerCardsOnBoard; }

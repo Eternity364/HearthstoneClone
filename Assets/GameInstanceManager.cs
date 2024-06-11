@@ -16,12 +16,12 @@ public class GameInstanceManager : MonoBehaviour
     public GameInstance Create(PlayerPair pair, UnityAction<GameInstance> OnTimerRunOut, UnityAction<GameInstance> OnTimerThresholdReached, 
         UnityAction OnGameEnd)
     {
-        GameState gameState = new GameState(cardGenerator.GetRandomDataList(3), cardGenerator.GetRandomDataList(4),
+        GameState gameState = new GameState(cardGenerator.GetRandomDataList(0), cardGenerator.GetRandomDataList(0),
             cardGenerator.GetRandomDataList(5), cardGenerator.GetRandomDataList(5), 
-            5, 5, 5, 5, 10, 10,
+            1, 0, 1, 0, 10, 10,
             30, 30, 30, 30,
             OnCardDead, OnManaChangeEmpty, OnHeroDead);
-        GameInstance newInstance = new GameInstance(pair, 30, 10, 10, gameState);
+        GameInstance newInstance = new GameInstance(pair, 30, 20, 10, gameState);
         newInstance.OnTimerRunOut += OnTimerRunOut;
         newInstance.OnTimerThresholdReached += OnTimerThresholdReached;
         newInstance.GenerateNewData = cardGenerator.GetRandomData;

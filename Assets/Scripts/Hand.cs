@@ -80,6 +80,16 @@ public class Hand : MonoBehaviour
         }
     }
 
+    public Card GetPlayableOpponentCard() {
+        for (int i = 0; i < cards.Count; i++)
+        {
+            if (cards[i].cardDisplay.Data.Cost <= GameStateInstance.Instance.currentOpponentMana) {
+                return cards[i];
+            }
+        }
+        return null;
+    }
+
     public void DrawCard(Card card) {
         card.cardDisplay.SetRenderLayer("Active");
         float position2duration = 0.5f;
@@ -187,7 +197,6 @@ public class Hand : MonoBehaviour
     public void OnManaChange(PlayerState state, int currentMana, int mana) {
         for (int i = 0; i < cards.Count; i++)
         {
-            print("cost = " + cards[i].cardDisplay.Data.Cost);
             if (cards[i].cardDisplay.Data.Cost > currentMana) {
                 if (!costBlocks.ContainsKey(cards[i]))
                     costBlocks[cards[i]] = InputBlockerInstace.Instance.AddCardBlock(cards[i]);

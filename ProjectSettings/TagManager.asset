@@ -44,20 +44,20 @@ TagManager:
   - name: Board
     uniqueID: 919621911
     locked: 0
+  - name: Attacking
+    uniqueID: 533380719
+    locked: 0
   - name: DamageSplash
     uniqueID: 286408747
     locked: 0
-  - name: Attacking
-    uniqueID: 533380719
+  - name: LandingOnBoard
+    uniqueID: 3144962145
     locked: 0
   - name: Arrow2
     uniqueID: 3696899461
     locked: 0
   - name: Arrow1
     uniqueID: 1775374363
-    locked: 0
-  - name: LandingOnBoard
-    uniqueID: 3144962145
     locked: 0
   - name: InHandCard0
     uniqueID: 1171756905

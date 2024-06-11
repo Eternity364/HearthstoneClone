@@ -51,6 +51,7 @@ public class CardChangingStateAnimation : MonoBehaviour
             duration = 0;
         DOTween.To(AlphaSetter, 0, 1f, duration).SetEase(Ease.OutQuad);
         fromOutline.SetActive(false);
+        fromTextGroup.gameObject.SetActive(false);
 
 
         void AlphaSetter(float alpha) {

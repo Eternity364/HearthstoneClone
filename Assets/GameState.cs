@@ -169,8 +169,8 @@ public class GameState
             attackerState = PlayerState.Player;
         }
         List<CardData> list = GetListByState(attackerState);
-
         if (attackerIndex < list.Count) {
+            list[attackerIndex].Active = false;
             hero.Health -= list[attackerIndex].Attack;
             if (hero.Health <= 0) {
                 OnHeroDead.Invoke(state);

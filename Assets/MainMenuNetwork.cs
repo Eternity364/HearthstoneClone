@@ -161,25 +161,6 @@ public class MainMenuNetwork : MonoBehaviour
         }
     }
 
-    private void StartSinglePlayer()
-    {
-        controlScheme = singlePlayerControlScheme;
-        GameState gameState = new GameState(cardGenerator.GetRandomDataList(0), cardGenerator.GetRandomDataList(4),
-            cardGenerator.GetRandomDataList(10), cardGenerator.GetRandomDataList(10), 
-            10, 0, 10, 0, 10, 10,
-            30, 30, 30, 30,
-            boardManager.OnCardDead, OnManaChange, OnHeroDead);
-        StartClient(true, gameState.ToJson());
-        //manaController.StartCoroutine(StartTestCardPlacing());
-    }
-
-    IEnumerator StartTestCardPlacing()
-    {
-        yield return new WaitForSeconds(3);
-
-        playerManaController.StartAppearAnimation();
-    }
-
     private void StartClient(bool isPlayer, string gameStateJson)
     {
         gameState = JsonUtility.FromJson<GameState>(gameStateJson);

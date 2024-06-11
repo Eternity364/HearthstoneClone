@@ -1,10 +1,23 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SinglePlayerControlScheme : MonoBehaviour, ControlScheme {
     [SerializeField]
     BoardManager boardManager;
     [SerializeField]
     ActiveCardController activeCardController;
+    [SerializeField]
+    Hand opponentHand;
+    [SerializeField]
+    Hand playerHand;
+    [SerializeField]
+    CardGenerator cardGenerator;
+    [SerializeField]
+    Button endTurnButton;
+    [SerializeField]
+    SinglePlayerBot singlePlayerBot;
+
+    private InputBlock block = null;
 
     BoardManager ControlScheme.bManager
     {
@@ -41,10 +54,34 @@ public class SinglePlayerControlScheme : MonoBehaviour, ControlScheme {
     }
 
     void ControlScheme.AttemptToStartNextTurn() {
+        SetupTurn(PlayerState.Enemy, opponentHand);
+        endTurnButton.gameObject.SetActive(false);
+        block = InputBlockerInstace.Instance.AddBlock();
+        singlePlayerBot.StartNewTurn();
     }
 
     void ControlScheme.Concede() {
         boardManager.OnPreGameEnd();
         boardManager.playerHero.DealDamage(30);
+    }
+
+    public void StartPlayerTurn() {
+        SetupTurn(PlayerState.Player, playerHand);
+        endTurnButton.gameObject.SetActive(true);
+        InputBlockerInstace.Instance.RemoveBlock(block);
+        block = null;
+        boardManager.OnPlayerTurnStart();
+    }
+
+    private void SetupTurn(PlayerState turn, Hand hand) {
+        GameStateInstance.Instance.SetCardsActive(turn);
+        GameStateInstance.Instance.ProgressMana(turn);
+        if (GameStateInstance.Instance.GetHandListByState(turn).Count < 10) {
+            Card card = cardGenerator.Create(cardGenerator.GetRandomData().Index, hand.transform);
+            CardData cardData = card.GetData();
+            CardData data = new CardData(cardData.Health, cardData.maxHealth, cardData.Attack, cardData.Cost, cardData.Index, cardData.abilities, cardData.buffs, cardData.battlecryBuff);
+            GameStateInstance.Instance.GetHandListByState(turn).Add(data);
+            hand.DrawCard(card);
+        }
     }
 }
