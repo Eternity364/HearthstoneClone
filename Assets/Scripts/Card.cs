@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Card : MonoBehaviour
@@ -7,7 +5,7 @@ public class Card : MonoBehaviour
     public AngleSetter angleSetter;
 
     [SerializeField]
-    public CardDisplay cardDisplay;
+    public CardDisplay display;
     [SerializeField]
     public InHandClickHandler clickHandler;
     [SerializeField]
@@ -19,8 +17,8 @@ public class Card : MonoBehaviour
     }
 
     public bool TryAndApplyCharge (InputBlock block) {
-        if (cardDisplay.Data.abilities.Contains(Ability.Charge)) {
-            cardDisplay.Data.abilities.Remove(Ability.Charge);
+        if (display.Data.abilities.Contains(Ability.Charge)) {
+            display.Data.abilities.Remove(Ability.Charge);
             InputBlockerInstace.Instance.RemoveBlock(block);
             return true;
         }
@@ -29,28 +27,28 @@ public class Card : MonoBehaviour
     
     public bool DealDamage(int damage)
     {
-        if (cardDisplay.Data.abilities.Contains(Ability.DivineShield)) {
-            cardDisplay.RemoveDivineShield();
+        if (display.Data.abilities.Contains(Ability.DivineShield)) {
+            display.RemoveDivineShield();
         }
         else
         {
-            cardDisplay.Data.Health -= damage;
-            cardDisplay.ShowDamage(damage);
+            display.Data.Health -= damage;
+            display.ShowDamage(damage);
         }
 
-        cardDisplay.UpdateDisplay();
-        bool dead = cardDisplay.Data.Health <= 0;
+        display.UpdateDisplay();
+        bool dead = display.Data.Health <= 0;
         if (dead) StartDeathAnimation();
         return dead;
     }
 
     public CardData GetData() {
-        return cardDisplay.Data;
+        return display.Data;
     }
     
     void StartDeathAnimation()
     {
-        cardDisplay.StartDeathAnimation();
+        display.StartDeathAnimation();
         //Destroy(this.gameObject);
     }
 }

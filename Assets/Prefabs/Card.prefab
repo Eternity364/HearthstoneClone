@@ -16620,7 +16620,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   angleSetter: {fileID: 2781721940718277738}
-  cardDisplay: {fileID: 4421477798839540139}
+  display: {fileID: 4421477798839540139}
   clickHandler: {fileID: 2987097022873872687}
   rotationManager: {fileID: 8321436124563181073}
 --- !u!114 &4421477798839540139

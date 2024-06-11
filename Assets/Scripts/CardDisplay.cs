@@ -223,13 +223,6 @@ public class CardDisplay : MonoBehaviour
         }
     }
 
-    // void OnCardTurningVisibility()
-    // {
-    //     bool back = card.gameObject.transform.eulerAngles.y > 93.61 && card.gameObject.transform.eulerAngles.y < 273.75f;
-    //     cardBack.SetActive(back);
-    //     textCanvasGO.SetActive(!back);
-    // }
-
     public void SetShadowActive(bool value)
     {
         shadowInHand.SetActive(value && currentState == DisplayStates.InHand);

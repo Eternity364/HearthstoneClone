@@ -47,30 +47,6 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
         blocks.Enqueue(block);
     }
 
-    private void DequeueInputBlock() {
-        if (blocks.Count > 0) {
-            InputBlock block = blocks.Dequeue();
-            InputBlockerInstace.Instance.RemoveBlock(block);
-        }
-    }
-
-    private bool CheckGameStateIntegrity(byte[] clientStateHash, byte[] serverStateHash, ulong clientID, GameInstance instance) {
-        string serverHashString = SecurityHelper.GetHexStringFromHash(serverStateHash);
-        string clientHashString = SecurityHelper.GetHexStringFromHash(clientStateHash);
-        if (serverHashString == clientHashString) 
-            return true;
-        else
-        {
-            ClientRpcParams clientRpcParams = CreateClientRpcParams(clientID);
-            ClientRpcParams opponentRpcParams = CreateClientRpcParams(instance.Pair.GetOpponentID(clientID));
-            playerConnectionManager.SendClientShutDownClientRpc(false, clientRpcParams);
-            playerConnectionManager.SendClientShutDownClientRpc(true, opponentRpcParams);
-            gameInstanceManager.Remove(instance);
-            StartCoroutine(playerConnectionManager.ShutDown());
-            return false;
-        }
-    }
-
     void ControlScheme.Clear() {
         boardManager.OnCardAttack = null;
         boardManager.OnHeroAttack = null;
@@ -84,7 +60,7 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     void ControlScheme.AttemptToPerformAttack(int attackerIndex, int targetIndex) {
         attacker = boardManager.PlayerCardsOnBoard[attackerIndex];
         target = boardManager.EnemyCardsOnBoard[targetIndex];
-        boardManager.PlayerCardsOnBoard[attackerIndex].cardDisplay.SetActiveStatus(false);
+        boardManager.PlayerCardsOnBoard[attackerIndex].display.SetActiveStatus(false);
         GameStateInstance.Instance.Attack(PlayerState.Player, attackerIndex, PlayerState.Enemy, targetIndex);
         AttemptToPerformAttackServerRpc(attackerIndex, targetIndex, GameStateInstance.Instance.GetHash(), new ServerRpcParams());
         AddInputBlock();
@@ -93,7 +69,7 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     void ControlScheme.AttemptToPerformHeroAttack(int attackerIndex) {
         attacker = boardManager.PlayerCardsOnBoard[attackerIndex];
         GameStateInstance.Instance.AttackHero(PlayerState.Enemy, attackerIndex);
-        boardManager.PlayerCardsOnBoard[attackerIndex].cardDisplay.SetActiveStatus(false);
+        boardManager.PlayerCardsOnBoard[attackerIndex].display.SetActiveStatus(false);
         AttemptToPerformHeroAttackServerRpc(attackerIndex, GameStateInstance.Instance.GetHash(), new ServerRpcParams());
         AddInputBlock();
     }
@@ -465,5 +441,28 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
                 TargetClientIds = new ulong[]{clientId}
             }
         };
+    }
+    private void DequeueInputBlock() {
+        if (blocks.Count > 0) {
+            InputBlock block = blocks.Dequeue();
+            InputBlockerInstace.Instance.RemoveBlock(block);
+        }
+    }
+
+    private bool CheckGameStateIntegrity(byte[] clientStateHash, byte[] serverStateHash, ulong clientID, GameInstance instance) {
+        string serverHashString = SecurityHelper.GetHexStringFromHash(serverStateHash);
+        string clientHashString = SecurityHelper.GetHexStringFromHash(clientStateHash);
+        if (serverHashString == clientHashString) 
+            return true;
+        else
+        {
+            ClientRpcParams clientRpcParams = CreateClientRpcParams(clientID);
+            ClientRpcParams opponentRpcParams = CreateClientRpcParams(instance.Pair.GetOpponentID(clientID));
+            playerConnectionManager.SendClientShutDownClientRpc(false, clientRpcParams);
+            playerConnectionManager.SendClientShutDownClientRpc(true, opponentRpcParams);
+            gameInstanceManager.Remove(instance);
+            StartCoroutine(playerConnectionManager.ShutDown());
+            return false;
+        }
     }
 }

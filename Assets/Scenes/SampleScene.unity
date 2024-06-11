@@ -1272,7 +1272,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Port: 9000'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -22943,8 +22943,6 @@ MonoBehaviour:
   tempCard: {fileID: 141743619}
   arrowController: {fileID: 478586566}
   playerHand: {fileID: 1248651921}
-  enemyCardsSet: []
-  playerCardsSet: []
   playerHero: {fileID: 1948316030}
   enemyHero: {fileID: 546870801}
   pointer: {fileID: 1549283567}
@@ -23456,7 +23454,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1293511112
 Transform:
   m_ObjectHideFlags: 0
@@ -26522,7 +26520,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1629029910
 Transform:
   m_ObjectHideFlags: 0
