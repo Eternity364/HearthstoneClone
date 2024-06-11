@@ -9,10 +9,12 @@ using System;
 using System.Threading.Tasks;
 using Unity.Services.Core;
 using Unity.Services.Authentication;
+using TMPro;
 
 public class MainMenuNetwork : MonoBehaviour
 {
-    [SerializeField] private GameObject game;
+    [SerializeField] private GameObject game;    
+    [SerializeField] private TextMeshProUGUI matchIDtext;
     [SerializeField] private Button startClient;
     [SerializeField] private Button startServer;
     [SerializeField] private Button startSinglePlayer;
@@ -133,12 +135,15 @@ public class MainMenuNetwork : MonoBehaviour
     private void StartNetworkClient(MatchmakingResult matchmakingResult)
     {
         Debug.Log($"Connecting to server at {matchmakingResult.ip}:{matchmakingResult.port}");
+        
+        matchIDtext.SetText("Port: " + matchmakingResult.port.ToString());
+        matchIDtext.gameObject.SetActive(true);
+        controlScheme = networkControlScheme;
 
         // Set the server ip and port to connect to, received from our match making result.
         var unityTransport = NetworkManager.Singleton.GetComponent<UnityTransport>();
         unityTransport.SetConnectionData(matchmakingResult.ip, (ushort)matchmakingResult.port);
-        
-        controlScheme = networkControlScheme;
+
 
         // NOTE: For this demo no data is being sent upon connection, but you could do it with the example code below.
         // var userData = <some_user_data_source>;
@@ -177,17 +182,23 @@ public class MainMenuNetwork : MonoBehaviour
         opponentHand.Clear();
         controlScheme.Clear();
         splashScreen.Clear();
-        endTurnButton.gameObject.SetActive(false);
         endTurnButton.onClick.RemoveAllListeners();
         concedeButton.onClick.RemoveAllListeners();
 
         gameObject.SetActive(false);
         game.SetActive(true);
+        endTurnButton.gameObject.SetActive(true);
         playerHand.Initialize(PlayerState.Player);
         opponentHand.Initialize(PlayerState.Enemy);
         boardManager.Initialize(isPlayer, OnPreGameEnd, OnGameEnd);
         controlScheme.Initialize();
-        endTurnButton.gameObject.SetActive(isPlayer);
+        endTurnButton.interactable = isPlayer;
+
+        if (isPlayer)
+            endTurnButton.GetComponentInChildren<TextMeshProUGUI>().text = "End turn";
+        else
+            endTurnButton.GetComponentInChildren<TextMeshProUGUI>().text = "Enemy turn";
+
         endTurnButton.onClick.AddListener(controlScheme.AttemptToStartNextTurn);
         concedeButton.onClick.AddListener(controlScheme.Concede);
         gameCanvas.SetActive(true);

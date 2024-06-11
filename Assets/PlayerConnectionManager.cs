@@ -112,7 +112,7 @@ public class PlayerConnectionManager : NetworkBehaviour
             OnPairComplete(isPlayer, gameStateJson);
         else
             OnOnePlayerConnected();
-        instanceIdtext.SetText(instanceId.ToString());
+        //instanceIdtext.SetText(instanceId.ToString());
     }
     
     [ClientRpc]

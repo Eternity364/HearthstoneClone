@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -55,7 +56,8 @@ public class SinglePlayerControlScheme : MonoBehaviour, ControlScheme {
 
     void ControlScheme.AttemptToStartNextTurn() {
         SetupTurn(PlayerState.Enemy, opponentHand);
-        endTurnButton.gameObject.SetActive(false);
+        endTurnButton.interactable = false;
+        endTurnButton.GetComponentInChildren<TextMeshProUGUI>().text = "Enemy turn";
         block = InputBlockerInstace.Instance.AddBlock();
         singlePlayerBot.StartNewTurn();
     }
@@ -67,7 +69,8 @@ public class SinglePlayerControlScheme : MonoBehaviour, ControlScheme {
 
     public void StartPlayerTurn() {
         SetupTurn(PlayerState.Player, playerHand);
-        endTurnButton.gameObject.SetActive(true);
+        endTurnButton.interactable = true;
+        endTurnButton.GetComponentInChildren<TextMeshProUGUI>().text = "End turn";
         InputBlockerInstace.Instance.RemoveBlock(block);
         block = null;
         boardManager.OnPlayerTurnStart();

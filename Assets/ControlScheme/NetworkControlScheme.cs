@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
 using System.Collections.Generic;
+using TMPro;
 
 public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
     [SerializeField]
@@ -113,7 +114,8 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
 
     void ControlScheme.AttemptToStartNextTurn() {
         AddInputBlock();
-        EndTurnButton.gameObject.SetActive(false);
+        EndTurnButton.interactable = false;
+        EndTurnButton.GetComponentInChildren<TextMeshProUGUI>().text = "Enemy turn";
         endTurnTimer.gameObject.SetActive(false);
         AttemptToStartNextTurnServerRpc(GameStateInstance.Instance.GetHash(), new ServerRpcParams());
     }
@@ -372,7 +374,8 @@ public class NetworkControlScheme : NetworkBehaviour, ControlScheme {
                 AddInputBlock();
                 boardManager.SetCardsStatusActive(false);
             }
-            EndTurnButton.gameObject.SetActive(value);
+            EndTurnButton.interactable = true;
+            EndTurnButton.GetComponentInChildren<TextMeshProUGUI>().text = "End turn";
             endTurnTimer.gameObject.SetActive(false);
         }
     }
